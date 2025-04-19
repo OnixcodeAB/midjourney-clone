@@ -49,12 +49,7 @@ export async function generateImageAndSave({
       [id, prompt, "sora", "pending", taskId]
     );
 
-    //2.1 ✅ Trigger cron immediately (non-blocking fire & forget)
-    await fetch("/api/poll-tasks").catch((err) =>
-      console.error("[TRIGGER ERROR]", err)
-    );
-
-    // 3. Immediately return pending result
+    // 4. Immediately return pending result
     return {
       success: true,
       image: {
