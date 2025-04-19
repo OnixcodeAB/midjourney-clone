@@ -18,7 +18,7 @@ interface Props {
   currentUserId?: string;
 }
 
-const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
+const CreateGrid = ({ images: initialImages }: Props) => {
   const router = useRouter();
   const [images, setImages] = useState<Image[]>(initialImages);
 

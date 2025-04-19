@@ -1,6 +1,6 @@
 "use server";
 import { randomUUID } from "crypto";
-import dbPromise from "@/lib/db";
+import dbPromise from "@lib/db";
 
 // Function to poll the Sora API for task completion
 // until the task is either completed or times out.
