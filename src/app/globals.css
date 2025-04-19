@@ -119,4 +119,7 @@
   body {
     @apply bg-background text-foreground;
   }
+  .btn-preview {
+    @apply p-2 rounded-sm hover:bg-red-100 hover:text-red-500 hover:border-red-300 cursor-pointer;
+  }
 }

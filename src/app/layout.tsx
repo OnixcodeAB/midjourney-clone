@@ -4,6 +4,8 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/layout/AppSidebar";
 import Header from "@/components/layout/Header";
 import "./globals.css";
+import { PromptProvider } from "./context/PromptContext";
+import { HeaderProvider } from "@/app/context/HeaderContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,13 +32,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
-          <AppSidebar />
-          <div className="relative flex-1 z-10">
-            <Header />
-            {children}
-          </div>
-        </SidebarProvider>
+        <PromptProvider>
+          <SidebarProvider>
+            <AppSidebar />
+            <HeaderProvider>
+              <div className="relative flex-1 z-10">
+                <Header />
+                {children}
+              </div>
+            </HeaderProvider>
+          </SidebarProvider>
+        </PromptProvider>
       </body>
     </html>
   );

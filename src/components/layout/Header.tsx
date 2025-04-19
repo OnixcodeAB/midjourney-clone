@@ -1,0 +1,179 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { usePrompt } from "@/app/context/PromptContext";
+import { useHeaderSettings } from "@/app/context/HeaderContext";
+import { useDropzone } from "react-dropzone";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Image, Lock, SlidersHorizontal, Trash2 } from "lucide-react";
+import ImageSizeSelector from "./ImageSizeSelector";
+import { generateImageAndSave } from "@/app/actions/generateImageSora";
+import { useRouter, usePathname } from "next/navigation";
+
+export default function Header() {
+  const { prompt, setPrompt } = usePrompt();
+  const { ratio } = useHeaderSettings();
+  const [preview, setPreview] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
+
+  const { getRootProps, getInputProps, open } = useDropzone({
+    accept: {
+      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
+    },
+    noClick: true,
+    noKeyboard: true,
+    maxFiles: 1,
+    onDrop: (files) => {
+      const file = files[0];
+      if (file) {
+        const previewUrl = URL.createObjectURL(file);
+        setPreview(previewUrl);
+        setFileName(file.name);
+      }
+    },
+  });
+
+  const router = useRouter();
+  const pathname = usePathname(); // Check the current route
+
+  // cleanup preview
+  useEffect(() => {
+    return () => {
+      if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
+
+  useEffect(() => {
+    const handleDragEnter = (e: DragEvent) => {
+      if (
+        e.dataTransfer?.types.includes("Files") ||
+        e.dataTransfer?.types.includes("text/plain")
+      ) {
+        setIsDraggingFile(true);
+      }
+    };
+    const handleDrop = () => setIsDraggingFile(false);
+    const handleDragLeave = (e: DragEvent) => {
+      if (e.relatedTarget === null) setIsDraggingFile(false);
+    };
+
+    window.addEventListener("dragenter", handleDragEnter);
+    window.addEventListener("drop", handleDrop);
+    window.addEventListener("dragleave", handleDragLeave);
+
+    return () => {
+      window.removeEventListener("dragenter", handleDragEnter);
+      window.removeEventListener("drop", handleDrop);
+      window.removeEventListener("dragleave", handleDragLeave);
+    };
+  }, []);
+
+  const handleDropCapture = (e: React.DragEvent) => {
+    const text = e.dataTransfer.getData("text/plain");
+    if (text.startsWith("http")) {
+      setPreview(text); // handle image dropped from grid
+    }
+  };
+
+  // Build the full prompt
+  const generatePrompt = () => {
+    let final = prompt;
+    if (ratio) final += `| Aspect Ratio: ${ratio}`;
+    if (fileName) final += ` | Ref Image: ${fileName}`;
+    return final;
+  };
+
+  const handleGenerate = async () => {
+    const fullPrompt = generatePrompt();
+    const originalPrompt = prompt; // backup
+    setPrompt(""); // You can clear immediately or wait for success
+
+    const result = await generateImageAndSave({
+      prompt: fullPrompt,
+      aspect: ratio,
+    });
+
+    // Check if we're already on the /create page:
+    if (pathname === "/create") {
+      // If on create page, force a refresh so that grid picks up new data
+      router.refresh();
+    } else {
+      // Otherwise, navigate to create page
+      router.push("/create");
+    }
+
+    // Optionally, restore prompt if generation failed
+    if (!result?.success) {
+      setPrompt(originalPrompt);
+    }
+  };
+
+  return (
+    <header
+      className={`sticky inset-0 z-50 bg-[#fcfcfd] flex flex-col items-start top-2 border-2 rounded-lg px-3 mx-2 py-1 shadow-lg transition-colors duration-300 ${
+        isDraggingFile ? "border-blue-500" : "border-gray-200"
+      }`}
+      onDropCapture={handleDropCapture}
+    >
+      <div {...getRootProps()} className="relative w-full flex items-center">
+        <Image className="text-gray-400 size-6 cursor-pointer" onClick={open} />
+        <input {...getInputProps()} className="hidden" />
+
+        <Input
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleGenerate();
+            }
+          }}
+          className="w-full h-12 border-none outline-none focus:outline-none focus-visible:ring-0 placeholder:text-[15px] placeholder:text-gray-400"
+          placeholder="Log in to start creating.."
+        />
+
+        <Popover modal>
+          <PopoverTrigger>
+            <SlidersHorizontal className="text-gray-400 size-6 cursor-pointer" />
+          </PopoverTrigger>
+          <PopoverContent>
+            <ImageSizeSelector />
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      {/* Thumbnail preview */}
+      {preview && (
+        <div className="w-full mt-2 ml-1 flex item-start justify-between gap-2 py-2 bg-[#fcfcfd]">
+          <img
+            src={preview}
+            alt="preview"
+            className="w-20 h-20 object-cover rounded-md border"
+          />
+          <div className="flex flex-col gap-2 text-gray-400">
+            <button
+              type="button"
+              aria-label="btn-preview-lock"
+              className="btn-preview"
+            >
+              <Lock className="size-5 " />
+            </button>
+            <button
+              type="reset"
+              aria-label="btn-preview-reset"
+              className="btn-preview"
+            >
+              <Trash2 className="size-5" onClick={() => setPreview(null)} />
+            </button>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
