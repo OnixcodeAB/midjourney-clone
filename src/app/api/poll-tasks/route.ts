@@ -1,7 +1,6 @@
 // src/app/api/poll-tasks/route.ts
 import { NextResponse } from "next/server";
-import WebSocket from "ws";
-import dbPromise from "@/lib/db";
+import dbPromise from "@lib/db";
 import { v2 as cloudinary } from "cloudinary";
 import { randomUUID } from "crypto";
 
@@ -10,24 +9,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY!,
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
-
-// Helper function to send message to external WebSocket
-async function sendWebSocketMessage(message: any) {
-  return new Promise<void>((resolve, reject) => {
-    const socket = new WebSocket("ws://localhost:5000/ws");
-
-    socket.on("open", () => {
-      socket.send(JSON.stringify(message));
-      socket.close();
-      resolve();
-    });
-
-    socket.on("error", (err) => {
-      console.error("[WebSocket Error]:", err);
-      reject(err);
-    });
-  });
-}
 
 // Polling interval (in milliseconds)
 let lastPollTime = 0;
@@ -73,22 +54,6 @@ export async function GET() {
           `UPDATE Image SET progress_pct = ? WHERE id = ?`,
           [taskData.progress_pct, task.id]
         );
-
-        // Broadcast progress to WebSocket clients
-        await sendWebSocketMessage({
-          type: "image_update",
-          imageId: task.id,
-          url: taskData.generations?.[0]?.url ?? "",
-          status: task.status ?? "running",
-          progress_pct: taskData.progress_pct,
-        });
-        await sendWebSocketMessage({
-          type: "image_update",
-          imageId: task.id,
-          url: taskData.generations?.[0]?.url ?? "",
-          status: task.status ?? "running",
-          progress_pct: taskData.progress_pct,
-        });
       }
 
       // If complete, upload to Cloudinary and update
@@ -104,15 +69,6 @@ export async function GET() {
           `UPDATE Image SET url = ?, status = 'complete', prompt = ? WHERE id = ?`,
           [uploaded.secure_url, taskData.prompt, task.id]
         );
-
-        // Broadcast completion to WebSocket clients
-        await sendWebSocketMessage({
-          type: "image_update",
-          imageId: task.id,
-          url: uploaded.secure_url ?? "",
-          status: "complete",
-          progress_pct: taskData.progress_pct,
-        });
 
         updated.push(task.id);
 
