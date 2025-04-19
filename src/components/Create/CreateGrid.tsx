@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useWebSocket, WebSocketEvent } from "@/hooks/useWebSocket";
 import ImageCard from "./ImageCard";
 
 interface Image {
@@ -22,39 +21,6 @@ interface Props {
 const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
   const router = useRouter();
   const [images, setImages] = useState<Image[]>(initialImages);
-
-  // 1. Handle live WebSocket updates
-  useWebSocket((msg: WebSocketEvent) => {
-    setImages((prev) => {
-      const exists = prev.some((img) => img.id === msg.imageId);
-
-      if (exists) {
-        return prev.map((img) =>
-          img.id === msg.imageId
-            ? {
-                ...img,
-                url: msg.url || img.url,
-                status: msg.status,
-                progress_pct: msg.progress_pct ?? img.progress_pct,
-              }
-            : img
-        );
-      } else {
-        // Add new pending record
-        return [
-          {
-            id: msg.imageId,
-            url: msg.url || "",
-            prompt: msg.prompt || "Generating...",
-            status: msg.status,
-            progress_pct: msg.progress_pct ?? 0,
-            createdAt: new Date().toISOString(),
-          },
-          ...prev,
-        ];
-      }
-    });
-  }, "ws://localhost:3000");
 
   // 2. Fallback refresh (1-time) if WebSocket is slow/missed
   const hasPending = images.some(
