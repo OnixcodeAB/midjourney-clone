@@ -18,11 +18,12 @@ interface Props {
   currentUserId?: string;
 }
 
-const CreateGrid = ({ images: initialImages }: Props) => {
+const CreateGrid = ({ images }: Props) => {
   const router = useRouter();
-  const [images, setImages] = useState<Image[]>(initialImages);
 
-  // 2. Fallback refresh (1-time) if WebSocket is slow/missed
+  console.log("images updating");
+
+  //  1. Update images state when initialImages changes
   const hasPending = images.some(
     (img) => img.status === "pending" || img.status === "running"
   );
@@ -33,7 +34,7 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     const timeout = setTimeout(() => {
       console.warn("[Grid] Fallback refresh triggered");
       router.refresh();
-    }, 60000); // 1 minute fallback
+    }, 45000); // 45 seconds
 
     return () => clearTimeout(timeout);
   }, [hasPending]);

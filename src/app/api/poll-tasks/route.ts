@@ -11,7 +11,7 @@ cloudinary.config({
 
 // Polling interval (in milliseconds)
 const POLLING_INTERVAL = 25000; // 25 seconds
-const MAX_POLLING_DURATION = 300000; // 5 minutes in milliseconds
+const MAX_POLLING_DURATION = 120000; // 2 minutes
 
 export async function GET() {
   const db = await dbPromise;
@@ -86,6 +86,7 @@ export async function GET() {
             ]
           );
         } else {
+          console.log("Task not completed yet:", task.task_id);
           // Wait for the polling interval before checking again
           await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL));
         }

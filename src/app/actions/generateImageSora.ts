@@ -50,7 +50,7 @@ export async function generateImageAndSave({
     );
 
     //2.1 ✅ Trigger cron immediately (non-blocking fire & forget)
-    await fetch("/api/poll-tasks").catch((err) =>
+    await fetch("http://localhost:3000/api/poll-tasks").catch((err) =>
       console.error("[TRIGGER ERROR]", err)
     );
 

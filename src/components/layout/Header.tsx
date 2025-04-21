@@ -100,14 +100,10 @@ export default function Header() {
     });
 
     // Check if we're already on the /create page:
-    if (pathname === "/create") {
+    if (pathname !== "/create") {
       // If on create page, force a refresh so that grid picks up new data
-      router.refresh();
-    } else {
-      // Otherwise, navigate to create page
       router.push("/create");
     }
-
     // Optionally, restore prompt if generation failed
     if (!result?.success) {
       setPrompt(originalPrompt);
