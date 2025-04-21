@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "tsx ../scr/lib/Server.ts",
+    "dev": "next dev --turbopack",
     "next:dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
