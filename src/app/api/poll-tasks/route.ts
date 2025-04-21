@@ -1,4 +1,3 @@
-// src/app/api/poll-tasks/route.ts
 import { NextResponse } from "next/server";
 import dbPromise from "@lib/db";
 import { v2 as cloudinary } from "cloudinary";
@@ -11,18 +10,9 @@ cloudinary.config({
 });
 
 // Polling interval (in milliseconds)
-let lastPollTime = 0;
+const POLLING_INTERVAL = 25000; // 25 seconds
 
 export async function GET() {
-  // Check if the last poll was less than 30 seconds ago
-  const now = Date.now();
-  if (now - lastPollTime < 25000) {
-    return NextResponse.json(
-      { message: "Cooldown in effect" },
-      { status: 429 }
-    );
-  }
-
   const db = await dbPromise;
 
   const pendingTasks = await db.all(
@@ -33,68 +23,77 @@ export async function GET() {
   const updated: string[] = [];
 
   for (const task of pendingTasks) {
-    try {
-      const res = await fetch(endpoint, {
-        headers: {
-          Authorization: `Bearer ${process.env.SORA_API_TOKEN}`,
-          "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
-          limit: "100",
-          before: `${task.task_id}`,
-        },
-      });
+    let taskCompleted = false;
 
-      const data = await res.json();
-      const taskData = data.task_responses.find(
-        (t: any) => t.id === task.task_id
-      );
-
-      // Optional: update progress
-      if (typeof taskData?.progress_pct === "number") {
-        const dbResponse = await db.run(
-          `UPDATE Image SET progress_pct = ? WHERE id = ?`,
-          [taskData.progress_pct, task.id]
-        );
-      }
-
-      // If complete, upload to Cloudinary and update
-      if (taskData?.status === "succeeded") {
-        const finalUrl = taskData.generations?.[0]?.url;
-        if (!finalUrl) continue;
-
-        const uploaded = await cloudinary.uploader.upload(finalUrl, {
-          folder: "ai_gallery",
+    while (!taskCompleted) {
+      try {
+        const res = await fetch(endpoint, {
+          headers: {
+            Authorization: `Bearer ${process.env.SORA_API_TOKEN}`,
+            "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
+            limit: "100",
+            before: `${task.task_id}`,
+          },
         });
 
-        await db.run(
-          `UPDATE Image SET url = ?, status = 'complete', prompt = ? WHERE id = ?`,
-          [uploaded.secure_url, taskData.prompt, task.id]
+        const data = await res.json();
+        const taskData = data.task_responses.find(
+          (t: any) => t.id === task.task_id
         );
 
-        updated.push(task.id);
+        // Optional: update progress
+        if (typeof taskData?.progress_pct === "number") {
+          await db.run(`UPDATE Image SET progress_pct = ? WHERE id = ?`, [
+            taskData.progress_pct,
+            task.id,
+          ]);
+        }
 
+        // If complete, upload to Cloudinary and update
+        if (taskData?.status === "succeeded") {
+          const finalUrl = taskData.generations?.[0]?.url;
+          if (!finalUrl) continue;
+
+          const uploaded = await cloudinary.uploader.upload(finalUrl, {
+            folder: "ai_gallery",
+          });
+
+          await db.run(
+            `UPDATE Image SET url = ?, status = 'complete', prompt = ? WHERE id = ?`,
+            [uploaded.secure_url, taskData.prompt, task.id]
+          );
+
+          updated.push(task.id);
+          taskCompleted = true; // Mark task as completed
+
+          await db.run(
+            `INSERT INTO PollLog (id, triggeredAt, status, updatedCount, error) VALUES (?, ?, ?, ?, ?)`,
+            [
+              randomUUID(),
+              new Date().toISOString(),
+              "success",
+              updated.length,
+              null,
+            ]
+          );
+        } else {
+          // Wait for the polling interval before checking again
+          await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL));
+        }
+      } catch (err) {
+        console.error("Polling failed for task:", task.taskId, err);
         await db.run(
           `INSERT INTO PollLog (id, triggeredAt, status, updatedCount, error) VALUES (?, ?, ?, ?, ?)`,
           [
             randomUUID(),
             new Date().toISOString(),
-            "success",
-            updated.length,
-            null,
+            "failed",
+            0,
+            (err as Error).message,
           ]
         );
+        break; // Exit the loop on error
       }
-    } catch (err) {
-      console.error("Polling failed for task:", task.taskId, err);
-      await db.run(
-        `INSERT INTO PollLog (id, triggeredAt, status, updatedCount, error) VALUES (?, ?, ?, ?, ?)`,
-        [
-          randomUUID(),
-          new Date().toISOString(),
-          "failed",
-          0,
-          (err as Error).message,
-        ]
-      );
     }
   }
 
