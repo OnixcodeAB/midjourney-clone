@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageCard from "./ImageCard";
+import { useWebSocket } from "@/hooks/useWebSocket "; // Assuming this is the hook from earlier
 
 interface Image {
   id: string;
@@ -18,30 +19,36 @@ interface Props {
   currentUserId?: string;
 }
 
-const CreateGrid = ({ images }: Props) => {
-  const router = useRouter();
+const CreateGrid = ({ images: initialImages }: Props) => {
+  const [images, setImages] = useState<Image[]>(initialImages);
 
-  console.log("images updating");
+  // Handle image updates
+  const { isConnected } = useWebSocket("ws://localhost:3001", (data: any) => {
+    console.log("WebSocket received:", data);
 
-  //  1. Update images state when initialImages changes
-  const hasPending = images.some(
-    (img) => img.status === "pending" || img.status === "running"
-  );
+    if (data.table === "Image" && data.operation === "UPDATE") {
+      setImages((prevImages) => {
+        const exists = prevImages.some((img) => img.id === data.id);
 
-  useEffect(() => {
-    if (!hasPending) return;
+        if (exists) {
+          // Update existing item
+          return prevImages.map((img) =>
+            img.id === data.id ? { ...img, ...data.data } : img
+          );
+        } else {
+          // Add new item
+          return [...prevImages, { ...data.data }];
+        }
+      });
+    }
+  });
 
-    const timeout = setTimeout(() => {
-      console.warn("[Grid] Fallback refresh triggered");
-      router.refresh();
-    }, 45000); // 45 seconds
+  console.log("WebSocket connected:", isConnected);
+  console.log("images", images);
 
-    return () => clearTimeout(timeout);
-  }, [hasPending]);
-
-  // 3. Group images by time
   const now = new Date();
 
+  // Group images by time
   const grouped = useMemo(() => {
     const groups: { [key: string]: Image[] } = {
       Today: [],
@@ -87,7 +94,7 @@ const CreateGrid = ({ images }: Props) => {
     return groups;
   }, [images]);
 
-  // 4. Render
+  // Render
   return (
     <div className="p-6 w-full max-w-fit space-y-6">
       {Object.entries(grouped).map(

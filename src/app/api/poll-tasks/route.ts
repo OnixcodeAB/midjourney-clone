@@ -23,12 +23,12 @@ export async function GET() {
   const endpoint = `https://sora.chatgpt.com/backend/video_gen`;
   const updated: string[] = [];
 
-  for (const task of pendingTasks) {
+  // Create an array of promises for each task
+  const taskPromises = pendingTasks.map(async (task) => {
     let taskCompleted = false;
     const startTime = Date.now(); // Record the start time
 
     while (!taskCompleted) {
-      // Check if the maximum polling duration has been exceeded
       const elapsedTime = Date.now() - startTime;
       if (elapsedTime > MAX_POLLING_DURATION) {
         console.warn(`Polling timed out for task: ${task.task_id}`);
@@ -50,7 +50,7 @@ export async function GET() {
           (t: any) => t.id === task.task_id
         );
 
-        // Optional: update progress
+        // Update progress if available
         if (typeof taskData?.progress_pct === "number") {
           await db.run(`UPDATE Image SET progress_pct = ? WHERE id = ?`, [
             taskData.progress_pct,
@@ -74,38 +74,19 @@ export async function GET() {
 
           updated.push(task.id);
           taskCompleted = true; // Mark task as completed
-
-          await db.run(
-            `INSERT INTO PollLog (id, triggeredAt, status, updatedCount, error) VALUES (?, ?, ?, ?, ?)`,
-            [
-              randomUUID(),
-              new Date().toISOString(),
-              "success",
-              updated.length,
-              null,
-            ]
-          );
         } else {
-          console.log("Task not completed yet:", task.task_id);
           // Wait for the polling interval before checking again
           await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL));
         }
       } catch (err) {
-        console.error("Polling failed for task:", task.taskId, err);
-        await db.run(
-          `INSERT INTO PollLog (id, triggeredAt, status, updatedCount, error) VALUES (?, ?, ?, ?, ?)`,
-          [
-            randomUUID(),
-            new Date().toISOString(),
-            "failed",
-            0,
-            (err as Error).message,
-          ]
-        );
+        console.error("Polling failed for task:", task.task_id, err);
         break; // Exit the loop on error
       }
     }
-  }
+  });
+
+  // Wait for all tasks to complete
+  await Promise.all(taskPromises);
 
   return NextResponse.json({
     status: pendingTasks.length > 0 ? "running" : "complete",
