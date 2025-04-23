@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import dbPromise from "@lib/db";
+import dbPromise, { query } from "@lib/db";
 import { v2 as cloudinary } from "cloudinary";
 import { randomUUID } from "crypto";
 
@@ -16,8 +16,8 @@ const MAX_POLLING_DURATION = 120000; // 2 minutes
 export async function GET() {
   const db = await dbPromise;
 
-  const pendingTasks = await db.all(
-    `SELECT id, task_id FROM Image WHERE status = 'pending' AND task_id IS NOT NULL`
+  const { rows: pendingTasks } = await query(
+    `SELECT id, task_id FROM "Image" WHERE status = 'pending' AND task_id IS NOT NULL`
   );
 
   const endpoint = `https://sora.chatgpt.com/backend/video_gen`;
@@ -52,7 +52,7 @@ export async function GET() {
 
         // Update progress if available
         if (typeof taskData?.progress_pct === "number") {
-          await db.run(`UPDATE Image SET progress_pct = ? WHERE id = ?`, [
+          await query(`UPDATE "Image" SET progress_pct = $1 WHERE id = $2`, [
             taskData.progress_pct,
             task.id,
           ]);
@@ -67,8 +67,10 @@ export async function GET() {
             folder: "ai_gallery",
           });
 
-          await db.run(
-            `UPDATE Image SET url = ?, status = 'complete', prompt = ? WHERE id = ?`,
+          await query(
+            `UPDATE "Image" 
+             SET url = $1, status = 'complete', prompt = $2 
+             WHERE id = $3`,
             [uploaded.secure_url, taskData.prompt, task.id]
           );
 

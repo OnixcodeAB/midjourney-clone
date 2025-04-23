@@ -1,22 +1,22 @@
 // app/api/create/route.ts
-import dbPromise from "@/lib/db";
+import dbPromise, { query } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     const db = await dbPromise;
 
-    const images = await db.all(`
-      SELECT 
-        id, 
-        url , 
-        prompt ,
-        status,
-        progress_pct,
-        createdAt 
-      FROM Image 
-      ORDER BY rowid DESC
-    `);
+    const { rows: images } = await query(`
+         SELECT 
+           id, 
+           url,
+           status,
+            progress_pct,
+           prompt,
+           provider
+         FROM "Image"
+         ORDER BY "createdat" DESC
+       `);
 
     return NextResponse.json(images);
   } catch (error) {

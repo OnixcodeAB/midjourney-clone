@@ -13,6 +13,8 @@ export default async function CreatePage() {
   // Fetch from DB or external API
   const images: Image[] = await getData();
 
+  console.log(images)
+
   return (
     <div className="flex-1">
       <CreateGrid images={images} />

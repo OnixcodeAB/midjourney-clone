@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useMemo, useState } from "react";
 import ImageCard from "./ImageCard";
-import { useWebSocket } from "@/hooks/useWebSocket "; // Assuming this is the hook from earlier
+import { useSocket } from "@/hooks/useSocket"; // Updated to useSocket
 
 interface Image {
   id: string;
@@ -21,30 +20,69 @@ interface Props {
 
 const CreateGrid = ({ images: initialImages }: Props) => {
   const [images, setImages] = useState<Image[]>(initialImages);
+  console.log(images);
 
-  // Handle image updates
-  const { isConnected } = useWebSocket("ws://localhost:3001", (data: any) => {
-    console.log("WebSocket received:", data);
+  // --- Define the message handler using useCallback ---
+  const handleDbUpdate = useCallback((data: any) => {
+    console.log("Socket.IO received:", data);
 
-    if (data.table === "Image" && data.operation === "UPDATE") {
+    // Ensure the data structure matches expectations
+    if (
+      data && // Check if data exists
+      typeof data === "object" && // Check if it's an object
+      data.table === "Image" &&
+      data.operation === "UPDATE" &&
+      data.id && // Ensure ID is present
+      data.data // Ensure data payload exists
+    ) {
       setImages((prevImages) => {
         const exists = prevImages.some((img) => img.id === data.id);
 
         if (exists) {
-          // Update existing item
+          // Update existing item: Merge existing data with new data
           return prevImages.map((img) =>
             img.id === data.id ? { ...img, ...data.data } : img
           );
         } else {
-          // Add new item
-          return [...prevImages, { ...data.data }];
+          // Add new item: Treat the payload as a new image
+          // Ensure all required fields for the 'Image' interface are present
+          // Provide defaults if necessary, or ensure the backend sends complete objects
+          const newImage: Image = {
+            id: data.id, // Must be provided by the backend notification
+            url: data.data.url || "", // Provide default or ensure it's sent
+            prompt: data.data.prompt || "", // Provide default or ensure it's sent
+            status: data.data.status || "pending", // Default status
+            progress_pct: data.data.progress_pct || 0, // Default progress
+            createdAt: data.data.createdAt || new Date().toISOString(), // Need a creation date! Ensure backend sends it.
+            ...data.data, // Spread the rest of the data, potentially overwriting defaults
+          };
+          // Filter out potentially invalid new images if essential data is missing
+          if (!newImage.id || !newImage.createdAt) {
+            console.warn(
+              "Received incomplete image data for new item, skipping:",
+              data
+            );
+            return prevImages;
+          }
+          return [...prevImages, newImage];
         }
       });
+    } else {
+      console.warn("Received invalid db_update payload:", data);
     }
-  });
+    // The dependency array is empty `[]` because `setImages` is guaranteed
+    // by React to be stable and we are using the functional update form
+    // which doesn't need `images` in the closure.
+  }, []); // <--- Empty dependency array for useCallback
 
-  console.log("WebSocket connected:", isConnected);
-  console.log("images", images);
+  // Handle real-time updates from Socket.IO
+  const { isConnected } = useSocket(
+    "http://localhost:5000",
+    "db_update",
+    handleDbUpdate // Pass the memoized callback function
+  );
+
+  console.log("Socket.IO connected:", isConnected);
 
   const now = new Date();
 
@@ -94,7 +132,6 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     return groups;
   }, [images]);
 
-  // Render
   return (
     <div className="p-6 w-full max-w-fit space-y-6">
       {Object.entries(grouped).map(

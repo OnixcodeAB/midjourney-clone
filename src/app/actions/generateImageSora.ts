@@ -1,6 +1,6 @@
 "use server";
 import { randomUUID } from "crypto";
-import dbPromise from "@lib/db";
+import dbPromise, { query } from "@lib/db";
 
 // Function to poll the Sora API for task completion
 // until the task is either completed or times out.
@@ -44,9 +44,10 @@ export async function generateImageAndSave({
     if (!taskId) throw new Error("No task ID returned from Sora.");
 
     // 2. Insert pending record in SQLite (url is null for now)
-    await db.run(
-      `INSERT INTO Image (id, prompt, provider, status, task_id) VALUES (?, ?, ?, ?, ?)`,
-      [id, prompt, "sora", "pending", taskId]
+    await query(
+      `INSERT INTO "Image" (prompt, provider, status, task_id)
+       VALUES ($1, $2, $3, $4 )`,
+      [prompt, "sora", "pending", taskId]
     );
 
     //2.1 ✅ Trigger cron immediately (non-blocking fire & forget)
