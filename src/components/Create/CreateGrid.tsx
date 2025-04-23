@@ -10,7 +10,7 @@ interface Image {
   prompt: string;
   status?: "pending" | "running" | "complete";
   progress_pct?: number;
-  createdAt: string;
+  createdat: string;
 }
 
 interface Props {
@@ -57,7 +57,7 @@ const CreateGrid = ({ images: initialImages }: Props) => {
             ...data.data, // Spread the rest of the data, potentially overwriting defaults
           };
           // Filter out potentially invalid new images if essential data is missing
-          if (!newImage.id || !newImage.createdAt) {
+          if (!newImage.id || !newImage.createdat) {
             console.warn(
               "Received incomplete image data for new item, skipping:",
               data
@@ -123,9 +123,9 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     };
 
     for (const img of images) {
-      if (isToday(img.createdAt)) groups["Today"].push(img);
-      else if (isThisWeek(img.createdAt)) groups["This Week"].push(img);
-      else if (isThisMonth(img.createdAt)) groups["This Month"].push(img);
+      if (isToday(img.createdat)) groups["Today"].push(img);
+      else if (isThisWeek(img.createdat)) groups["This Week"].push(img);
+      else if (isThisMonth(img.createdat)) groups["This Month"].push(img);
       else groups["Older"].push(img);
     }
 

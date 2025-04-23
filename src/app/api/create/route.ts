@@ -10,10 +10,11 @@ export async function GET() {
          SELECT 
            id, 
            url,
+           prompt,
+           provider,
            status,
             progress_pct,
-           prompt,
-           provider
+            createdat
          FROM "Image"
          ORDER BY "createdat" DESC
        `);

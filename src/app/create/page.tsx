@@ -6,7 +6,7 @@ interface Image {
   url: string;
   prompt: string;
   status?: "pending" | "complete" | "running";
-  createdAt: string;
+  createdat: string;
 }
 
 export default async function CreatePage() {
