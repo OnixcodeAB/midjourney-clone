@@ -1,6 +1,6 @@
 // src/app/api/images/[id]/route.ts
 import { NextResponse } from "next/server";
-import dbPromise from "@/lib/db";
+import dbPromise, { query } from "@/lib/db";
 
 /// This route fetches a single image by its ID
 /// and returns the image data in JSON format.
@@ -13,14 +13,16 @@ export async function GET(
   try {
     const db = await dbPromise;
 
-    const image = await db.get(
+    const {
+      rows: [image],
+    } = await query(
       `SELECT 
-        id, 
-        url AS src, 
-        prompt, 
-        provider AS author 
-       FROM Image 
-       WHERE id = ?`,
+         id, 
+         url AS src, 
+         prompt, 
+         provider AS author 
+       FROM "Image"
+       WHERE id = $1`,
       [id]
     );
 
