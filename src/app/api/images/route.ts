@@ -1,11 +1,9 @@
 // src/app/api/images/route.ts
 import { NextResponse } from "next/server";
-import dbPromise, { query } from "@/lib/db";
+import { query } from "@/lib/db";
 
 export async function GET() {
   try {
-    const db = await dbPromise;
-
     const { rows: images } = await query(`
       SELECT 
         id, 
@@ -15,7 +13,6 @@ export async function GET() {
       FROM "Image"
       ORDER BY "createdat" DESC
     `);
-    console.log(images);
     return NextResponse.json(images);
   } catch (error) {
     console.error("Error fetching images:", error);

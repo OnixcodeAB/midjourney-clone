@@ -91,22 +91,25 @@ export default function Header() {
 
   const handleGenerate = async () => {
     const fullPrompt = generatePrompt();
-    const originalPrompt = prompt; // backup
-    setPrompt(""); // You can clear immediately or wait for success
+    const originalPrompt = prompt;
 
-    const result = await generateImageAndSave({
+    // Optimistically clear the prompt
+    setPrompt("");
+
+    // 1) Kick off the server action (don’t await it yet)
+    const promise = generateImageAndSave({
       prompt: fullPrompt,
       aspect: ratio,
     });
 
-    // Check if we're already on the /create page:
-    if (pathname !== "/create") {
-      // If on create page, force a refresh so that grid picks up new data
-      router.push("/create");
-    }
-    // Optionally, restore prompt if generation failed
+    // 2) Immediately navigate to /create
+    router.push("/create");
+
+    // 3) Now await your save; if it fails, restore the prompt
+    const result = await promise;
     if (!result?.success) {
       setPrompt(originalPrompt);
+      // (optionally router.back() or show an error toast here)
     }
   };
 

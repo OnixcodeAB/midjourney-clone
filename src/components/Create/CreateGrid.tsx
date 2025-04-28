@@ -20,21 +20,13 @@ interface Props {
 
 const CreateGrid = ({ images: initialImages }: Props) => {
   const [images, setImages] = useState<Image[]>(initialImages);
-  console.log(images);
 
   // --- Define the message handler using useCallback ---
   const handleDbUpdate = useCallback((data: any) => {
     console.log("Socket.IO received:", data);
 
     // Ensure the data structure matches expectations
-    if (
-      data && // Check if data exists
-      typeof data === "object" && // Check if it's an object
-      data.table === "Image" &&
-      data.operation === "UPDATE" &&
-      data.id && // Ensure ID is present
-      data.data // Ensure data payload exists
-    ) {
+    if (data) {
       setImages((prevImages) => {
         const exists = prevImages.some((img) => img.id === data.id);
 

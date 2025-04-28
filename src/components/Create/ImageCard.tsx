@@ -46,7 +46,7 @@ const ImageCard = ({
       {status === "pending" || status === "running" ? (
         <div className="absolute inset-0 bg-gray-200 flex flex-col items-center justify-center z-10">
           <DonutLoader
-            progress={progress_pct ?? 0}
+            progress={progress_pct ?? 10}
             size={60}
             strokeWidth={5}
             color="blue"
