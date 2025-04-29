@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import "./globals.css";
 import { PromptProvider } from "./context/PromptContext";
 import { HeaderProvider } from "@/app/context/HeaderContext";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,22 +29,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <PromptProvider>
-          <SidebarProvider>
-            <AppSidebar />
-            <HeaderProvider>
-              <div className="relative flex-1 z-10">
-                <Header />
-                {children}
-              </div>
-            </HeaderProvider>
-          </SidebarProvider>
-        </PromptProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <PromptProvider>
+            <SidebarProvider>
+              <AppSidebar />
+              <HeaderProvider>
+                <div className="relative flex-1 z-10">
+                  <Header />
+                  {children}
+                </div>
+              </HeaderProvider>
+            </SidebarProvider>
+          </PromptProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
