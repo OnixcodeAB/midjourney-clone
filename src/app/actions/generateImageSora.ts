@@ -1,6 +1,6 @@
 "use server";
 import { randomUUID } from "crypto";
-import dbPromise, { query } from "@lib/db";
+import { query } from "@lib/db";
 
 // Function to poll the Sora API for task completion
 // until the task is either completed or times out.
@@ -14,7 +14,6 @@ export async function generateImageAndSave({
   aspect?: "1024x1024" | "1024x1792" | "1792x1024";
 }) {
   try {
-    const db = await dbPromise;
     const id = randomUUID();
 
     // 1. Kick off Sora image generation
@@ -28,8 +27,8 @@ export async function generateImageAndSave({
       },
       body: JSON.stringify({
         type: "image_gen",
-        height: 720,
-        width: 480,
+        height: 1024,
+        width: 1536,
         inpaint_items: [],
         n_frames: 1,
         n_variants: 1,

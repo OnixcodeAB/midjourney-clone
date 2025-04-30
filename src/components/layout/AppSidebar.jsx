@@ -17,6 +17,7 @@ import {
   CircleHelp,
   CircleUserRound,
   Compass,
+  Ellipsis,
   Globe,
   Image,
   PaintbrushVertical,
@@ -25,6 +26,7 @@ import {
   SwatchBook,
   ThumbsUp,
 } from "lucide-react";
+import { useUser, useClerk } from "@clerk/nextjs";
 
 // Menu items.
 const items = [
@@ -80,6 +82,8 @@ const itmesFooter = [
 export default function AppSidebar() {
   const { state } = useSidebar();
   const pathname = usePathname();
+  const { user } = useUser();
+  const { signOut } = useClerk();
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -122,7 +126,7 @@ export default function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarContent className="">
+        <SidebarContent className="mb-5">
           <SidebarGroup>
             <SidebarGroupContent
               className={`${state === "collapsed" ? "px-0" : "px-4"}`}
@@ -150,27 +154,55 @@ export default function AppSidebar() {
                         : "rounded-2xl bg-[#abafba]/20 hover:bg-[#abafba]/35  py-5"
                     }`}
                   >
-                    <a href="#" className="">
-                      <CircleUserRound className="size-[22px]! mr-6" />
-                      <span className="text-[16px]">Login</span>
-                    </a>
+                    {user && (
+                      <a
+                        href="#"
+                        className="pe-4 flex items-center justify-between"
+                        onClick={async () => {
+                          await signOut({ redirectUrl: "/" });
+                        }}
+                      >
+                        <CircleUserRound className="size-[22px]! " />
+                        <span className="text-[16px]">{user.fullName}</span>
+                        <Ellipsis className="size-[22px]" />
+                      </a>
+                    )}
                   </SidebarMenuButton>
-                  <SidebarMenuButton
-                    asChild
-                    className={`${
-                      state === "collapsed"
-                        ? "bg-none"
-                        : "rounded-2xl bg-[#f9e8e6] hover:bg-[#ffd6da] py-5"
-                    }`}
-                  >
-                    <a
-                      href="#"
-                      className=" text-[#f25b44] hover:text-[#f25b44]!"
-                    >
-                      <Globe className="size-[22px]! mr-6" />
-                      <span className="text-[16px] font-semibold">Sign Up</span>
-                    </a>
-                  </SidebarMenuButton>
+                  {!user && (
+                    <>
+                      <SidebarMenuButton
+                        asChild
+                        className={`${
+                          state === "collapsed"
+                            ? "bg-none"
+                            : "rounded-2xl bg-[#abafba]/20 hover:bg-[#abafba]/35  py-5"
+                        }`}
+                      >
+                        <a href="#" className="">
+                          <CircleUserRound className="size-[22px]! " />
+                          <span className="text-[16px] ml-5">Log in</span>
+                        </a>
+                      </SidebarMenuButton>
+                      <SidebarMenuButton
+                        asChild
+                        className={`${
+                          state === "collapsed"
+                            ? "bg-none"
+                            : "rounded-2xl bg-[#f9e8e6] hover:bg-[#ffd6da] py-5"
+                        }`}
+                      >
+                        <a
+                          href="#"
+                          className=" text-[#f25b44] hover:text-[#f25b44]!"
+                        >
+                          <Globe className="size-[22px]! mr-6" />
+                          <span className="text-[16px] font-semibold">
+                            Sign Up
+                          </span>
+                        </a>
+                      </SidebarMenuButton>
+                    </>
+                  )}
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
