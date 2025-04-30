@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { RedirectToSignIn, useUser } from "@clerk/nextjs";
 import { usePrompt } from "@/app/context/PromptContext";
 import { useHeaderSettings } from "@/app/context/HeaderContext";
 import { useDropzone } from "react-dropzone";
@@ -13,7 +14,7 @@ import {
 import { Image, Lock, SlidersHorizontal, Trash2 } from "lucide-react";
 import ImageSizeSelector from "./ImageSizeSelector";
 import { generateImageAndSave } from "@/app/actions/generateImageSora";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, redirect } from "next/navigation";
 
 export default function Header() {
   const { prompt, setPrompt } = usePrompt();
@@ -41,6 +42,7 @@ export default function Header() {
 
   const router = useRouter();
   const pathname = usePathname(); // Check the current route
+  const { user, isLoaded } = useUser();
 
   // cleanup preview
   useEffect(() => {
@@ -90,6 +92,11 @@ export default function Header() {
   };
 
   const handleGenerate = async () => {
+    if (!isLoaded) return; // Wait for user to load
+    if (!user)
+      router.push(`/auth/sign-in?redirectUrl=${encodeURIComponent(pathname)}`);
+    return; // Redirect to sign-in if not authenticated
+
     const fullPrompt = generatePrompt();
     const originalPrompt = prompt;
 

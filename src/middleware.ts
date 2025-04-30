@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 // Middleware to check if the user is authenticated before accessing protected routes
 const isProtectedRoute = createRouteMatcher([
@@ -15,7 +16,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (!userId && isProtectedRoute(req)) {
     return redirectToSignIn({ returnBackUrl: "/auth/sign-in" });
-  }
+  } 
 });
 
 export const config = {
