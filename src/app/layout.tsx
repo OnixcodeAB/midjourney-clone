@@ -7,6 +7,7 @@ import "./globals.css";
 import { PromptProvider } from "./context/PromptContext";
 import { HeaderProvider } from "@/app/context/HeaderContext";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default function RootLayout({
                   <Header />
                   {children}
                 </div>
+                <Toaster />
               </HeaderProvider>
             </SidebarProvider>
           </PromptProvider>

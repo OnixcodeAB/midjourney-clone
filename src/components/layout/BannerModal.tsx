@@ -110,9 +110,9 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Footer link */}
-          <div className="mt-4 text-center text-xs text-gray-500">
+          <div className=" text-center text-md text-gray-500">
             Already have a subscription?{" "}
-            <a href="#" className="underline">
+            <a href="#" className="underline text-[#f25b44]">
               Link your accounts
             </a>
           </div>

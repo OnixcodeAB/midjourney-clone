@@ -10,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { toast } from "sonner";
 import { Image, Lock, SlidersHorizontal, Trash2 } from "lucide-react";
 import ImageSizeSelector from "./ImageSizeSelector";
 import { generateImageAndSave } from "@/app/actions/generateImageSora";
@@ -92,6 +93,14 @@ export default function Header() {
     return final;
   };
   const handleGenerate = async () => {
+    // Don't allow empty prompt
+    if (!prompt.trim()) {
+      toast.error("Prompt required", {
+        description: "Please enter some text before generating an image.",
+      });
+      return;
+    }
+
     const fullPrompt = generatePrompt();
     const originalPrompt = prompt;
 
