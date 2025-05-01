@@ -1,23 +1,40 @@
 "use server";
+import { logPoll, parseAspect } from "@/lib/helper";
 import { query } from "@lib/db";
 
-// Function to poll the Sora API for task completion
-// until the task is either completed or times out.
+// Allowed aspect ratios
+type Aspect = "1024x1024" | "1024x1536" | "1536x1024";
+interface GenerateImageParams {
+  prompt: string;
+  aspect?: Aspect;
+}
 
-/// Function to generate an image using Sora API and save it to Cloudinary and DB
+export interface ImageRecord {
+  id: string;
+  url: string;
+  prompt: string;
+  provider: string;
+  task_id: string;
+  status: string;
+  progress_pct: number;
+  createdat?: string;
+}
+
 export async function generateImageAndSave({
   prompt,
   aspect = "1024x1024",
-}: {
-  prompt: string;
-  aspect?: "1024x1024" | "1024x1536" | "1536x1024";
-}) {
-  try {
-    // Parse aspect string into width and height
-    const [width, height] = aspect.split("x").map((dim) => Number(dim));
+}: GenerateImageParams): Promise<{
+  success: boolean;
+  image?: ImageRecord;
+  error?: string;
+}> {
+  // Parse the aspect ratio
+  const { width, height } = parseAspect(aspect);
 
-    // 1. Kick off Sora image generation
-    const postRes = await fetch("https://sora.chatgpt.com/backend/video_gen", {
+  // 1. Call Sora API
+  let taskId: string;
+  try {
+    const response = await fetch("https://sora.chatgpt.com/backend/video_gen", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,8 +44,8 @@ export async function generateImageAndSave({
       },
       body: JSON.stringify({
         type: "image_gen",
-        height,
         width,
+        height,
         inpaint_items: [],
         n_frames: 1,
         n_variants: 1,
@@ -37,32 +54,45 @@ export async function generateImageAndSave({
         tag: "image_gen",
       }),
     });
-    const postData = await postRes.json();
-    const taskId = postData.id;
 
-    if (!taskId) throw new Error("No task ID returned from Sora.");
+    if (!response.ok) {
+      throw new Error(
+        `Sora API responded ${response.status} ${response.statusText}`
+      );
+    }
 
-    // 2. Insert pending record in SQLite (url is null for now)
-    const { rows: images } = await query(
+    const data = await response.json();
+    if (!data.id) {
+      throw new Error("No task ID returned from Sora API.");
+    }
+    taskId = data.id;
+  } catch (apiErr: any) {
+    console.error("[SORA_API_ERROR]", apiErr);
+    await logPoll("generateImageFailed", 0, apiErr.message);
+    return { success: false, error: apiErr.message };
+  }
+
+  // 2. Insert pending record in DB
+  let inserted: ImageRecord;
+  try {
+    const { rows } = await query(
       `INSERT INTO "Image" (prompt, provider, status, task_id)
-       VALUES ($1, $2, $3, $4 )`,
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, prompt, provider, status, task_id, created_at`,
       [prompt, "sora", "pending", taskId]
     );
-
-    console.log(images, "Image inserted into DB");
-
-    //2.1 ✅ Trigger cron immediately (non-blocking fire & forget)
-    await fetch("http://localhost:3000/api/poll-tasks").catch((err) =>
-      console.error("[TRIGGER ERROR]", err)
-    );
-
-    // 3. Immediately return pending result
-    return {
-      success: true,
-      images,
-    };
-  } catch (err) {
-    console.error("[GENERATE_IMAGE_ERROR]", err);
-    return { success: false, error: "Image generation failed." };
+    inserted = rows[0];
+  } catch (dbErr: any) {
+    console.error("[DB_INSERT_ERROR]", dbErr);
+    await logPoll("dbInsertFailed", 0, dbErr.message);
+    return { success: false, error: "Database insert failed." };
   }
+
+  // 3. Trigger background polling (fire-and-forget)
+  fetch("/api/poll-tasks").catch((err) =>
+    console.error("[TRIGGER_ERROR]", err)
+  );
+
+  // 4. Return the pending image record
+  return { success: true, image: inserted };
 }
