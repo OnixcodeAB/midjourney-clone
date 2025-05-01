@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import dbPromise, { query } from "@lib/db";
+import { query } from "@lib/db";
 import { v2 as cloudinary } from "cloudinary";
-import { randomUUID } from "crypto";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -14,8 +13,6 @@ const POLLING_INTERVAL = 25000; // 25 seconds
 const MAX_POLLING_DURATION = 120000; // 2 minutes
 
 export async function GET() {
-  const db = await dbPromise;
-
   const { rows: pendingTasks } = await query(
     `SELECT id, task_id FROM "Image" WHERE status = 'pending' AND task_id IS NOT NULL`
   );
