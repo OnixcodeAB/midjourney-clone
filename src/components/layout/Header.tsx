@@ -120,7 +120,9 @@ export default function Header() {
     const result = await promise;
     if (!result?.success) {
       setPrompt(originalPrompt);
-      // (optionally router.back() or show an error toast here)
+      toast.error("Generation failed", {
+        description: "Something went wrong—please try again later.",
+      });
     }
   };
 
