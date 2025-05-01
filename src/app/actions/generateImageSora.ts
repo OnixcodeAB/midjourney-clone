@@ -1,5 +1,4 @@
 "use server";
-import { randomUUID } from "crypto";
 import { query } from "@lib/db";
 
 // Function to poll the Sora API for task completion
@@ -11,10 +10,11 @@ export async function generateImageAndSave({
   aspect = "1024x1024",
 }: {
   prompt: string;
-  aspect?: "1024x1024" | "1024x1792" | "1792x1024";
+  aspect?: "1024x1024" | "1024x1536" | "1536x1024";
 }) {
   try {
-    const id = randomUUID();
+    // Parse aspect string into width and height
+    const [width, height] = aspect.split("x").map((dim) => Number(dim));
 
     // 1. Kick off Sora image generation
     const postRes = await fetch("https://sora.chatgpt.com/backend/video_gen", {
@@ -27,8 +27,8 @@ export async function generateImageAndSave({
       },
       body: JSON.stringify({
         type: "image_gen",
-        height: 1024,
-        width: 1536,
+        height,
+        width,
         inpaint_items: [],
         n_frames: 1,
         n_variants: 1,
@@ -43,11 +43,13 @@ export async function generateImageAndSave({
     if (!taskId) throw new Error("No task ID returned from Sora.");
 
     // 2. Insert pending record in SQLite (url is null for now)
-    await query(
+    const { rows: images } = await query(
       `INSERT INTO "Image" (prompt, provider, status, task_id)
        VALUES ($1, $2, $3, $4 )`,
       [prompt, "sora", "pending", taskId]
     );
+
+    console.log(images, "Image inserted into DB");
 
     //2.1 ✅ Trigger cron immediately (non-blocking fire & forget)
     await fetch("http://localhost:3000/api/poll-tasks").catch((err) =>
@@ -57,13 +59,7 @@ export async function generateImageAndSave({
     // 3. Immediately return pending result
     return {
       success: true,
-      image: {
-        id,
-        url: null, // still pending
-        prompt,
-        status: "pending",
-        provider: "sora",
-      },
+      images,
     };
   } catch (err) {
     console.error("[GENERATE_IMAGE_ERROR]", err);

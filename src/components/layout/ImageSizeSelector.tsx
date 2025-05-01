@@ -9,9 +9,9 @@ import {
 } from "@/app/context/HeaderContext";
 
 const aspectOptions = [
-  { label: "Portrait", value: "portrait", ratio: "9:16", range: [0, 40] },
+  { label: "Portrait", value: "portrait", ratio: "2:3", range: [0, 40] },
   { label: "Square", value: "square", ratio: "1:1", range: [41, 60] },
-  { label: "Landscape", value: "landscape", ratio: "16:9", range: [61, 100] },
+  { label: "Landscape", value: "landscape", ratio: "3:2", range: [61, 100] },
 ];
 
 export default function ImageSizeSelector() {
@@ -46,7 +46,7 @@ export default function ImageSizeSelector() {
           onClick={() => {
             setAspect("landscape");
             setSize(80);
-            setRatio("16:9");
+            setRatio("1024x1536");
           }}
           className="text-md text-gray-400 border border-white px-4 py-2 rounded-sm cursor-pointer hover:bg-red-100 hover:text-red-500 hover:border-red-300"
         >

@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useState } from "react";
 
-export type AspectType = "portrait" | "square" | "landscape";
-export type AspectRatio = "1024x1024" | "1024x1792" | "1792x1024";
+export type AspectType = "square" | "portrait" | "landscape";
+export type AspectRatio = "1024x1024" | "1024x1536" | "1536x1024";
 
 interface HeaderContextType {
   aspect: AspectType;

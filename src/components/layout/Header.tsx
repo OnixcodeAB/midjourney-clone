@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { usePrompt } from "@/app/context/PromptContext";
 import { useHeaderSettings } from "@/app/context/HeaderContext";
