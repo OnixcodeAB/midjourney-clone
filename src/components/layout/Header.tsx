@@ -84,13 +84,6 @@ export default function Header() {
     }
   };
 
-  // Build the full prompt
-  const generatePrompt = () => {
-    let final = prompt;
-    if (ratio) final += `| Aspect Ratio: ${ratio}`;
-    if (fileName) final += ` | Ref Image: ${fileName}`;
-    return final;
-  };
   const handleGenerate = async () => {
     // Don't allow empty prompt
     if (!prompt.trim()) {
@@ -100,7 +93,6 @@ export default function Header() {
       return;
     }
 
-    const fullPrompt = generatePrompt();
     const originalPrompt = prompt;
 
     // Optimistically clear the prompt
@@ -108,7 +100,7 @@ export default function Header() {
 
     // 1) Kick off the server action (don’t await it yet)
     const promise = generateImageAndSave({
-      prompt: fullPrompt,
+      prompt,
       aspect: ratio,
     });
 

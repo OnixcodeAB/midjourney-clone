@@ -9,9 +9,14 @@ import {
 } from "@/app/context/HeaderContext";
 
 const aspectOptions = [
-  { label: "Portrait", value: "portrait", ratio: "2:3", range: [0, 40] },
-  { label: "Square", value: "square", ratio: "1:1", range: [41, 60] },
-  { label: "Landscape", value: "landscape", ratio: "3:2", range: [61, 100] },
+  { label: "Portrait", value: "portrait", ratio: "1024x1536", range: [0, 40] },
+  { label: "Square", value: "square", ratio: "1024x1024", range: [41, 60] },
+  {
+    label: "Landscape",
+    value: "landscape",
+    ratio: "1536x1024",
+    range: [61, 100],
+  },
 ];
 
 export default function ImageSizeSelector() {
@@ -20,8 +25,11 @@ export default function ImageSizeSelector() {
     setAspect,
     size: sliderValue,
     setSize,
+    ratio,
     setRatio,
   } = useHeaderSettings();
+
+  console.log(ratio);
 
   // Optional: Update slider midpoint when aspect changes
   useEffect(() => {
@@ -44,7 +52,7 @@ export default function ImageSizeSelector() {
         <button
           type="button"
           onClick={() => {
-            setAspect("landscape");
+            setAspect("portrait");
             setSize(80);
             setRatio("1024x1536");
           }}
@@ -59,15 +67,15 @@ export default function ImageSizeSelector() {
         <div className="relative flex flex-col justify-center w-30 h-30">
           {/* Back box - dashed */}
           <div
-            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                  border border-dashed w-16 h-25 rounded-md z-0 ${
+            className={`absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                  border border-dashed w-17 h-25 rounded-md z-0 ${
                     selected === "portrait" ? "border-black" : "border-gray-400"
                   }`}
           />
 
           {/* Front box - solid */}
           <div
-            className={`relative z-10 w-24 h-16 rounded-md flex items-center justify-center text-xs font-medium 
+            className={`relative z-10 w-30 h-16 rounded-md flex items-center justify-center text-xs font-medium 
                 ${
                   selected === "portrait"
                     ? "border border-gray-400 text-gray-500"

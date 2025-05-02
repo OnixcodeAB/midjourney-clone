@@ -43,7 +43,7 @@ export default function RootLayout({
                   <Header />
                   {children}
                 </div>
-                <Toaster />
+                <Toaster position="bottom-right" richColors />
               </HeaderProvider>
             </SidebarProvider>
           </PromptProvider>
