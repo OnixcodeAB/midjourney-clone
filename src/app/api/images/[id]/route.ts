@@ -1,6 +1,6 @@
 // src/app/api/images/[id]/route.ts
 import { NextResponse } from "next/server";
-import dbPromise, { query } from "@/lib/db";
+import { query } from "@/lib/db";
 
 /// This route fetches a single image by its ID
 /// and returns the image data in JSON format.

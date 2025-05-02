@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import ImageCard from "./ImageCard";
 import { useSocket } from "@/hooks/useSocket"; // Updated to useSocket
+import { BannerModal } from "../layout/BannerModal";
 
 interface Image {
   id: string;
@@ -74,7 +75,7 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     handleDbUpdate // Pass the memoized callback function
   );
 
-  console.log("Socket.IO connected:", isConnected);
+  //console.log("Socket.IO connected:", isConnected);
 
   const now = new Date();
 

@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 
 // Middleware to check if the user is authenticated before accessing protected routes
 const isProtectedRoute = createRouteMatcher([
-  "/create",
   "/jobs",
   "/account",
   "/settings",
