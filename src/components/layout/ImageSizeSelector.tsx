@@ -29,7 +29,7 @@ export default function ImageSizeSelector() {
     setRatio,
   } = useHeaderSettings();
 
-  console.log(ratio);
+  //console.log(ratio);
 
   // Optional: Update slider midpoint when aspect changes
   useEffect(() => {
