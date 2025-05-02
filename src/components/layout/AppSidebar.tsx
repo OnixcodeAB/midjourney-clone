@@ -43,8 +43,8 @@ const items = [
 ];
 
 const itemsFooter = [
-  { title: "Help", url: "#", icon: CircleHelp },
-  { title: "Update", url: "#", icon: Bell },
+  { title: "Help", url: "/help", icon: CircleHelp },
+  { title: "Update", url: "/update", icon: Bell },
   { title: "Light Mode", url: "#", icon: Sun },
 ];
 
@@ -59,7 +59,12 @@ export default function AppSidebar() {
   // Handle navigation to the selected URL
   const handleNavigation = (url: string) => {
     // Always allow navigating to home and login/signup without modal
-    if (url === "/" || url.startsWith("/auth")) {
+    if (
+      url === "/" ||
+      url.startsWith("/auth") ||
+      url == "/help" ||
+      url == "/update"
+    ) {
       setIsEditing(false);
       router.push(url);
       return;
@@ -121,7 +126,7 @@ export default function AppSidebar() {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
-                        className="rounded-2xl hover:bg-[#abafba]/25 py-5"
+                        className="rounded-2xl hover:bg-[#abafba]/25 py-5 cursor-pointer"
                         onClick={() => handleNavigation(item.url)}
                       >
                         <a>
@@ -172,14 +177,16 @@ export default function AppSidebar() {
                         </SidebarMenuButton>
                         <SidebarMenuButton
                           asChild
-                          className={
-                            state === "collapsed"
-                              ? "bg-none"
-                              : "rounded-2xl bg-[#f9e8e6] hover:bg-[#ffd6da] py-5"
-                          }
+                          className={` cursor-pointer
+                            ${
+                              state === "collapsed"
+                                ? "bg-none"
+                                : "rounded-2xl bg-[#f9e8e6] hover:bg-[#ffd6da] py-5"
+                            }
+                          `}
                           onClick={() => handleNavigation("#")}
                         >
-                          <a className="text-[#f25b44] flex items-center justify-center">
+                          <a className="text-[#f25b44] flex items-center ">
                             <Globe className="size-[22px]! mr-2" />
                             <span className="text-[16px] font-semibold">
                               Sign Up

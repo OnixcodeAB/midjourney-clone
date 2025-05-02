@@ -34,7 +34,7 @@ export const ExploreHomePage = ({ images }: Props) => {
   return (
     <Masonry
       breakpointCols={breakpointCols}
-      className="flex ml-[-1rem] w-auto"
+      className="flex w-auto"
       columnClassName="my-masonry-grid_column"
     >
       {images.map((img) => (

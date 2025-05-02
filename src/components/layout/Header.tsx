@@ -16,6 +16,7 @@ import { generateImageAndSave } from "@/app/actions/generateImageSora";
 import { useRouter } from "next/navigation";
 import { BannerModal } from "./BannerModal";
 import { useUser } from "@clerk/nextjs";
+import { Textarea } from "../ui/textarea";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
@@ -124,11 +125,16 @@ export default function Header() {
       }`}
       onDropCapture={handleDropCapture}
     >
-      <div {...getRootProps()} className="relative w-full flex items-center">
+      <div
+        {...getRootProps()}
+        className={`relative w-full flex items-center ${
+          prompt.trim() ? "" : "h-10"
+        }`}
+      >
         <Image className="text-gray-400 size-6 cursor-pointer" onClick={open} />
         <input {...getInputProps()} className="hidden" />
 
-        <Input
+        <Textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           onClick={() => {
@@ -142,7 +148,9 @@ export default function Header() {
               handleGenerate();
             }
           }}
-          className="w-full h-12 border-none outline-none focus:outline-none focus-visible:ring-0 placeholder:text-[15px] placeholder:text-gray-400"
+          className={`resize-none w-full  leading-10  border-none outline-none focus:outline-none focus-visible:ring-0 placeholder:text-[15px] placeholder:text-gray-400 ${
+            prompt.trim() ? "max-h-35" : ""
+          }`}
           placeholder="Log in to start creating.."
         />
 
