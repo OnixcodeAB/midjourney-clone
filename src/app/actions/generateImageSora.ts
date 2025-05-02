@@ -1,5 +1,5 @@
 "use server";
-import { auth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { logPoll, parseAspect } from "@/lib/helper";
 import { query } from "@lib/db";
 import { toast } from "sonner";
@@ -30,8 +30,9 @@ export async function generateImageAndSave({
   image?: ImageRecord;
   error?: string;
 }> {
-  const { userId } = await auth();
-  if (!userId) {
+  const user = await currentUser();
+  const { id, fullName } = user || {};
+  if (!id) {
     toast.error("User not authenticated", {
       description: "Please sign in to generate an image.",
     });
@@ -86,10 +87,10 @@ export async function generateImageAndSave({
   let inserted: ImageRecord;
   try {
     const { rows } = await query(
-      `INSERT INTO "Image" (prompt, provider, status, task_id, user_id)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING id, prompt, provider, status, task_id, createdat, user_id`,
-      [prompt, "sora", "pending", taskId, userId]
+      `INSERT INTO "Image" (prompt, provider, status, task_id, user_id, user_name)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING id, prompt, provider, status, task_id, createdat, user_id, user_name`,
+      [prompt, "sora", "pending", taskId, id, fullName]
     );
     inserted = rows[0];
   } catch (dbErr: any) {

@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import Masonry from "react-masonry-css";
 import ImageCard from "@/components/Home/ImageCard";
 
-interface Image {
+interface ImageExplorePage {
   id: number;
-  src: string;
+  url: string;
   alt: string;
   author: string;
   description: string;
 }
 
 interface Props {
-  images: Image[];
+  images: ImageExplorePage[];
 }
 
 export const ExploreHomePage = ({ images }: Props) => {
@@ -44,7 +44,7 @@ export const ExploreHomePage = ({ images }: Props) => {
           className="cursor-pointer"
         >
           <ImageCard
-            src={img.src}
+            src={img.url}
             alt={img.alt}
             author={img.author}
             description={img.description}

@@ -11,16 +11,14 @@ export async function GET(
   const { id } = await params;
 
   try {
-    const db = await dbPromise;
-
     const {
       rows: [image],
     } = await query(
       `SELECT 
          id, 
-         url AS src, 
+         url, 
          prompt, 
-         provider AS author 
+         user_name AS author 
        FROM "Image"
        WHERE id = $1`,
       [id]

@@ -7,9 +7,9 @@ export async function GET() {
     const { rows: images } = await query(`
       SELECT 
         id, 
-        url AS src, 
+        url, 
         prompt AS description,
-        provider AS author 
+        user_name AS author 
       FROM "Image"
       ORDER BY "createdat" DESC
     `);

@@ -8,7 +8,7 @@ import { useState } from "react";
 
 interface Image {
   id: number;
-  src: string;
+  url: string;
   alt: string;
   author: string;
   prompt: string;
@@ -29,7 +29,7 @@ export default function JobsDetailPanel({ image }: Props) {
       <div className="relative mt-18 flex-1 flex flex-col items-center justify-center bg-[#f7f7f7] py-8">
         <div className="min-w-lg">
           <ImageCard
-            src={image.src}
+            src={image.url}
             alt={image.alt}
             author={image.author}
             imgClassName="h-[80vh]"
@@ -37,7 +37,7 @@ export default function JobsDetailPanel({ image }: Props) {
             {/* Hoverable Top Action Menu */}
             <div className="absolute top-4 right-4 flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               <PanelControl
-                ImgSrc={image.src}
+                ImgSrc={image.url}
                 alt={image.alt}
                 onEdit={() => setIsEditing(true)} // trigger modal
               />
@@ -59,7 +59,7 @@ export default function JobsDetailPanel({ image }: Props) {
         <div className="flex gap-5 mb-4">
           <p className="text-md text-gray-400">21 may...</p>
           <PanelControl
-            ImgSrc={image.src}
+            ImgSrc={image.url}
             alt={image.alt}
             theme="light"
             onEdit={() => setIsEditing(true)} // trigger modal
@@ -84,7 +84,7 @@ export default function JobsDetailPanel({ image }: Props) {
       <EditModal
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
-        imgSrc={image.src}
+        imgSrc={image.url}
         alt={image.alt}
       />
     </div>

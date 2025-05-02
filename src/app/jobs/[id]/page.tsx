@@ -19,6 +19,8 @@ export default async function JobDetailPage({ params }: Props) {
 
   if (!endpoint) notFound();
 
+  console.log(endpoint)
+
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${process.env.PORT}${endpoint}`, {
     cache: "default",
   });
