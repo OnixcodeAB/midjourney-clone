@@ -1,7 +1,8 @@
 import { query } from "./db";
 
 // Helper to parse and validate the aspect ratio
-export function parseAspect(ratio: string): { width: number; height: number } {
+export function parseAspect(ratio: string|undefined): { width: number; height: number } {
+  if (!ratio) throw new Error("Aspect ratio is undefined");
   const [w, h] = ratio.split("x").map(Number);
   if (!w || !h) throw new Error(`Invalid aspect ratio: '${ratio}'`);
   return { width: w, height: h };

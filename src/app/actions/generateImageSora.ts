@@ -22,18 +22,18 @@ export interface ImageRecord {
 
 export async function generateImageAndSave({
   prompt,
-  aspect = "1024x1024",
+  aspect,
 }: GenerateImageParams): Promise<{
   success: boolean;
   image?: ImageRecord;
   error?: string;
 }> {
-  // Parse the aspect ratio
-  const { width, height } = parseAspect(aspect);
-
   // 1. Call Sora API
   let taskId: string;
   try {
+    // Parse the aspect ratio
+    const { width, height } = parseAspect(aspect);
+
     const response = await fetch("https://sora.chatgpt.com/backend/video_gen", {
       method: "POST",
       headers: {
@@ -78,7 +78,7 @@ export async function generateImageAndSave({
     const { rows } = await query(
       `INSERT INTO "Image" (prompt, provider, status, task_id)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, prompt, provider, status, task_id, created_at`,
+       RETURNING id, prompt, provider, status, task_id, createdat`,
       [prompt, "sora", "pending", taskId]
     );
     inserted = rows[0];
@@ -89,9 +89,15 @@ export async function generateImageAndSave({
   }
 
   // 3. Trigger background polling (fire-and-forget)
-  fetch("/api/poll-tasks").catch((err) =>
-    console.error("[TRIGGER_ERROR]", err)
-  );
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    console.log("baseUrl", baseUrl);
+    const Url = new URL("/api/poll-tasks", baseUrl).toString();
+    console.log("Url", Url);
+    fetch(Url).catch((err) => console.error("[TRIGGER_ERROR]", err));
+  } catch (err) {
+    console.error("[TRIGGER_ERROR] invalid base URL", err);
+  }
 
   // 4. Return the pending image record
   return { success: true, image: inserted };

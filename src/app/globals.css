@@ -123,3 +123,12 @@
     @apply p-2 rounded-sm hover:bg-red-100 hover:text-red-500 hover:border-red-300 cursor-pointer;
   }
 }
+
+.my-masonry-grid_column {
+  padding-left: 0.3rem; /* gutter */
+  background-clip: padding-box;
+}
+
+.my-masonry-grid_column > div {
+  margin-bottom: 0.2rem;
+}

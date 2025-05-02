@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import Masonry from "react-masonry-css";
 import ImageCard from "@/components/Home/ImageCard";
 
 interface Image {
@@ -22,8 +23,20 @@ export const ExploreHomePage = ({ images }: Props) => {
   const handleClick = (id: number) => {
     router.push(`/jobs/img_${id}`);
   };
+
+  // Define responsive breakpoints for masonry
+  const breakpointCols = {
+    default: 3,
+    768: 2,
+    640: 1,
+  };
+
   return (
-    <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-3 space-y-2 -space-x-2">
+    <Masonry
+      breakpointCols={breakpointCols}
+      className="flex ml-[-1rem] w-auto"
+      columnClassName="my-masonry-grid_column"
+    >
       {images.map((img) => (
         <div
           key={img.id}
@@ -38,6 +51,6 @@ export const ExploreHomePage = ({ images }: Props) => {
           />
         </div>
       ))}
-    </div>
+    </Masonry>
   );
 };
