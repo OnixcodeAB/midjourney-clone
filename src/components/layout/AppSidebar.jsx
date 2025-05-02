@@ -27,6 +27,7 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
+import Link from "next/link";
 
 // Menu items.
 const items = [
@@ -178,10 +179,10 @@ export default function AppSidebar() {
                             : "rounded-2xl bg-[#abafba]/20 hover:bg-[#abafba]/35  py-5"
                         }`}
                       >
-                        <a href="#" className="">
+                        <Link href="/auth/sign-in" className="">
                           <CircleUserRound className="size-[22px]! " />
                           <span className="text-[16px] ml-5">Log in</span>
-                        </a>
+                        </Link>
                       </SidebarMenuButton>
                       <SidebarMenuButton
                         asChild
