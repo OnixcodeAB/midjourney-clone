@@ -1,0 +1,201 @@
+"use client";
+
+import React, { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import {
+  Bell,
+  CircleHelp,
+  CircleUserRound,
+  Compass,
+  Ellipsis,
+  Globe,
+  Image,
+  PaintbrushVertical,
+  SquarePen,
+  Sun,
+  SwatchBook,
+  ThumbsUp,
+} from "lucide-react";
+import { useUser, useClerk } from "@clerk/nextjs";
+import Link from "next/link";
+import { BannerModal } from "./BannerModal";
+
+// Menu items.
+const items = [
+  { title: "Explore", url: "/", icon: Compass },
+  { title: "Create", url: "/create", icon: PaintbrushVertical },
+  { title: "Edit", url: "/edit", icon: SquarePen },
+  { title: "Personalize", url: "/personalize", icon: SwatchBook },
+  { title: "Organize", url: "/organize", icon: Image },
+  { title: "Surveys", url: "/surveys", icon: ThumbsUp },
+];
+
+const itemsFooter = [
+  { title: "Help", url: "#", icon: CircleHelp },
+  { title: "Update", url: "#", icon: Bell },
+  { title: "Light Mode", url: "#", icon: Sun },
+];
+
+export default function AppSidebar() {
+  const [isEditing, setIsEditing] = useState(false);
+  const { state } = useSidebar();
+  const pathname = usePathname();
+  const router = useRouter();
+  const { user } = useUser();
+  const { signOut } = useClerk();
+
+  // Handle navigation to the selected URL
+  const handleNavigation = (url: string) => {
+    // Always allow navigating to home and login/signup without modal
+    if (url === "/" || url.startsWith("/auth")) {
+      setIsEditing(false);
+      router.push(url);
+      return;
+    }
+    // For other routes, require authentication
+    if (!user) {
+      setIsEditing(true);
+    } else {
+      setIsEditing(false);
+      router.push(url);
+    }
+  };
+
+  return (
+    <>
+      <Sidebar variant="inset" collapsible="icon">
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-lg px-4 mt-5 mb-6">
+              Midjourney
+            </SidebarGroupLabel>
+            <SidebarGroupContent
+              className={state === "collapsed" ? "px-0" : "px-4"}
+            >
+              <SidebarMenu className="gap-3">
+                {items.map((item) => {
+                  const isActive = pathname === item.url;
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        className={` rounded-2xl py-5 font-semibold cursor-pointer ${
+                          isActive
+                            ? "text-[#f25b44] bg-[#f9e8e6]"
+                            : "hover:bg-[#abafba]/35"
+                        }`}
+                        onClick={() => handleNavigation(item.url)}
+                      >
+                        <a>
+                          <item.icon className="size-[22px]!" />
+                          <span className="text-[16px] ml-3">{item.title}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <SidebarContent className="mb-5">
+            <SidebarGroup>
+              <SidebarGroupContent
+                className={state === "collapsed" ? "px-0" : "px-4"}
+              >
+                <SidebarMenu className="gap-2">
+                  {itemsFooter.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        className="rounded-2xl hover:bg-[#abafba]/25 py-5"
+                        onClick={() => handleNavigation(item.url)}
+                      >
+                        <a>
+                          <item.icon className="size-[22px]!" />
+                          <span className="text-[16px] ml-3">{item.title}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                  <SidebarMenuItem className="flex flex-col gap-3">
+                    {user ? (
+                      <SidebarMenuButton
+                        asChild
+                        className={
+                          state === "collapsed"
+                            ? "bg-none"
+                            : "rounded-2xl bg-[#abafba]/20 hover:bg-[#abafba]/35 py-5"
+                        }
+                      >
+                        <a
+                          className="flex items-center justify-between"
+                          onClick={async () => {
+                            await signOut({ redirectUrl: "/" });
+                          }}
+                        >
+                          <CircleUserRound className="size-[22px]!" />
+                          <span className="text-[16px] ml-3">
+                            {user.fullName}
+                          </span>
+                          <Ellipsis className="size-[22px]" />
+                        </a>
+                      </SidebarMenuButton>
+                    ) : (
+                      <>
+                        <SidebarMenuButton
+                          asChild
+                          className={
+                            state === "collapsed"
+                              ? "bg-none"
+                              : "rounded-2xl bg-[#abafba]/20 hover:bg-[#abafba]/35 py-5"
+                          }
+                          onClick={() => handleNavigation("/auth/sign-in")}
+                        >
+                          <Link href="/auth/sign-in">
+                            <CircleUserRound className="size-[22px]!" />
+                            <span className="text-[16px] ml-3">Log in</span>
+                          </Link>
+                        </SidebarMenuButton>
+                        <SidebarMenuButton
+                          asChild
+                          className={
+                            state === "collapsed"
+                              ? "bg-none"
+                              : "rounded-2xl bg-[#f9e8e6] hover:bg-[#ffd6da] py-5"
+                          }
+                          onClick={() => handleNavigation("#")}
+                        >
+                          <a className="text-[#f25b44] flex items-center justify-center">
+                            <Globe className="size-[22px]! mr-2" />
+                            <span className="text-[16px] font-semibold">
+                              Sign Up
+                            </span>
+                          </a>
+                        </SidebarMenuButton>
+                      </>
+                    )}
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </SidebarFooter>
+      </Sidebar>
+      <BannerModal isOpen={isEditing} onClose={() => setIsEditing(false)} />
+    </>
+  );
+}
