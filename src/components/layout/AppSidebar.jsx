@@ -86,6 +86,8 @@ export default function AppSidebar() {
   const { user } = useUser();
   const { signOut } = useClerk();
 
+  console.log(user)
+
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarContent className="">

@@ -1,5 +1,4 @@
 import { ExploreHomePage } from "@/components/Home/ExploreHomePage";
-import { getData } from "./actions/getData";
 import { getAllData } from "./actions/getAllData";
 
 export default async function Home() {

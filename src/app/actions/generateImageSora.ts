@@ -1,6 +1,8 @@
 "use server";
+import { auth } from "@clerk/nextjs/server";
 import { logPoll, parseAspect } from "@/lib/helper";
 import { query } from "@lib/db";
+import { toast } from "sonner";
 
 // Allowed aspect ratios
 type Aspect = "1024x1024" | "1024x1536" | "1536x1024";
@@ -28,6 +30,14 @@ export async function generateImageAndSave({
   image?: ImageRecord;
   error?: string;
 }> {
+  const { userId } = await auth();
+  if (!userId) {
+    toast.error("User not authenticated", {
+      description: "Please sign in to generate an image.",
+    });
+    return { success: false, error: "User not authenticated" };
+  }
+
   // 1. Call Sora API
   let taskId: string;
   try {
@@ -76,10 +86,10 @@ export async function generateImageAndSave({
   let inserted: ImageRecord;
   try {
     const { rows } = await query(
-      `INSERT INTO "Image" (prompt, provider, status, task_id)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, prompt, provider, status, task_id, createdat`,
-      [prompt, "sora", "pending", taskId]
+      `INSERT INTO "Image" (prompt, provider, status, task_id, user_id)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, prompt, provider, status, task_id, createdat, user_id`,
+      [prompt, "sora", "pending", taskId, userId]
     );
     inserted = rows[0];
   } catch (dbErr: any) {
