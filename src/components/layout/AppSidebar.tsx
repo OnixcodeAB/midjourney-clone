@@ -31,6 +31,7 @@ import {
 import { useUser, useClerk } from "@clerk/nextjs";
 import Link from "next/link";
 import { BannerModal } from "./BannerModal";
+import { UserSettingsMenu } from "../User/UserSettingsMenu";
 
 // Menu items.
 const items = [
@@ -138,27 +139,13 @@ export default function AppSidebar() {
                   ))}
                   <SidebarMenuItem className="flex flex-col gap-3">
                     {user ? (
-                      <SidebarMenuButton
-                        asChild
-                        className={
-                          state === "collapsed"
-                            ? "bg-none"
-                            : "rounded-2xl bg-[#abafba]/20 hover:bg-[#abafba]/35 py-5"
-                        }
-                      >
-                        <a
-                          className="flex items-center justify-between"
-                          onClick={async () => {
-                            await signOut({ redirectUrl: "/" });
-                          }}
-                        >
-                          <CircleUserRound className="size-[22px]!" />
-                          <span className="text-[16px] ml-3">
-                            {user.fullName}
-                          </span>
-                          <Ellipsis className="size-[22px]" />
-                        </a>
-                      </SidebarMenuButton>
+                      <div className="flex items-center justify-between">
+                        <CircleUserRound className="size-[22px]" />
+                        <span className="text-[16px] flex-1 ml-3">
+                          {user.fullName}
+                        </span>
+                        <UserSettingsMenu />
+                      </div>
                     ) : (
                       <>
                         <SidebarMenuButton
