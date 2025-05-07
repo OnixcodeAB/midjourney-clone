@@ -56,7 +56,6 @@ export default function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
-  const { signOut } = useClerk();
 
   // Handle navigation to the selected URL
   const handleNavigation = async (url: string) => {
@@ -125,9 +124,9 @@ export default function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter>
+        <SidebarFooter className="">
           <SidebarContent className="mb-5">
-            <SidebarGroup>
+            <SidebarGroup className="p-0">
               <SidebarGroupContent
                 className={state === "collapsed" ? "px-0" : "px-4"}
               >
