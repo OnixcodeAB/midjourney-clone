@@ -67,7 +67,7 @@ const PLANS: Plan[] = [
 ];
 
 export default function OnboardingPlans() {
-  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
+  const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const router = useRouter();
 
@@ -77,7 +77,7 @@ export default function OnboardingPlans() {
   };
 
   return (
-    <div className="space-y-8 p-6">
+    <div className="space-y-8 mt-8 p-6">
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold">Purchase a subscription</h1>
         <p className="text-gray-600">Choose the plan that works for you</p>
@@ -86,13 +86,13 @@ export default function OnboardingPlans() {
       <div className="flex flex-col justify-center items-center px-8 gap-4">
         <ToggleGroup
           type="single"
-          value={billing}
+          value={billing || "monthly"}
           onValueChange={(value) => setBilling(value as "monthly" | "yearly")}
           className="inline-flex rounded-full  bg-[#e3e4e8]"
         >
           <ToggleGroupItem
             value="yearly"
-            className={`px-8 py-2 text-md  font-medium rounded-full transition-all ease-in-out ${
+            className={`px-8 py-2 text-md cursor-pointer  font-medium rounded-full transition-all ease-in-out ${
               billing === "yearly"
                 ? "bg-[#303030]! text-white! "
                 : " text-gray-900 rounded-none"
@@ -102,7 +102,7 @@ export default function OnboardingPlans() {
           </ToggleGroupItem>
           <ToggleGroupItem
             value="monthly"
-            className={`px-8 py-2 text-md font-medium rounded-full ${
+            className={`px-8 py-2 text-md cursor-pointer font-medium rounded-full ${
               billing === "monthly"
                 ? "bg-[#303030]! text-white! "
                 : "bg-[#e3e4e8] text-gray-900 rounded-none"
@@ -137,8 +137,13 @@ export default function OnboardingPlans() {
                   <span className="text-xl text-gray-500 font-semibold">/ {billing}</span>
                 </div>
                 {billing === "yearly" && (
-                  <Badge variant="outline" className="mt-4">
+                  <Badge variant="outline" className="mt-4 text-sm bg-green-200">
                     20% off billed annually
+                  </Badge>
+                )}
+                {billing === "monthly" && (
+                  <Badge variant="outline" className="mt-4 text-lg border-none text-black/60 ">
+                    Billed Monthly
                   </Badge>
                 )}
               </CardHeader>
@@ -146,7 +151,7 @@ export default function OnboardingPlans() {
               <CardContent className="space-y-2 ">
                 <Button
                   variant={isSelected ? "secondary" : "default"}
-                  className="w-full"
+                  className="w-full cursor-pointer"
                   onClick={() => {
                     setSelectedPlan(plan.key);
                     handleSubscribe(plan.key);
