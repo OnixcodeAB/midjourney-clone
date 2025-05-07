@@ -1,3 +1,4 @@
+"use server";
 import { query } from "@/lib/db";
 
 interface User {
@@ -11,7 +12,7 @@ interface User {
   updated_at: string;
 }
 
-export async function checkOnboardingStatus(userId: string, url: string) {
+export async function checkOnboardingStatus(userId: string) {
   try {
     const { rows } = await query(`SELECT * FROM users WHERE id = $1`, [userId]);
     const onboardedUser = rows[0] as User | null;

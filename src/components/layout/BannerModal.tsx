@@ -7,6 +7,7 @@ import {
   AlertDialogContent,
   AlertDialogTitle,
   AlertDialogCancel,
+  AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 import Image from "next/image";
 
@@ -19,6 +20,7 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent
+        aria-describedby="alert-dialog-description"
         className="
           max-w-5xl w-full
           grid grid-cols-1 md:grid-cols-2
@@ -50,6 +52,14 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
             <AlertDialogTitle className="text-3xl font-bold mb-4">
               Explore the Frontiers of Imagination
             </AlertDialogTitle>
+            <AlertDialogDescription
+              id="alert-dialog-description"
+              aria-describedby="alert-dialog-description"
+              className="sr-only hidden"
+            >
+              This dialog promotes joining a creative community and offers
+              subscription tiers.
+            </AlertDialogDescription>
             <p className="text-lg text-gray-700 mb-6">
               With the world's most advanced image models and regular updates
               with community-steered roadmaps

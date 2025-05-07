@@ -17,6 +17,8 @@ import { useRouter } from "next/navigation";
 import { BannerModal } from "./BannerModal";
 import { useUser } from "@clerk/nextjs";
 import { Textarea } from "../ui/textarea";
+import { checkOnboardingStatus } from "@/app/actions/checkOnboardingStatus";
+import { on } from "events";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
@@ -78,6 +80,16 @@ export default function Header() {
     };
   }, []);
 
+  const handleOnboarding = async () => {
+    const onboarded = await checkOnboardingStatus(user?.id as string);
+    console.log(onboarded)
+    if (!onboarded) {
+      setIsEditing(true);
+    } else {
+      return;
+    }
+  };
+
   const handleDropCapture = (e: React.DragEvent) => {
     const text = e.dataTransfer.getData("text/plain");
     if (text.startsWith("http")) {
@@ -138,9 +150,7 @@ export default function Header() {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           onClick={() => {
-            if (!user) {
-              return setIsEditing(true);
-            }
+            handleOnboarding();
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {

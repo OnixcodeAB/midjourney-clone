@@ -1,5 +1,6 @@
+"use server";
+
 import { query } from "@/lib/db";
-import React from "react";
 
 interface User {
   id: string;
