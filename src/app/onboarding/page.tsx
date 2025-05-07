@@ -129,11 +129,11 @@ export default function OnboardingPlans() {
                 <CardTitle className="py-2">{plan.name} Plan</CardTitle>
                 <div className="flex items-baseline space-x-1">
                   {billing === "yearly" && (
-                    <span className="text-3xl text-gray-500 line-through mr-3">
+                    <span className="text-4xl text-gray-500 line-through mr-3">
                       ${plan.monthly}
                     </span>
                   )}
-                  <span className="text-3xl font-bold">${price}</span>
+                  <span className="text-4xl font-bold">${price}</span>
                   <span className="text-xl text-gray-500 font-semibold">/ {billing}</span>
                 </div>
                 {billing === "yearly" && (
