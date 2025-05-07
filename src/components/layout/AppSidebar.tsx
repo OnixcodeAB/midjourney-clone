@@ -32,6 +32,7 @@ import { useUser, useClerk } from "@clerk/nextjs";
 import Link from "next/link";
 import { BannerModal } from "./BannerModal";
 import { UserSettingsMenu } from "../User/UserSettingsMenu";
+import { checkOnboardingStatus } from "@/app/actions/checkOnboardingStatus";
 
 // Menu items.
 const items = [
@@ -58,7 +59,7 @@ export default function AppSidebar() {
   const { signOut } = useClerk();
 
   // Handle navigation to the selected URL
-  const handleNavigation = (url: string) => {
+  const handleNavigation = async (url: string) => {
     // Always allow navigating to home and login/signup without modal
     if (
       url === "/" ||
@@ -71,10 +72,18 @@ export default function AppSidebar() {
       return;
     }
     // For other routes, require authentication
-    if (!user) {
-      setIsEditing(true);
+    if (user) {
+      const onboardedUser = await checkOnboardingStatus(user.id);
+      if (!onboardedUser) {
+        // If the user is not onboarded, show the modal
+        setIsEditing(true);
+        return;
+      } else {
+        setIsEditing(false);
+        router.push(url);
+      }
     } else {
-      setIsEditing(false);
+      setIsEditing(true);
       router.push(url);
     }
   };
