@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
+import { ArrowUpRight, Check } from "lucide-react";
 
 interface Plan {
   key: string;
@@ -155,7 +155,7 @@ export default function OnboardingPlans() {
                 )}
               </CardHeader>
 
-              <CardContent className="space-y-2 ">
+              <CardContent className="flex flex-col justify-center space-y-2 ">
                 <Button
                   variant={isSelected ? "secondary" : "default"}
                   className="w-full cursor-pointer"
@@ -166,6 +166,35 @@ export default function OnboardingPlans() {
                 >
                   {isSelected ? "Selected" : "Subscribe"}
                 </Button>
+
+                {billing == "monthly" && (
+                  <Button
+                    className="cursor-pointer"
+                    variant="link"
+                    onClick={() => {
+                      setBilling("yearly");
+                    }}
+                  >
+                    <span className="text-[15px] text-gray-500  flex items-center gap-1">
+                      Save with annual billing (20% off)
+                      <ArrowUpRight />
+                    </span>
+                  </Button>
+                )}
+                {billing == "yearly" && (
+                  <Button
+                    className="cursor-pointer"
+                    variant="link"
+                    onClick={() => {
+                      setBilling("monthly");
+                    }}
+                  >
+                    <span className="text-[15px] text-gray-500    flex items-center gap-1">
+                      View monthly billing
+                      <ArrowUpRight />
+                    </span>
+                  </Button>
+                )}
               </CardContent>
 
               <CardFooter className="flex flex-col gap-2 items-start ">

@@ -147,9 +147,9 @@ export default function AppSidebar() {
                   ))}
                   <SidebarMenuItem className="flex flex-col gap-3">
                     {user ? (
-                      <div className="flex items-center justify-between">
-                        <CircleUserRound className="size-[22px]" />
-                        <span className="text-[16px] flex-1 ml-3">
+                      <div className="flex items-center justify-between rounded-2xl  hover:bg-[#abafba]/25">
+                        <CircleUserRound className="size-[22px] ml-2" />
+                        <span className="text-[16px] flex-1 ml-2">
                           {user.fullName}
                         </span>
                         <UserSettingsMenu />
