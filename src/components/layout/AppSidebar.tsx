@@ -40,14 +40,14 @@ const items = [
   { title: "Create", url: "/create", icon: PaintbrushVertical },
   { title: "Edit", url: "/edit", icon: SquarePen },
   { title: "Personalize", url: "/personalize", icon: SwatchBook },
-  { title: "Organize", url: "/organize", icon: Image },
   { title: "Surveys", url: "/surveys", icon: ThumbsUp },
+  { title: "Subscribe", url: "/onboarding", icon: CircleUserRound },
 ];
 
 const itemsFooter = [
+  
   { title: "Help", url: "/help", icon: CircleHelp },
   { title: "Update", url: "/update", icon: Bell },
-  { title: "Light Mode", url: "#", icon: Sun },
 ];
 
 export default function AppSidebar() {
@@ -64,7 +64,8 @@ export default function AppSidebar() {
       url === "/" ||
       url.startsWith("/auth") ||
       url == "/help" ||
-      url == "/update"
+      url == "/onboarding" ||
+      url == "/update" 
     ) {
       setIsEditing(false);
       router.push(url);
