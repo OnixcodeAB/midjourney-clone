@@ -66,11 +66,11 @@ export function SettingsAlertDialog({
                   className={`flex w-full  items-center px-5 py-2 mb-4 rounded-md text-sm font-medium transition-colors ${
                     section === key
                       ? "bg-gray-100 text-gray-900"
-                      : "hover:bg-gray-50 text-gray-700"
+                      : "hover:bg-gray-100 text-gray-700"
                   }`}
                   onClick={() => setSection(key as "general" | "plan")}
                 >
-                  <span className="capitalize">
+                  <span className="capitalize text-[15px] font-semibold">
                     {key.replace("plan", "My plan")}
                   </span>
                   {key === "plan" && (
@@ -89,18 +89,9 @@ export function SettingsAlertDialog({
               <div className=" space-y-6 px-4">
                 <h3 className="text-xl font-semibold border-b pb-2">General</h3>
                 {/* Username row */}
-                <div className="flex justify-between gap-4 items-center border-b pb-3">
+                <div className="flex justify-between pr-7 items-center border-b pb-3">
                   <label className="text-md font-medium">Username</label>
-                  <span className=" text-end pr-18">
-                    {username}
-                    <button
-                      type="button"
-                      aria-label="btn-icon"
-                      className="p-1 pl-2 focus:outline-none"
-                    >
-                      <Pencil className="size-[18px] text-gray-500" />
-                    </button>
-                  </span>
+                  <span className=" text-end pr-18">{username}</span>
                 </div>
                 {/* Email row */}
                 <div className="flex justify-between gap-4 items-center border-b pb-3">

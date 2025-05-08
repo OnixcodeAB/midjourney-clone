@@ -62,7 +62,7 @@ export function UserSettingsMenu() {
             <button
               type="button"
               aria-label="Open user settings"
-              className="flex items-center gap-2 py-2 hover:bg-gray-100 rounded"
+              className="flex items-center gap-2 py-2 w-full hover:bg-gray-100 rounded"
               onClick={() => {
                 setDropdownOpen(false);
                 setSettingsAlertOpen(true);
