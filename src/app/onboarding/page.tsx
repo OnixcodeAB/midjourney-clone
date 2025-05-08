@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
-import { Input } from "@/components/ui/input"; // If needed elsewhere
 
 interface Plan {
   key: string;
@@ -134,15 +133,23 @@ export default function OnboardingPlans() {
                     </span>
                   )}
                   <span className="text-4xl font-bold">${price}</span>
-                  <span className="text-xl text-gray-500 font-semibold">/ {billing}</span>
+                  <span className="text-xl text-gray-500 font-semibold">
+                    / {billing}
+                  </span>
                 </div>
                 {billing === "yearly" && (
-                  <Badge variant="outline" className="mt-4 text-sm bg-green-200">
+                  <Badge
+                    variant="outline"
+                    className="mt-4 text-sm bg-green-200"
+                  >
                     20% off billed annually
                   </Badge>
                 )}
                 {billing === "monthly" && (
-                  <Badge variant="outline" className="mt-4 text-lg border-none text-black/60 ">
+                  <Badge
+                    variant="outline"
+                    className="mt-4 text-lg border-none text-black/60 "
+                  >
                     Billed Monthly
                   </Badge>
                 )}
@@ -164,7 +171,7 @@ export default function OnboardingPlans() {
               <CardFooter className="flex flex-col gap-2 items-start ">
                 {plan.features.map((feat) => (
                   <div key={feat} className="flex items-center gap-2">
-                    <Check className="size-[16px] text-green-500" />
+                    <Check className="size-[16px] text-[#f25b44]" />
                     <span className="text-sm text-gray-700">{feat}</span>
                   </div>
                 ))}

@@ -45,7 +45,7 @@ export function SettingsAlertDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
 
-      <AlertDialogContent className="max-w-4xl w-[90vw] px-3 py-4">
+      <AlertDialogContent className="max-w-4xl px-3 py-4">
         <AlertDialogHeader>
           <AlertDialogTitle className="sr-only">Settings</AlertDialogTitle>
           <AlertDialogDescription className="sr-only">
@@ -53,7 +53,7 @@ export function SettingsAlertDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="flex ">
+        <div className="flex h-[500px] ">
           {/* Left Sidebar Nav */}
           <aside className="w-48 border-r pr-4">
             <nav className="space-y-1">
@@ -63,7 +63,7 @@ export function SettingsAlertDialog({
                   type="button"
                   aria-label="btn-icon"
                   key={key}
-                  className={`flex w-full justify-between items-center px-5 py-2 mb-4 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex w-full  items-center px-5 py-2 mb-4 rounded-md text-sm font-medium transition-colors ${
                     section === key
                       ? "bg-gray-100 text-gray-900"
                       : "hover:bg-gray-50 text-gray-700"
@@ -73,21 +73,25 @@ export function SettingsAlertDialog({
                   <span className="capitalize">
                     {key.replace("plan", "My plan")}
                   </span>
-                  {key === "plan" && <Badge variant="outline">Plus</Badge>}
+                  {key === "plan" && (
+                    <Badge className="ml-4" variant="outline">
+                      Plus
+                    </Badge>
+                  )}
                 </button>
               ))}
             </nav>
           </aside>
 
           {/* Right Content */}
-          <section className="px-2">
+          <section className="w-[78%] ">
             {section === "general" ? (
-              <div className="space-y-6 px-4">
+              <div className=" space-y-6 px-4">
                 <h3 className="text-xl font-semibold border-b pb-2">General</h3>
                 {/* Username row */}
-                <div className="grid grid-cols-3 gap-4 items-center">
-                  <label className="text-sm font-medium">Username</label>
-                  <span className="col-span-2 text-end pr-18">
+                <div className="flex justify-between gap-4 items-center border-b pb-3">
+                  <label className="text-md font-medium">Username</label>
+                  <span className=" text-end pr-18">
                     {username}
                     <button
                       type="button"
@@ -99,15 +103,15 @@ export function SettingsAlertDialog({
                   </span>
                 </div>
                 {/* Email row */}
-                <div className="grid grid-cols-3 gap-4 items-center">
-                  <label className="text-sm font-medium">Email</label>
-                  <span className="col-span-2 text-sm text-end text-gray-700">
+                <div className="flex justify-between gap-4 items-center border-b pb-3">
+                  <label className="text-md font-medium">Email</label>
+                  <span className=" text-sm text-end text-gray-700">
                     abelmejia.e@gmail.com
                   </span>
                 </div>
                 {/* Theme row */}
-                <div className="flex justify-between  gap-4 items-center">
-                  <label className="text-sm font-medium ">Theme</label>
+                <div className="flex justify-between  gap-4 items-center border-b pb-3">
+                  <label className="text-md font-medium ">Theme</label>
                   <div className="pr-18">
                     <Select value={theme} onValueChange={setTheme}>
                       <SelectTrigger className=" col-span-2">
@@ -121,14 +125,14 @@ export function SettingsAlertDialog({
                   </div>
                 </div>
                 {/* Toggles */}
-                <div className="space-y-4 w-[82%]">
-                  <div className="flex items-center justify-between gap-4 ">
-                    <div className="flex flex-col w-[80%]">
-                      <p className="text-sm font-medium">Publish to explore</p>
-                      <p className="text-xs text-gray-500">
-                        Images and videos you create can be seen by others in
-                        the explore feeds. Turning off this setting does not
-                        unpublish images and videos already in the feed.
+                <div className="space-y-4 ">
+                  <div className="flex items-center gap-26 ">
+                    <div className="flex flex-col w-[60%] ">
+                      <p className="text-md font-medium">Publish to explore</p>
+                      <p className="text-sm text-gray-500">
+                        Images you create can be seen by others in the explore
+                        feeds. Turning off this setting, does not unpublish
+                        images already in the feed.
                       </p>
                     </div>
                     <Switch
@@ -136,15 +140,17 @@ export function SettingsAlertDialog({
                       onCheckedChange={setPublishExplore}
                     />
                   </div>
-                  <div className="flex items-start">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">
+                  <hr className="" />
+
+                  <div className="flex items-center  gap-26">
+                    <div className="flex flex-col w-[60%]">
+                      <p className="text-md font-medium">
                         Improve the model for everyone
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm text-gray-500">
                         Allows your content to be used to train our models,
-                        which makes Sora better for you and everyone who uses
-                        it. We take steps to protect your privacy.
+                        which makes Imagen AI Studio better for you and everyone
+                        who uses it. We take steps to protect your privacy.
                       </p>
                     </div>
                     <Switch
@@ -155,16 +161,31 @@ export function SettingsAlertDialog({
                 </div>
               </div>
             ) : (
-              <div>
-                <h3 className="text-xl font-semibold">My plan</h3>
-                <p className="mt-2 text-gray-600">You’re on the Plus plan.</p>
+              <div className="space-y-6 px-4">
+                <h3 className="text-xl font-semibold border-b pb-2">Plus</h3>
+                {/* Feature row */}
+                <div className="flex gap-10 items-start border-b pb-2">
+                  <div className="flex flex-col gap-2 w-[60%]">
+                    <label className="text-md font-medium">
+                      Max concurrent generations
+                    </label>
+                    <span>
+                      Number of generations you can have queued at the same time
+                    </span>
+                  </div>
+                  <span className="col-span-2 text-end pr-18">1</span>
+                </div>
               </div>
             )}
-            <AlertDialogCancel asChild className="relative mt-6 right-[-560px]">
-              <button className="btn">Done</button>
-            </AlertDialogCancel>
           </section>
         </div>
+        <AlertDialogFooter className="flex justify-end">
+          <AlertDialogCancel asChild className="">
+            <button type="button" className="btn">
+              Done
+            </button>
+          </AlertDialogCancel>
+        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
