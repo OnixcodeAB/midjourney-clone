@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, Check } from "lucide-react";
+import { SubscribeButton } from "@/components/Subscription/SubscribeButton";
 
 interface Plan {
   key: string;
@@ -156,16 +157,15 @@ export default function OnboardingPlans() {
               </CardHeader>
 
               <CardContent className="flex flex-col justify-center space-y-2 ">
-                <Button
-                  variant={isSelected ? "secondary" : "default"}
-                  className="w-full cursor-pointer"
-                  onClick={() => {
-                    setSelectedPlan(plan.key);
-                    handleSubscribe(plan.key);
+                <SubscribeButton
+                  key={plan.key}
+                  planId="P-XXXXXXXXXXXXX"
+                  subscriber={{
+                    name: "John Doe",
+                    email_address: "john@example.com",
                   }}
-                >
-                  {isSelected ? "Selected" : "Subscribe"}
-                </Button>
+                  isSelected={isSelected}
+                />
 
                 {billing == "monthly" && (
                   <Button
