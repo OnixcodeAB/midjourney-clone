@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import { Loader } from "lucide-react";
 
 interface subscriberInfo {
   name?: string;
@@ -57,10 +58,16 @@ export const SubscribeButton = ({
   return (
     <Button
       variant={isSelected ? "secondary" : "default"}
-      className="w-full cursor-pointer"
+      className="w-full flex items-center justify-center cursor-pointer"
       onClick={handleSubscribe}
     >
-      {isSelected ? "Selected" : "Subscribe"}
+      {isSelected ? (
+        "Selected"
+      ) : isLoading ? (
+        <Loader className="animate-spin h-5 w-5" />
+      ) : (
+        "Subscribe"
+      )}
     </Button>
   );
 };
