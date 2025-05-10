@@ -3,9 +3,13 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { Loader } from "lucide-react";
+import { toast } from "sonner";
 
 interface subscriberInfo {
-  name?: string;
+  name?: {
+    given_name?: string;
+    surname?: string;
+  };
   email_address?: string;
 }
 
@@ -25,8 +29,11 @@ export const SubscribeButton = ({
   const [error, setError] = useState<string | null>(null);
 
   const handleSubscribe = async () => {
+    if (isSelected) return;
+
     setIsLoading(true);
     setError(null);
+    toast.dismiss();
 
     try {
       const res = await fetch("/api/subscription", {
@@ -36,13 +43,13 @@ export const SubscribeButton = ({
         },
         body: JSON.stringify({
           planId,
-          subscriber,
+          subscriber: subscriber ?? {},
         }),
       });
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || "subscription failed");
+        throw new Error(err.error || "Failed to initiate subscription");
       }
 
       const data = await res.json();
@@ -51,6 +58,10 @@ export const SubscribeButton = ({
     } catch (err: any) {
       console.log("Error subscribing:", err);
       setError(err.message);
+      toast.error(error, {
+        position: "top-center",
+        duration: 5000,
+      });
       setIsLoading(false);
     }
   };
@@ -58,13 +69,13 @@ export const SubscribeButton = ({
   return (
     <Button
       variant={isSelected ? "secondary" : "default"}
-      className="w-full flex items-center justify-center cursor-pointer"
+      className="w-full h-9 flex items-center justify-center cursor-pointer"
       onClick={handleSubscribe}
     >
       {isSelected ? (
         "Selected"
       ) : isLoading ? (
-        <Loader className="animate-spin h-5 w-5" />
+        <Loader className="animate-spin h-7 w-7 size-1" />
       ) : (
         "Subscribe"
       )}

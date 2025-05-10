@@ -69,12 +69,6 @@ const PLANS: Plan[] = [
 export default function OnboardingPlans() {
   const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const router = useRouter();
-
-  const handleSubscribe = (planKey: string) => {
-    // navigate to subscription flow
-    router.push(`/onboarding/subscribe?plan=${planKey}&billing=${billing}`);
-  };
 
   return (
     <div className="space-y-8 mt-8 p-6">
@@ -159,10 +153,10 @@ export default function OnboardingPlans() {
               <CardContent className="flex flex-col justify-center space-y-2 ">
                 <SubscribeButton
                   key={plan.key}
-                  planId="P-XXXXXXXXXXXXX"
+                  planId="P-6BK88110VJ091233ANAPJXWA"
                   subscriber={{
-                    name: "John Doe",
-                    email_address: "john@example.com",
+                    name: { given_name: "John", surname: "Doe" },
+                    email_address: "sb-e43wfd26561677@business.example.com",
                   }}
                   isSelected={isSelected}
                 />
