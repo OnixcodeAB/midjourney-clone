@@ -7,7 +7,7 @@ interface User {
   email: string;
 }
 
-export default async function registerUser(id: string, email: string) {
+export default async function registerUser({ id, email }: User) {
   try {
     const existingUser = await query(`SELECT * FROM users WHERE id = $1`, [id]);
 
