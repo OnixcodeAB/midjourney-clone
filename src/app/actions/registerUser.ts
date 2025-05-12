@@ -11,9 +11,11 @@ export default async function registerUser(id: string, email: string) {
   try {
     const existingUser = await query(`SELECT * FROM users WHERE id = $1`, [id]);
 
-    // If the user exists, return early
+    // If the user exists, update the user information
     if (existingUser?.rowCount && existingUser.rowCount > 0) {
-      return { success: false, message: "User already exists" };
+      await query(`UPDATE users SET email = $2 WHERE id = $1`, [id, email]);
+      console.log("User updated successfully");
+      return { success: true, message: "User updated successfully" };
     }
 
     // If the user does not exist, insert a new user
