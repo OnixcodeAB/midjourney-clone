@@ -37,6 +37,7 @@ export default async function RootLayout({
     const result = await registerUser({
       id: user.id,
       email: user.emailAddresses[0].emailAddress,
+      name: user.fullName,
     });
     console.log(result.message);
   }
