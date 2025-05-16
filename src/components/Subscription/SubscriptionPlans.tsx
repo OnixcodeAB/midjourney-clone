@@ -28,6 +28,12 @@ interface SubscriptionPlansProps {
   plans: Plan[];
 }
 
+interface UserSubscription {
+  subscription_id: string;
+  subscription_plan: string;
+  subscription_status: string;
+}
+
 export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -36,7 +42,16 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   const { user } = useUser();
 
   // Check if the user has a subscription
-  const userSubscription = user?.publicMetadata;
+  const userSubscription = user?.publicMetadata
+    ?.subscription as UserSubscription;
+
+  // If the user has a subscription, set the selected plan to their current plan
+  if (userSubscription) {
+    const currentPlan = plans.find(
+      (plan) => plan.id === userSubscription?.subscription_id
+    );
+    setSelectedPlan(currentPlan?.id || null);
+  }
 
   // Filter plans based on the current billing state
   const filteredPlans = plans.filter((plan) => plan.frequency === billing);
@@ -120,8 +135,11 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                   key={plan.id}
                   planId={plan.id}
                   subscriber={{
-                    name: { given_name: "John", surname: "Doe" },
-                    email_address: "sb-e43wfd26561677@business.example.com",
+                    name: {
+                      given_name: user?.firstName ?? undefined,
+                      surname: user?.lastName ?? undefined,
+                    },
+                    email_address: user?.emailAddresses[0]?.emailAddress,
                   }}
                   isSelected={isSelected}
                 />

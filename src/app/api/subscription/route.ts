@@ -66,13 +66,17 @@ export async function POST(req: Request) {
     }
 
     // 3. Update database and Clerk metadata in parallel
+    // 3.1 identify the plan into the database
+    const { rows } = await query(`SELECT * FROM plans WHERE id = $1`, [planId]);
+    const plan = rows[0];
+
     const [dbUpdate, clerkUpdate] = await Promise.allSettled([
       // Update database
       query(
         `UPDATE users 
-         SET subscription_id = $1, subscription_status =$3, paypal_plan_id = $4, onboarded = true
+         SET subscription_id = $1, subscription_status =$3, paypal_plan_id = $4, plan_id = $5, onboarded = true
          WHERE id = $2`,
-        [subscriptionId, userId, status, planId]
+        [subscriptionId, userId, status, planId, plan?.id]
       ),
 
       // Update Clerk metadata
@@ -83,11 +87,13 @@ export async function POST(req: Request) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          private_metadata: { payer_id: subscriptionId },
           public_metadata: {
             subscription: {
-              subscription_plan: "Free",
-              subscription_id: subscriptionId,
+              subscription_plan: plan?.name || "free",
+              subscription_id: planId,
               subscription_status: status,
+              subscription_frequency: plan?.frequency,
             },
           },
         }),
