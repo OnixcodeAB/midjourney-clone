@@ -40,8 +40,8 @@ export async function POST(req: Request) {
         application_context: {
           brand_name: "Imagen AI Studio",
           user_action: "SUBSCRIBE_NOW",
-          return_url: `${process.env.APP_URL}/onboarding/complete`,
-          cancel_url: `${process.env.APP_URL}/onboarding/cancel`,
+          return_url: `${process.env.APP_URL}/subscription/complete`,
+          cancel_url: `${process.env.APP_URL}/subscription/cancel`,
         },
       }),
     });
@@ -84,8 +84,11 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           public_metadata: {
-            subscription_id: subscriptionId,
-            subscription_status: "ACTIVE",
+            subscription: {
+              subscription_plan: "Free",
+              subscription_id: subscriptionId,
+              subscription_status: status,
+            },
           },
         }),
       }),
