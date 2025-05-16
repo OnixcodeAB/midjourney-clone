@@ -16,11 +16,15 @@ import { ArrowUpRight, Check } from "lucide-react";
 import { SubscribeButton } from "@/components/Subscription/SubscribeButton";
 
 interface Plan {
-  key: string;
+  id: string;
   name: string;
-  monthly: number;
-  yearly: number;
+  frequency: string;
+  price: number;
   features: string[];
+}
+
+interface SubscriptionPlansProps {
+  plans: Plan[];
 }
 
 const PLANS: Plan[] = [
@@ -66,7 +70,7 @@ const PLANS: Plan[] = [
   },
 ];
 
-export default function OnboardingPlans() {
+export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
@@ -109,7 +113,7 @@ export default function OnboardingPlans() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {PLANS.map((plan) => {
+        {plans.map((plan) => {
           const price = billing === "monthly" ? plan.monthly : plan.yearly;
           const isSelected = selectedPlan === plan.key;
           return (
@@ -153,7 +157,7 @@ export default function OnboardingPlans() {
               <CardContent className="flex flex-col justify-center space-y-2 ">
                 <SubscribeButton
                   key={plan.key}
-                  planId="P-6BK88110VJ091233ANAPJXWA"
+                  planId="P-25998168A8156310LNASOH5Y"
                   subscriber={{
                     name: { given_name: "John", surname: "Doe" },
                     email_address: "sb-e43wfd26561677@business.example.com",
@@ -205,4 +209,4 @@ export default function OnboardingPlans() {
       </div>
     </div>
   );
-}
+};

@@ -5,6 +5,8 @@ import { NextResponse } from "next/server";
 
 interface SubscriptionResponse {
   id: string;
+  status: string;
+  plan_id: string;
   links?: Array<{
     rel: string;
     href: string;
@@ -55,6 +57,8 @@ export async function POST(req: Request) {
 
     const subData: SubscriptionResponse = await subRes.json();
     const subscriptionId = subData.id;
+    const status = subData.status;
+    console.log(subData);
     const approvalUrl = subData.links?.find((l) => l.rel === "approve")?.href;
 
     if (!approvalUrl) {
@@ -66,9 +70,9 @@ export async function POST(req: Request) {
       // Update database
       query(
         `UPDATE users 
-         SET subscription_id = $1, subscription_status = 'ACTIVE' 
+         SET subscription_id = $1, subscription_status =$3, paypal_plan_id = $4, onboarded = true
          WHERE id = $2`,
-        [subscriptionId, userId]
+        [subscriptionId, userId, status, planId]
       ),
 
       // Update Clerk metadata

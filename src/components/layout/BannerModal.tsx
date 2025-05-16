@@ -112,7 +112,7 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
                  hover:opacity-90
                "
             >
-              <Link href="/onboarding" className="h-12" onClick={handleClose}>
+              <Link href="/subscription" className="h-12" onClick={handleClose}>
                 Subscribe now
               </Link>
             </Button>

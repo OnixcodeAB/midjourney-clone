@@ -41,7 +41,7 @@ const items = [
   { title: "Edit", url: "/edit", icon: SquarePen },
   { title: "Personalize", url: "/personalize", icon: SwatchBook },
   { title: "Surveys", url: "/surveys", icon: ThumbsUp },
-  { title: "Subscribe", url: "/onboarding", icon: CircleUserRound },
+  { title: "Subscribe", url: "/subscription", icon: CircleUserRound },
 ];
 
 const itemsFooter = [
@@ -64,7 +64,7 @@ export default function AppSidebar() {
       url === "/" ||
       url.startsWith("/auth") ||
       url == "/help" ||
-      url == "/onboarding" ||
+      url == "/subscription" ||
       url == "/update" 
     ) {
       setIsEditing(false);
