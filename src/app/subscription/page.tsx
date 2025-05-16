@@ -1,5 +1,6 @@
 import { SubscriptionPlans } from "@/components/Subscription/SubscriptionPlans";
 import { query } from "@/lib/db";
+import { clerkClient } from "@clerk/nextjs/server";
 
 interface Plan {
   id: string;
@@ -10,6 +11,7 @@ interface Plan {
 }
 
 export default async function SubscriptionPage() {
+
   const { rows } = await query(`SELECT * FROM plans `);
 
   const Plans: Plan[] = rows;
