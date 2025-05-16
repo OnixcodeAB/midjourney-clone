@@ -10,7 +10,7 @@ interface Plan {
 }
 
 export default async function SubscriptionPage() {
-  const { rows } = await query(`SELECT * FROM plans ORDER BY id ASC`);
+  const { rows } = await query(`SELECT * FROM plans `);
 
   const Plans: Plan[] = rows;
   return <SubscriptionPlans plans={Plans} />; // Pass the fetched
