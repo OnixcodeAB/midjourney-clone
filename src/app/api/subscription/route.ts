@@ -91,9 +91,9 @@ export async function POST(req: Request) {
           public_metadata: {
             subscription: {
               subscription_plan: plan?.name || "free",
-              subscription_id: planId,
-              subscription_status: status,
-              subscription_frequency: plan?.frequency,
+              subscription_id: planId || "",
+              subscription_status: status || "active",
+              subscription_frequency: plan?.frequency || "monthly",
             },
           },
         }),
