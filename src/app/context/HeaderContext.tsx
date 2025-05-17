@@ -3,7 +3,12 @@
 import { createContext, useContext, useState } from "react";
 
 export type AspectType = "square" | "portrait" | "landscape";
-export type AspectRatio = "1024x1024" | "1024x1536" | "1536x1024" | "auto" | null | undefined;
+export type AspectRatio =
+  | "1024x1024"
+  | "1024x1536"
+  | "1536x1024"
+  | null
+  | undefined;
 export type QualityType = "low" | "medium" | "high";
 
 interface HeaderContextType {
@@ -27,7 +32,18 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <HeaderContext.Provider
-      value={{ aspect, setAspect, size, setSize, ratio, setRatio, quality, setQuality } as HeaderContextType}
+      value={
+        {
+          aspect,
+          setAspect,
+          size,
+          setSize,
+          ratio,
+          setRatio,
+          quality,
+          setQuality,
+        } as HeaderContextType
+      }
     >
       {children}
     </HeaderContext.Provider>

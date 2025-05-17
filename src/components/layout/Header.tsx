@@ -113,7 +113,7 @@ export default function Header() {
     // 1) Kick off the server action (don’t await it yet)
     const promise = generateImageAndSave({
       prompt,
-      aspect: ratio,
+      aspect: ratio || undefined,
     });
 
     // 2) Immediately navigate to /create
