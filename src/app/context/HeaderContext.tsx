@@ -3,7 +3,7 @@
 import { createContext, useContext, useState } from "react";
 
 export type AspectType = "square" | "portrait" | "landscape";
-export type AspectRatio = "1024x1024" | "1024x1536" | "1536x1024";
+export type AspectRatio = "1024x1024" | "1024x1536" | "1536x1024" | "auto" | null | undefined;
 export type QualityType = "low" | "medium" | "high";
 
 interface HeaderContextType {
