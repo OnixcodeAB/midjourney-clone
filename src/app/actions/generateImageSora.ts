@@ -9,6 +9,7 @@ type Aspect = "1024x1024" | "1024x1536" | "1536x1024";
 interface GenerateImageParams {
   prompt: string;
   aspect?: Aspect;
+  quality?: string;
 }
 
 export interface ImageRecord {
@@ -25,6 +26,7 @@ export interface ImageRecord {
 export async function generateImageAndSave({
   prompt,
   aspect,
+  quality,
 }: GenerateImageParams): Promise<{
   success: boolean;
   image?: ImageRecord;

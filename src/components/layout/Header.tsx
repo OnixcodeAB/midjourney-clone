@@ -18,7 +18,6 @@ import { BannerModal } from "./BannerModal";
 import { useUser } from "@clerk/nextjs";
 import { Textarea } from "../ui/textarea";
 import { checkOnboardingStatus } from "@/app/actions/checkOnboardingStatus";
-import { on } from "events";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);

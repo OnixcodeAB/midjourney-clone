@@ -1,12 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import {
   AspectRatio,
   AspectType,
+  QualityType,
   useHeaderSettings,
 } from "@/app/context/HeaderContext";
+
+// Quality options
+const QUALITY_OPTIONS = [
+  { label: "Low", value: "low", description: "Fastest, 1024x1024 only" },
+  { label: "Medium", value: "medium", description: "Best for most uses" },
+  { label: "High", value: "high", description: "Highest quality, slower" },
+];
 
 const aspectOptions = [
   { label: "Portrait", value: "portrait", ratio: "1024x1536", range: [0, 40] },
@@ -27,11 +35,14 @@ export default function ImageSizeSelector() {
     setSize,
     ratio,
     setRatio,
+    quality: selectedQuality,
+    setQuality, // Uncomment if you want to use the context for quality
+    // Add these to context if desired:
+    // quality, setQuality
   } = useHeaderSettings();
 
-  //console.log(ratio);
+  // Use local state for quality for now
 
-  // Optional: Update slider midpoint when aspect changes
   useEffect(() => {
     const aspect = aspectOptions.find((a) => a.value === selected);
     if (aspect) {
@@ -45,14 +56,38 @@ export default function ImageSizeSelector() {
 
   return (
     <div className="p-4 space-y-4">
-      <div className="flex justify-end gap-4 mb-0 items-center">
+      {/* Quality Selector */}
+      <div>
+        <h4 className="text-md font-semibold text-gray-700 mb-2">Quality</h4>
+        <div className="flex justify-center gap-10 mb-4">
+          {QUALITY_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setQuality(opt.value as QualityType)}
+              className={`px-4 py-2 rounded-md text-sm border transition
+                ${
+                  selectedQuality === opt.value
+                    ? "bg-red-100 text-red-500 border-red-300 font-semibold"
+                    : "bg-white text-gray-700 border-gray-300 hover:border-gray-400"
+                }`}
+              title={opt.description}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Existing Image Size Controls */}
+      <div className="flex justify-between gap-4 mb-0 items-center">
         <h4 className="text-md mr-35 font-semibold text-gray-700">
           Image Size
         </h4>
         <button
           type="button"
           onClick={() => {
-            setAspect("portrait");
+            setAspect("landscape");
             setSize(80);
             setRatio("1024x1536");
           }}
@@ -65,15 +100,12 @@ export default function ImageSizeSelector() {
       <div className="flex items-center justify-between gap-6">
         {/* Ratio Box */}
         <div className="relative flex flex-col justify-center w-30 h-30">
-          {/* Back box - dashed */}
           <div
             className={`absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
                   border border-dashed w-17 h-25 rounded-md z-0 ${
                     selected === "portrait" ? "border-black" : "border-gray-400"
                   }`}
           />
-
-          {/* Front box - solid */}
           <div
             className={`relative z-10 w-30 h-16 rounded-md flex items-center justify-center text-xs font-medium 
                 ${
@@ -117,7 +149,6 @@ export default function ImageSizeSelector() {
             })}
           </div>
 
-          {/* Slider + Floating label on hover */}
           <div className="relative group w-full">
             <Slider
               value={[sliderValue]}
@@ -139,6 +170,7 @@ export default function ImageSizeSelector() {
           </div>
         </div>
       </div>
+      {/* When sending request, pass { quality } */}
     </div>
   );
 }
