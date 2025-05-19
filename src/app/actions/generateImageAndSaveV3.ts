@@ -86,7 +86,7 @@ export async function generateImageAndSave({
   // 5. Save completed record in DB
   try {
     const { rows } = await query(
-      `INSERT INTO "Image" (prompt, provider, status, url, user_id, user_name)
+      `INSERT INTO "Image" (prompt, provider, status, url, user_id, user_name, quality)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING id, prompt, provider, status, url, createdat`,
       [
@@ -96,6 +96,7 @@ export async function generateImageAndSave({
         uploadRes.secure_url,
         user.id,
         user.fullName,
+        quality,
       ]
     );
     return { success: true, image: rows[0] };

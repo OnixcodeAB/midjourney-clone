@@ -27,7 +27,7 @@ const HeaderContext = createContext<HeaderContextType | undefined>(undefined);
 export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [aspect, setAspect] = useState<AspectType>("landscape");
   const [size, setSize] = useState<number>(80);
-  const [ratio, setRatio] = useState<AspectRatio>("1024x1024");
+  const [ratio, setRatio] = useState<AspectRatio>("1536x1024");
   const [quality, setQuality] = useState<QualityType>("low");
 
   return (
