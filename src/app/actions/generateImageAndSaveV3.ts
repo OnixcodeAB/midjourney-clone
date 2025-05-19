@@ -1,7 +1,7 @@
 "use server";
 
 import { currentUser } from "@clerk/nextjs/server";
-import { parseAspect } from "@/lib/helper";
+import { logError, parseAspect } from "@/lib/helper";
 import { query } from "@lib/db";
 import { OpenAI } from "openai";
 import { v2 as cloudinary } from "cloudinary";
@@ -78,6 +78,13 @@ export async function generateImageAndSave({
     imageBuffer = Buffer.from(b64, "base64");
   } catch (err: any) {
     console.error("[OPENAI_IMAGE_ERROR]", err);
+
+    // Log error in PollLog
+    await logError({
+      status: "imageGenFailed",
+      error: err.message || "Image generation failed",
+    });
+
     return { success: false, error: err.message || "Image generation failed" };
   }
 
@@ -96,6 +103,13 @@ export async function generateImageAndSave({
     });
   } catch (err: any) {
     console.error("[CLOUDINARY_UPLOAD_ERROR]", err);
+
+    // Log error in PollLog
+    await logError({
+      status: "cloudinaryUploadFailed",
+      error: err.message || "Cloudinary upload failed.",
+    });
+
     return { success: false, error: "Cloudinary upload failed." };
   }
 
@@ -111,6 +125,12 @@ export async function generateImageAndSave({
     return { success: true, image: updateRes.rows[0] };
   } catch (dbErr: any) {
     console.error("[DB_INSERT_ERROR]", dbErr);
-    return { success: false, error: "Database insert failed." };
+
+    // Log error in PollLog
+    await logError({
+      status: "dbUpdateFailed",
+      error: dbErr.message || "Database update failed.",
+    });
+    return { success: false, error: "Database update failed." };
   }
 }
