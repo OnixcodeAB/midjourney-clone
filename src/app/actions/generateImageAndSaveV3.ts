@@ -32,6 +32,13 @@ export async function generateImageAndSave({
   image?: ImageRecord;
   error?: string;
 }> {
+  // Configure Cloudinary
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+    api_key: process.env.CLOUDINARY_API_KEY!,
+    api_secret: process.env.CLOUDINARY_API_SECRET!,
+  });
+
   // 1. Auth
   const user = await currentUser();
   if (!user?.id) {
@@ -51,7 +58,7 @@ export async function generateImageAndSave({
   const { width, height } = parseAspect(aspect);
   const size = `${width}x${height}` as AspectRatio;
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.OPENAI_API_KEY2,
   });
 
   let imageBuffer: Buffer;
@@ -79,7 +86,7 @@ export async function generateImageAndSave({
   try {
     uploadRes = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        { folder: "user_images", public_id: `${user.id}-${Date.now()}` },
+        { folder: "ai_gallery", public_id: `${user.id}-${Date.now()}` },
         (error, result) => {
           if (error) reject(error);
           else resolve(result as any);
@@ -96,7 +103,7 @@ export async function generateImageAndSave({
   try {
     const updateRes = await query(
       `UPDATE  "Image" 
-         SET status = $1, url = $2,
+         SET status = $1, url = $2
        WHERE id = $3
        RETURNING id, prompt, provider, status, url, createdat`,
       ["complete", uploadRes.secure_url, imageId]

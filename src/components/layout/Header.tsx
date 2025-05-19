@@ -12,17 +12,18 @@ import {
 import { toast } from "sonner";
 import { Image, Lock, SlidersHorizontal, Trash2 } from "lucide-react";
 import ImageSizeSelector from "./ImageSizeSelector";
-import { generateImageAndSave } from "@/app/actions/generateImageSora";
+
 import { useRouter } from "next/navigation";
 import { BannerModal } from "./BannerModal";
 import { useUser } from "@clerk/nextjs";
 import { Textarea } from "../ui/textarea";
 import { checkOnboardingStatus } from "@/app/actions/checkOnboardingStatus";
+import { generateImageAndSave } from "@/app/actions/generateImageAndSaveV3";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
   const { prompt, setPrompt } = usePrompt();
-  const { ratio } = useHeaderSettings();
+  const { ratio,quality } = useHeaderSettings();
   const [preview, setPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -81,7 +82,7 @@ export default function Header() {
 
   const handleOnboarding = async () => {
     const onboarded = await checkOnboardingStatus(user?.id as string);
-    console.log(onboarded)
+    console.log(onboarded);
     if (!onboarded) {
       setIsEditing(true);
     } else {
@@ -114,6 +115,7 @@ export default function Header() {
     const promise = generateImageAndSave({
       prompt,
       aspect: ratio || undefined,
+      quality,
     });
 
     // 2) Immediately navigate to /create
