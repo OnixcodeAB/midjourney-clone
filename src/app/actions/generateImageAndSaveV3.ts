@@ -38,6 +38,15 @@ export async function generateImageAndSave({
     return { success: false, error: "User not authenticated" };
   }
 
+  // Insert the pending record in DB inmediately
+  const insertRes = await query(
+    `INSERT INTO "Image" (prompt, provider, status, user_id, user_name, quality, progress_pct) VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id`,
+    [prompt, "openai", "pending", user.id, user.fullName, quality, 0.3]
+  );
+
+  const imageId: string = insertRes.rows[0].id;
+
   // 2. Prepare model call
   const { width, height } = parseAspect(aspect);
   const size = `${width}x${height}` as AspectRatio;
@@ -83,23 +92,16 @@ export async function generateImageAndSave({
     return { success: false, error: "Cloudinary upload failed." };
   }
 
-  // 5. Save completed record in DB
+  // 5. Update the same row to completed in DB
   try {
-    const { rows } = await query(
-      `INSERT INTO "Image" (prompt, provider, status, url, user_id, user_name, quality)
-       VALUES ($1, $2, $3, $4, $5, $6)
+    const updateRes = await query(
+      `UPDATE  "Image" 
+         SET status = $1, url = $2,
+       WHERE id = $3
        RETURNING id, prompt, provider, status, url, createdat`,
-      [
-        prompt,
-        "openai",
-        "complete",
-        uploadRes.secure_url,
-        user.id,
-        user.fullName,
-        quality,
-      ]
+      ["complete", uploadRes.secure_url, imageId]
     );
-    return { success: true, image: rows[0] };
+    return { success: true, image: updateRes.rows[0] };
   } catch (dbErr: any) {
     console.error("[DB_INSERT_ERROR]", dbErr);
     return { success: false, error: "Database insert failed." };
