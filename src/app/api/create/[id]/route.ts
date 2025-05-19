@@ -1,5 +1,5 @@
 // app/api/create/[id]/route.ts
-import dbPromise, { query } from "@/lib/db";
+import { query } from "@/lib/db";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -11,16 +11,14 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
-    const db = await dbPromise;
-
     const {
       rows: [image],
     } = await query(
       `SELECT
-      id,
-      url AS src,
-      prompt,
-      provider AS author
+        id,
+        url AS src,
+        prompt,
+        provider AS author
     FROM "Image"
     WHERE id = $1`,
       [id]
