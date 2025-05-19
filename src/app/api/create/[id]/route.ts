@@ -16,9 +16,9 @@ export async function GET(
     } = await query(
       `SELECT
         id,
-        url AS src,
+        url,
         prompt,
-        provider AS author
+        user_name AS author
     FROM "Image"
     WHERE id = $1`,
       [id]
