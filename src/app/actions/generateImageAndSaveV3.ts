@@ -1,7 +1,7 @@
 "use server";
 
 import { currentUser } from "@clerk/nextjs/server";
-import { logError, parseAspect } from "@/lib/helper";
+import { generateImageMetadata, logError, parseAspect } from "@/lib/helper";
 import { query } from "@lib/db";
 import { OpenAI } from "openai";
 import { v2 as cloudinary } from "cloudinary";
@@ -45,14 +45,44 @@ export async function generateImageAndSave({
     return { success: false, error: "User not authenticated" };
   }
 
+  // Extract metadata from prompt
+  const { search_text, tags } = await generateImageMetadata(prompt);
+  console.log({first: search_text, tags});
+
   // Insert the pending record in DB inmediately
   const insertRes = await query(
-    `INSERT INTO "Image" (prompt, provider, status, user_id, user_name, quality, progress_pct) VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO "Image" (prompt, provider, status, user_id, user_name, quality, progress_pct, alt) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING id`,
-    [prompt, "openai", "pending", user.id, user.fullName, quality, 0.3]
+    [
+      prompt,
+      "openai",
+      "pending",
+      user.id,
+      user.fullName,
+      quality,
+      0.3,
+      search_text,
+    ]
   );
 
   const imageId: string = insertRes.rows[0].id;
+
+  // Upsert tags into DB and link to image
+  for (const tag of tags) {
+    const tagRes = await query(
+      `INSERT INTO "Tag" (name) VALUES ($1) ON CONFLICT (name) DO NOTHING RETURNING id`,
+      [tag]
+    );
+
+    const tagId: string =
+      tagRes.rows[0]?.id ??
+      (await query(`SELECT id FROM "Tag" WHERE name = $1`, [tag])).rows[0].id;
+
+    await query(
+      `INSERT INTO "Image_Tag" (image_id, tag_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
+      [imageId, tagId]
+    );
+  }
 
   // 2. Prepare model call
   const { width, height } = parseAspect(aspect);
