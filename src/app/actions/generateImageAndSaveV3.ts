@@ -47,7 +47,6 @@ export async function generateImageAndSave({
 
   // Extract metadata from prompt
   const { search_text, tags } = await generateImageMetadata(prompt);
-  console.log({first: search_text, tags});
 
   // Insert the pending record in DB inmediately
   const insertRes = await query(

@@ -97,7 +97,6 @@ export async function generateImageMetadata(
 
   const toolCall = response.choices[0].message.tool_calls?.[0];
   const call = toolCall;
-  console.log(response.choices[0].message.tool_calls);
 
   if (!call?.function || !call.function.arguments) {
     throw new Error("Tag tool call failed or returned no arguments");
