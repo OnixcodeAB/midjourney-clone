@@ -45,27 +45,33 @@ export async function logError({
 }
 
 // Function spec for OpenAI function calling
-export const functionSpec = {
-  name: "generate_tags",
-  description:
-    "Extract 1 short search text and 3 tags, that capture ~90% of this prompt's essence for user find similar images",
-  parameters: {
-    type: "object",
-    properties: {
-      search_text: {
-        type: "string",
-        description:
-          "A short search text that captures the essence of the prompt",
-      },
-      tags: {
-        type: "array",
-        items: { type: "string" },
-        description: "A list of 3 tags that capture the essence of the prompt",
+export const functionSpec = [
+  {
+    type: "function" as const,
+    function: {
+      name: "generate_search_tags",
+      description:
+        "Extract 1 short search text and 3 tags, that capture ~90% of this prompt's essence for user find similar images",
+      parameters: {
+        type: "object",
+        properties: {
+          search_text: {
+            type: "string",
+            description:
+              "A short search text that captures the essence of the prompt",
+          },
+          tags: {
+            type: "array",
+            items: { type: "string" },
+            description:
+              "A list of 3 tags that capture the essence of the prompt",
+          },
+        },
+        required: ["search_text", "tags"],
       },
     },
-    required: ["search_text", "tags"],
   },
-};
+];
 
 // Helper Function to generate image metadata
 export async function generateImageMetadata(
@@ -82,14 +88,18 @@ export async function generateImageMetadata(
       },
       { role: "user", content: prompt },
     ],
-    functions: [functionSpec],
-    function_call: { name: "generate_search_tags" },
+    tools: functionSpec,
+    tool_choice: {
+      type: "function" as const,
+      function: { name: "generate_search_tags" },
+    },
   });
 
-  const toolCall = response.choices[0].message.tool_calls;
-  const call = toolCall?.[0];
+  const toolCall = response.choices[0].message.tool_calls?.[0];
+  const call = toolCall;
+  console.log(response.choices[0].message.tool_calls);
 
-  if (!call?.function.arguments) {
+  if (!call?.function || !call.function.arguments) {
     throw new Error("Tag tool call failed or returned no arguments");
   }
 
