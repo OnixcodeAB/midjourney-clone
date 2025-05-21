@@ -1,6 +1,22 @@
 import { query } from "@/lib/db";
+import { cachedOperation, cacheResult, redis } from "@/lib/redis"; // Make sure this path matches your project structure
+
+const CACHE_TTL = 60 * 60; // 1 hour
 
 export async function checkUsageLimit(userId: string, quality: QualityType) {
+  const cacheKey = `usage:${userId}:${quality}`;
+
+  //Try cache first
+  try {
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      console.log(cached);
+      return JSON.parse(cached);
+    }
+  } catch (error) {
+    console.error("Cache read error:", error);
+  }
+
   try {
     const [{ rows: planRows }, { rows: usageRows }] = await Promise.all([
       query(
@@ -40,23 +56,37 @@ export async function checkUsageLimit(userId: string, quality: QualityType) {
     }, {});
 
     // Define the limits for each quality type
-    const limits: Record<QualityType, number | null | undefined> = {
+    const limits: Record<QualityType, number> = {
       low: plan.low_quality_limit,
       medium: plan.medium_quality_limit,
       high: plan.high_quality_limit,
     };
 
+    const current = usage[quality] || 0;
+    const limit = limits[quality];
+
     // Check if the user has reached their monthly limit for the requested quality
-    if (limits[quality] !== null && limits[quality] !== undefined) {
-      if ((usage[quality] || 0) >= limits[quality]) {
-        return {
-          allowed: false,
-          error: `Monthly ${quality}-quality generation limit reached. Upgrade your plan to generate more images.`,
-        };
-      }
+    if (limits !== null && current >= limit) {
+      const result = {
+        allowed: false,
+        error: `Monthly ${quality}-quality generation limit reached`,
+        description: "Upgrade your plan to generate more images.",
+        current,
+        limit,
+      };
+      await cacheResult(cacheKey, CACHE_TTL, result);
+      return result;
     }
 
-    return { allowed: true };
+    const result = {
+      allowed: false,
+      error: `Monthly ${quality}-quality generation limit reached`,
+      description: "Upgrade your plan to generate more images.",
+      current,
+      limit,
+    };
+    await cacheResult(cacheKey, CACHE_TTL, result);
+    return result;
   } catch (error) {
     console.error("Error checking usage limits:", error);
     return { allowed: false, error: "Error checking usage limits" };
