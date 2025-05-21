@@ -6,12 +6,13 @@ import { query } from "@lib/db";
 import { OpenAI } from "openai";
 import { v2 as cloudinary } from "cloudinary";
 import { AspectRatio } from "../context/HeaderContext";
+import { checkUsageLimit } from "@/lib/usageLimits";
 
 type Aspect = "1024x1024" | "1024x1536" | "1536x1024";
 interface GenerateImageParams {
   prompt: string;
   aspect?: Aspect;
-  quality?: "low" | "medium" | "high" | "auto";
+  quality?: QualityType;
 }
 
 export interface ImageRecord {
@@ -43,6 +44,13 @@ export async function generateImageAndSave({
   const user = await currentUser();
   if (!user?.id) {
     return { success: false, error: "User not authenticated" };
+  }
+
+  // Check usage limits
+  const limitCheck = await checkUsageLimit(user.id, quality ?? "low");
+
+  if (!limitCheck.allowed) {
+    return { success: false, error: limitCheck.error };
   }
 
   // Extract metadata from prompt

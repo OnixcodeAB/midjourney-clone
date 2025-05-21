@@ -9,7 +9,6 @@ export type AspectRatio =
   | "1536x1024"
   | null
   | undefined;
-export type QualityType = "low" | "medium" | "high";
 
 interface HeaderContextType {
   aspect: AspectType;
