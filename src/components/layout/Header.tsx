@@ -23,7 +23,7 @@ import { generateImageAndSave } from "@/app/actions/generateImageAndSaveV3";
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
   const { prompt, setPrompt } = usePrompt();
-  const { ratio,quality } = useHeaderSettings();
+  const { ratio, quality } = useHeaderSettings();
   const [preview, setPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
@@ -126,7 +126,7 @@ export default function Header() {
     if (!result?.success) {
       setPrompt(originalPrompt);
       toast.error("Generation failed", {
-        description: "Something went wrong—please try again later.",
+        description: `${result?.error || "Try again later"}`,
       });
     }
   };

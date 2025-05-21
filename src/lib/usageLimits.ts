@@ -1,5 +1,4 @@
-import { query } from "@/lib/db"; // Adjust import based on your DB setup
-import { toast } from "sonner";
+import { query } from "@/lib/db";
 
 export async function checkUsageLimit(userId: string, quality: QualityType) {
   try {
@@ -50,9 +49,6 @@ export async function checkUsageLimit(userId: string, quality: QualityType) {
     // Check if the user has reached their monthly limit for the requested quality
     if (limits[quality] !== null && limits[quality] !== undefined) {
       if ((usage[quality] || 0) >= limits[quality]) {
-        toast.error(`Monthly ${quality}-quality generation limit reached`, {
-          description: "Upgrade your plan to generate more images.",
-        });
         return {
           allowed: false,
           error: `Monthly ${quality}-quality generation limit reached. Upgrade your plan to generate more images.`,
