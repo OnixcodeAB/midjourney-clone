@@ -14,6 +14,7 @@ interface Props {
   description?: string;
   children?: React.ReactNode; // 👈 added
   imgClassName?: string;
+  handleOnClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => void;
 }
 
 export default function ImageCard({
@@ -23,6 +24,7 @@ export default function ImageCard({
   description,
   imgClassName = "h-auto",
   children,
+  handleOnClick,
 }: Props) {
   const [liked, setLiked] = useState(false);
   return (
@@ -30,6 +32,7 @@ export default function ImageCard({
       <img
         src={src}
         alt={alt}
+        onClick={handleOnClick}
         className={`max-w-full  transition-transform duration-300 group-hover:scale-105 ${imgClassName}`}
       />
 
@@ -54,7 +57,11 @@ export default function ImageCard({
                   <Search size={18} strokeWidth={3} />
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="top" align="center" className="font-bold bg-gray-700">
+              <TooltipContent
+                side="top"
+                align="center"
+                className="font-bold bg-gray-700"
+              >
                 Search for similar images
               </TooltipContent>
             </Tooltip>

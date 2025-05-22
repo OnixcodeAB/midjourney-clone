@@ -40,7 +40,7 @@ export const ExploreHomePage = ({ images }: Props) => {
       {images.map((img) => (
         <div
           key={img.id}
-          onClick={() => handleClick(img.id)}
+          /* onClick={() => handleClick(img.id)} */
           className="cursor-pointer"
         >
           <ImageCard
@@ -48,6 +48,7 @@ export const ExploreHomePage = ({ images }: Props) => {
             alt={img.alt}
             author={img.author}
             description={img.description}
+            handleOnClick={() => handleClick(img.id)}
           />
         </div>
       ))}
