@@ -1,47 +1,23 @@
 // src/lib/redis.ts
 import { createClient } from "redis";
-
-declare global {
-  // eslint-disable-next-line no-var
-  var redis: ReturnType<typeof createClient> | undefined;
-}
-
-let redis: ReturnType<typeof createClient>;
-const env = {
-  REDIS_URL: process.env.REDIS_URL,
+type RedisClient = ReturnType<typeof createClient> & {
+  isOpen: boolean;
+  isReady: boolean;
 };
 
-if (env.REDIS_URL) {
-  redis =
-    global.redis ||
-    createClient({
-      url: env.REDIS_URL,
-      socket: {
-        // Additional socket options
-        reconnectStrategy: (retries) => {
-          if (retries > 5) {
-            console.error("Too many retries on REDIS. Connection Terminated");
-            return new Error("Too many retries");
-          }
-          return Math.min(retries * 100, 5000); // Reconnect with backoff up to 5s
-        },
-      },
-    });
+declare global {
+  var redis: RedisClient | undefined;
+}
 
-  redis.on("error", (err) => console.error("Redis Client Error", err));
+let redis: RedisClient;
+let connectionAttempts = 0;
+const MAX_CONNECTION_ATTEMPTS = 3;
 
-  if (process.env.NODE_ENV !== "production") {
-    global.redis = redis;
-  }
-} else {
-  // Fallback in-memory cache for development when Redis isn't configured
-  console.warn(
-    "REDIS_URL not set - using in-memory cache (not suitable for production)"
-  );
+// Fallback in-memory cache
+const fallbackCache = new Map<string, { value: any; expires: number }>();
 
-  const fallbackCache = new Map<string, { value: any; expires: number }>();
-
-  redis = {
+function createFallbackClient(): RedisClient {
+  return {
     async get(key: string) {
       const entry = fallbackCache.get(key);
       if (!entry) return null;
@@ -51,19 +27,18 @@ if (env.REDIS_URL) {
       }
       return entry.value;
     },
-    async setex(key: string, seconds: number, value: any) {
+    async setEx(key: string, seconds: number, value: string) {
       fallbackCache.set(key, {
         value,
         expires: Date.now() + seconds * 1000,
       });
     },
-    async del(key: string | string[]) {
-      const keys = Array.isArray(key) ? key : [key];
-      keys.forEach((k) => fallbackCache.delete(k));
+    async del(keys: string | string[]) {
+      const keysArray = Array.isArray(keys) ? keys : [keys];
+      keysArray.forEach((k) => fallbackCache.delete(k));
     },
     async keys(pattern: string) {
       const allKeys = Array.from(fallbackCache.keys());
-      // Simple pattern matching (only supports * at end)
       if (pattern.endsWith("*")) {
         const prefix = pattern.slice(0, -1);
         return allKeys.filter((k) => k.startsWith(prefix));
@@ -74,66 +49,154 @@ if (env.REDIS_URL) {
       fallbackCache.clear();
     },
     connect: async () => {},
+    disconnect: async () => {},
     isOpen: true,
-    on: () => redis,
-    // TypeScript placeholder for other methods
-  } as unknown as ReturnType<typeof createClient>;
+    isReady: true,
+    on: function () {
+      return this as any;
+    },
+  } as unknown as RedisClient;
 }
 
-// Helper functions
-export async function cachedOperation<T>(
-  key: string,
-  ttl: number,
-  operation: () => Promise<T>
-): Promise<T> {
-  const cached = await redis.get(key);
-  if (cached) {
-    return JSON.parse(cached);
+async function initializeRedis(): Promise<boolean> {
+  if (!(process.env.REDIS_URL || "redis://localhost:6379")) {
+    console.warn("REDIS_URL not set - using in-memory fallback");
+    redis = createFallbackClient();
+    return false;
   }
 
-  const result = await operation();
-  await redis.setex(key, ttl, JSON.stringify(result));
-  return result;
-}
+  try {
+    if (global.redis && (global.redis.isOpen || global.redis.isReady)) {
+      redis = global.redis;
+      return true;
+    }
 
-export async function flushPattern(pattern: string): Promise<void> {
-  const keys = await redis.keys(pattern);
-  if (keys.length > 0) {
-    await redis.del(keys);
+    redis = createClient({
+      url: process.env.REDIS_URL,
+      socket: {
+        reconnectStrategy: (retries) => {
+          if (retries > 5) {
+            console.log("Max reconnection attempts reached");
+            return new Error("Max retries reached");
+          }
+          return Math.min(retries * 100, 5000);
+        },
+      },
+    }) as RedisClient;
+
+    redis.on("error", (err) => {
+      console.error("Redis error:", err);
+    });
+
+    await redis.connect();
+    connectionAttempts = 0;
+
+    if (process.env.NODE_ENV !== "production") {
+      global.redis = redis;
+    }
+
+    return true;
+  } catch (error) {
+    connectionAttempts++;
+    console.error(
+      `Redis connection failed (attempt ${connectionAttempts}):`,
+      error
+    );
+
+    if (connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
+      console.warn("Falling back to in-memory cache after connection failures");
+      redis = createFallbackClient();
+    }
+    return false;
   }
 }
 
-// Cache a result with a TTL
-// This function is used to cache results for a specific key with a time-to-live (TTL) value.
+// Initialize immediately
+let isRedisConnected = false;
+(async () => {
+  isRedisConnected = await initializeRedis();
+})();
+
+// Health check function
+export async function checkRedisHealth(): Promise<boolean> {
+  if (!redis) return false;
+
+  try {
+    if (redis.isOpen && redis.isReady) return true;
+
+    // Try to ping the server
+    await redis.ping();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Cache operations with automatic fallback
 export async function cacheResult<T>(
   key: string,
   ttl: number,
-  value: T
+  value: UsageResult | any
 ): Promise<void> {
   try {
-    if (!redis) {
-      throw new Error("Redis client not initialized");
+    // Verify connection health
+    if (!(await checkRedisHealth())) {
+      if (!isRedisConnected) {
+        isRedisConnected = await initializeRedis();
+      }
+
+      if (!isRedisConnected) {
+        throw new Error("Redis unavailable");
+      }
     }
 
-    // Only cache if we have a valid Redis connection or fallback
-    if (
-      redis.isOpen ||
-      (process.env.NODE_ENV !== "production" && !redis.isOpen)
-    ) {
-      const serialized = JSON.stringify(value);
-      await redis.setex(key, ttl, serialized);
-    }
+    await redis.setEx(key, ttl, JSON.stringify(value));
   } catch (error) {
     console.error(`Failed to cache result for key ${key}:`, error);
-    // Fail silently - caching should never break application flow
+    // Fallback to in-memory cache
+    fallbackCache.set(key, {
+      value: JSON.stringify(value),
+      expires: Date.now() + ttl * 1000,
+    });
   }
 }
 
-// Always connect in production
-if (process.env.NODE_ENV === "production") {
-  redis.connect().catch((err) => {
-    console.error("Failed to connect to Redis:", err);
-  });
+export async function getCached<T>(key: string): Promise<T | null> {
+  console.log("getCached", key);
+  try {
+    if (!(await checkRedisHealth())) {
+      if (!isRedisConnected) {
+        isRedisConnected = await initializeRedis();
+      }
+
+      if (!isRedisConnected) {
+        const fallback = fallbackCache.get(key);
+        console.log({ redisfallback: fallback });
+        return fallback ? JSON.parse(fallback.value) : null;
+      }
+    }
+
+    const result = await redis.get(key);
+    console.log({ redis: result });
+    return result ? JSON.parse(result) : null;
+  } catch (error) {
+    console.error(`Failed to get cached value for key ${key}:`, error);
+    const fallback = fallbackCache.get(key);
+    return fallback ? JSON.parse(fallback.value) : null;
+  }
+}
+
+export async function invalidateCache(key: string | string[]): Promise<void> {
+  try {
+    if (await checkRedisHealth()) {
+      await redis.del(key);
+    }
+
+    const keys = Array.isArray(key) ? key : [key];
+    keys.forEach((k) => fallbackCache.delete(k));
+  } catch (error) {
+    console.error("Cache invalidation failed:", error);
+  }
 }
 
 export { redis };

@@ -1,17 +1,19 @@
 import { query } from "@/lib/db";
-import { cachedOperation, cacheResult, redis } from "@/lib/redis"; // Make sure this path matches your project structure
+import { cacheResult, getCached, redis } from "@/lib/redis"; // Make sure this path matches your project structure
 
 const CACHE_TTL = 60 * 60; // 1 hour
 
-export async function checkUsageLimit(userId: string, quality: QualityType) {
-  const cacheKey = `usage:${userId}:${quality}`;
+export async function checkUsageLimit(
+  userId: string,
+  quality: QualityType
+): Promise<UsageResult> {
+  const cacheKey = `usage:${userId}:${quality}:${new Date().getMonth()}`;
 
   //Try cache first
   try {
-    const cached = await redis.get(cacheKey);
+    const cached = await getCached(cacheKey);
     if (cached) {
-      console.log(cached);
-      return JSON.parse(cached);
+      return cached as UsageResult;
     }
   } catch (error) {
     console.error("Cache read error:", error);
