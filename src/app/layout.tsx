@@ -8,10 +8,6 @@ import { PromptProvider } from "./context/PromptContext";
 import { HeaderProvider } from "@/app/context/HeaderContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
-import { currentUser } from "@clerk/nextjs/server";
-import registerUser from "./actions/registerUser";
-import { getAuthUser } from "./actions/getAuthUser";
-import { useUser } from "@clerk/nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
