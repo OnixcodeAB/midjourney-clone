@@ -34,6 +34,7 @@ import { BannerModal } from "./BannerModal";
 import { UserSettingsMenu } from "../User/UserSettingsMenu";
 import { checkOnboardingStatus } from "@/lib/db/controller/checkOnboardingStatus";
 
+
 // Menu items.
 const items = [
   { title: "Explore", url: "/", icon: Compass },
