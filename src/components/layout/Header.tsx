@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { BannerModal } from "./BannerModal";
 import { useUser } from "@clerk/nextjs";
 import { Textarea } from "../ui/textarea";
-import { checkOnboardingStatus } from "@/app/actions/checkOnboardingStatus";
+import { checkOnboardingStatus } from "@/lib/db/controller/checkOnboardingStatus";
 import { generateImageAndSave } from "@/app/actions/generateImageAndSaveV3";
 
 export default function Header() {
