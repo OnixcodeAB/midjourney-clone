@@ -32,7 +32,7 @@ import { useUser, useClerk } from "@clerk/nextjs";
 import Link from "next/link";
 import { BannerModal } from "./BannerModal";
 import { UserSettingsMenu } from "../User/UserSettingsMenu";
-import { checkOnboardingStatus } from "@/lib/db/controller/checkOnboardingStatus";
+import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
 
 // Menu items.
 const items = [

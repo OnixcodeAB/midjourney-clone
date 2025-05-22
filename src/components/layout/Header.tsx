@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { BannerModal } from "./BannerModal";
 import { useUser } from "@clerk/nextjs";
 import { Textarea } from "../ui/textarea";
-/* import { checkOnboardingStatus } from "@/lib/db/controller/checkOnboardingStatus"; */
+import { checkOnboardingStatus } from "@/lib/db/controller/checkOnboardingStatus";
 import { generateImageAndSave } from "@/app/actions/generateImageAndSaveV3";
 
 export default function Header() {
@@ -80,7 +80,7 @@ export default function Header() {
     };
   }, []);
 
-  /* const handleOnboarding = async () => {
+  const handleOnboarding = async () => {
     const onboarded = await checkOnboardingStatus(user?.id as string);
     console.log(onboarded);
     if (!onboarded) {
@@ -88,7 +88,7 @@ export default function Header() {
     } else {
       return;
     }
-  }; */
+  };
 
   const handleDropCapture = (e: React.DragEvent) => {
     const text = e.dataTransfer.getData("text/plain");
@@ -151,7 +151,7 @@ export default function Header() {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           onClick={() => {
-            /* handleOnboarding(); */
+            handleOnboarding();
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
