@@ -10,6 +10,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
 import { currentUser } from "@clerk/nextjs/server";
 import registerUser from "./actions/registerUser";
+import { getAuthUser } from "./actions/getAuthUser";
+import { useUser } from "@clerk/nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,23 +33,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let user = null;
-
-  try {
-    user = await currentUser();
-
-    if (user) {
-      const result = await registerUser({
-        id: user.id,
-        email: user.emailAddresses[0].emailAddress,
-        name: user.fullName,
-      });
-      console.log(result.message);
-    }
-  } catch (error) {
-    console.error("Error fetching user:", error);
-  }
-
   return (
     <ClerkProvider>
       <html lang="en">

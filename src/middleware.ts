@@ -1,4 +1,7 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import {
+  clerkMiddleware,
+  createRouteMatcher,
+} from "@clerk/nextjs/server";
 
 // Middleware to check if the user is authenticated before accessing protected routes
 const isProtectedRoute = createRouteMatcher([
