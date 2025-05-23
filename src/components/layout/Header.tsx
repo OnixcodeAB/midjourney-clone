@@ -19,6 +19,7 @@ import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
 import { generateImageAndSave } from "@/app/actions/generateImageAndSaveV3";
 import { Input } from "../ui/input";
 import AspectRatioPopover from "./AspectRatioPopover";
+import PresetPopover from "./PresetPopover";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
@@ -131,11 +132,11 @@ export default function Header() {
           {/* Image previews */}
           {previews.length > 0 &&
             previews.map((url, idx) => (
-              <div key={url} className="relative w-14 h-14">
+              <div key={url} className="relative">
                 <img
                   src={url}
                   alt={`preview-${idx}`}
-                  className="w-14 h-14 object-cover rounded-lg border"
+                  className="w-20 h-auto object-cover rounded-lg border"
                 />
                 <button
                   className="absolute top-1 right-1 bg-white rounded-full p-1 hover:bg-gray-100"
@@ -206,6 +207,7 @@ export default function Header() {
             </PopoverContent>
           </Popover>
           {/* Remix/Generate Button */}
+          <PresetPopover />
           <button
             className="ml-3 px-5 py-2 rounded-2xl bg-black text-white font-semibold hover:bg-gray-900 transition"
             onClick={handleGenerate}
