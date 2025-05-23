@@ -3,29 +3,31 @@ import { useEffect, useState } from "react";
 import { usePrompt } from "@/app/context/PromptContext";
 import { useHeaderSettings } from "@/app/context/HeaderContext";
 import { useDropzone } from "react-dropzone";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "../ui/textarea";
+import { Image, Plus, SlidersHorizontal, Square, Trash2 } from "lucide-react";
+import ImageSizeSelector from "./ImageSizeSelector";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { Image, Lock, SlidersHorizontal, Trash2 } from "lucide-react";
-import ImageSizeSelector from "./ImageSizeSelector";
-
 import { useRouter } from "next/navigation";
 import { BannerModal } from "./BannerModal";
 import { useUser } from "@clerk/nextjs";
-import { Textarea } from "../ui/textarea";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
 import { generateImageAndSave } from "@/app/actions/generateImageAndSaveV3";
+import { Input } from "../ui/input";
+import AspectRatioPopover from "./AspectRatioPopover";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
   const { prompt, setPrompt } = usePrompt();
   const { ratio, quality } = useHeaderSettings();
-  const [preview, setPreview] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
+
+  // Multi-image support
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [fileNames, setFileNames] = useState<string[]>([]);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
   const { getRootProps, getInputProps, open } = useDropzone({
@@ -34,26 +36,25 @@ export default function Header() {
     },
     noClick: true,
     noKeyboard: true,
-    maxFiles: 1,
+    maxFiles: 10, // Adjust as needed
     onDrop: (files) => {
-      const file = files[0];
-      if (file) {
-        const previewUrl = URL.createObjectURL(file);
-        setPreview(previewUrl);
-        setFileName(file.name);
-      }
+      const urls = files.map((file) => URL.createObjectURL(file));
+      setPreviews((prev) => [...prev, ...urls]);
+      setFileNames((prev) => [...prev, ...files.map((f) => f.name)]);
     },
   });
 
   const router = useRouter();
   const { user } = useUser();
 
-  // cleanup preview
+  // Cleanup all blob URLs on unmount
   useEffect(() => {
     return () => {
-      if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
+      previews.forEach((preview) => {
+        if (preview.startsWith("blob:")) URL.revokeObjectURL(preview);
+      });
     };
-  }, [preview]);
+  }, [previews]);
 
   useEffect(() => {
     const handleDragEnter = (e: DragEvent) => {
@@ -82,46 +83,32 @@ export default function Header() {
 
   const handleOnboarding = async () => {
     const onboarded = await checkOnboardingStatus(user?.id as string);
-    console.log(onboarded);
-    if (!onboarded) {
-      setIsEditing(true);
-    } else {
-      return;
-    }
+    if (!onboarded) setIsEditing(true);
   };
 
   const handleDropCapture = (e: React.DragEvent) => {
     const text = e.dataTransfer.getData("text/plain");
     if (text.startsWith("http")) {
-      setPreview(text); // handle image dropped from grid
+      setPreviews((prev) => [...prev, text]);
     }
   };
 
   const handleGenerate = async () => {
-    // Don't allow empty prompt
     if (!prompt.trim()) {
       toast.error("Prompt required", {
         description: "Please enter some text before generating an image.",
       });
       return;
     }
-
     const originalPrompt = prompt;
-
-    // Optimistically clear the prompt
     setPrompt("");
-
-    // 1) Kick off the server action (don’t await it yet)
     const promise = generateImageAndSave({
       prompt,
       aspect: ratio || undefined,
       quality,
+      // You can also pass previews here if needed for your logic
     });
-
-    // 2) Immediately navigate to /create
     router.push("/create");
-
-    // 3) Now await your save; if it fails, restore the prompt
     const result = await promise;
     if (!result?.success) {
       setPrompt(originalPrompt);
@@ -133,80 +120,102 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky inset-0 z-50 bg-[#fcfcfd] flex flex-col items-start top-2 border-2 rounded-lg px-3 mx-2 py-1 shadow-lg transition-colors duration-300 ${
-        isDraggingFile ? "border-blue-500" : "border-gray-200"
+      className={`sticky inset-0 bottom-4 z-50 w-full flex flex-col items-center pb-2 ${
+        isDraggingFile ? "border-blue-500" : "border-transparent"
       }`}
       onDropCapture={handleDropCapture}
     >
-      <div
-        {...getRootProps()}
-        className={`relative w-full flex items-center ${
-          prompt.trim() ? "" : "h-10"
-        }`}
-      >
-        <Image className="text-gray-400 size-6 cursor-pointer" onClick={open} />
-        <input {...getInputProps()} className="hidden" />
+      <div className="flex flex-col items-center w-full h-fit max-w-4xl rounded-2xl bg-white border-2 border-gray-200 px-4 py-2 gap-3 shadow-lg">
+        {/* Upload image button & preview */}
+        <div {...getRootProps()} className="flex items-start gap-2">
+          {/* Image previews */}
+          {previews.length > 0 &&
+            previews.map((url, idx) => (
+              <div key={url} className="relative w-14 h-14">
+                <img
+                  src={url}
+                  alt={`preview-${idx}`}
+                  className="w-14 h-14 object-cover rounded-lg border"
+                />
+                <button
+                  className="absolute top-1 right-1 bg-white rounded-full p-1 hover:bg-gray-100"
+                  type="button"
+                  title="Remove"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPreviews((pre) => pre.filter((_, i) => i !== idx));
+                    setFileNames((names) => names.filter((_, i) => i !== idx));
+                  }}
+                >
+                  <Trash2 className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+            ))}
+          {/* Upload button if no previews */}
 
-        <Textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          onClick={() => {
-            handleOnboarding();
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleGenerate();
-            }
-          }}
-          className={`resize-none w-full  leading-10  border-none outline-none focus:outline-none focus-visible:ring-0 placeholder:text-[15px] placeholder:text-gray-400 ${
-            prompt.trim() ? "max-h-35" : ""
-          }`}
-          placeholder="Log in to start creating.."
-        />
+          <input {...getInputProps()} className="hidden" />
+        </div>
 
-        <Popover modal>
-          <PopoverTrigger>
-            <SlidersHorizontal className="text-gray-400 size-6 cursor-pointer" />
-          </PopoverTrigger>
-          <PopoverContent>
-            <ImageSizeSelector />
-          </PopoverContent>
-        </Popover>
+        <div className="w-full flex items-center gap-2">
+          {/* Upload button */}
+          <button
+            type="button"
+            className="p-[3px] bg-gray-100 rounded-lg hover:bg-gray-200"
+            onClick={open}
+            title="Add images"
+          >
+            <Plus className="w-5 h-5 text-gray-500" />
+          </button>
+          {/* Prompt input */}
+          <Input
+            className="border-none bg-transparent text-base placeholder:text-gray-400"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onClick={handleOnboarding}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleGenerate();
+              }
+            }}
+            placeholder="Describe your image..."
+          />
+          {/* Buttons for aspect ratio / format / settings */}
+        </div>
+        <div className="flex items-center gap-4 ml-2">
+          {/* Example: 1:1, 1v, settings, etc. */}
+          <AspectRatioPopover/>
+          <button
+            type="button"
+            aria-label="version"
+            className="px-2 py-1 rounded-lg text-sm bg-gray-100 hover:bg-gray-200"
+          >
+            1v
+          </button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                aria-label="btn-select"
+                className="px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200"
+              >
+                <SlidersHorizontal className="w-5 h-5 text-gray-500" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-fit">
+              <ImageSizeSelector />
+            </PopoverContent>
+          </Popover>
+          {/* Remix/Generate Button */}
+          <button
+            className="ml-3 px-5 py-2 rounded-2xl bg-black text-white font-semibold hover:bg-gray-900 transition"
+            onClick={handleGenerate}
+          >
+            Remix
+          </button>
+        </div>
       </div>
 
-      {/* Thumbnail preview */}
-      {preview && (
-        <div className="w-full mt-2 ml-1 flex item-start justify-between gap-2 py-2 bg-[#fcfcfd]">
-          <img
-            src={preview}
-            alt="preview"
-            className="w-20 h-20 object-cover rounded-md border"
-          />
-          <div className="flex flex-col gap-2 text-gray-400">
-            <button
-              type="button"
-              aria-label="btn-preview-lock"
-              className="btn-preview"
-            >
-              <Lock className="size-5 " />
-            </button>
-            <button
-              type="reset"
-              aria-label="btn-preview-reset"
-              className="btn-preview"
-            >
-              <Trash2 className="size-5" onClick={() => setPreview(null)} />
-            </button>
-          </div>
-        </div>
-      )}
-      <BannerModal
-        isOpen={isEditing}
-        onClose={() => {
-          setIsEditing(false);
-        }}
-      />
+      <BannerModal isOpen={isEditing} onClose={() => setIsEditing(false)} />
     </header>
   );
 }

@@ -40,8 +40,8 @@ export default async function RootLayout({
               <AppSidebar />
               <HeaderProvider>
                 <div className="relative flex-1 z-10">
-                  <Header />
                   {children}
+                  <Header />
                 </div>
                 <Toaster position="bottom-right" richColors />
               </HeaderProvider>

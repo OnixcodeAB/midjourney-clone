@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from "react";
 
-export type AspectType = "square" | "portrait" | "landscape";
+export type AspectType = "1:1" | "2:3" | "3:2";
 export type AspectRatio =
   | "1024x1024"
   | "1024x1536"
@@ -24,7 +24,7 @@ interface HeaderContextType {
 const HeaderContext = createContext<HeaderContextType | undefined>(undefined);
 
 export function HeaderProvider({ children }: { children: React.ReactNode }) {
-  const [aspect, setAspect] = useState<AspectType>("landscape");
+  const [aspect, setAspect] = useState<AspectType>("1:1");
   const [size, setSize] = useState<number>(80);
   const [ratio, setRatio] = useState<AspectRatio>("1536x1024");
   const [quality, setQuality] = useState<QualityType>("low");
