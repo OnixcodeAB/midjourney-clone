@@ -36,7 +36,7 @@ export default function AspectRatioPopover() {
         <button
           type="button"
           aria-label="aspect ratio"
-          className="flex gap-1 items-center px-2 py-1 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm"
+          className="flex gap-1 items-center px-2 py-1 rounded-lg bg-gray-200 hover:bg-gray-300 text-black text-sm"
         >
           {/* Dynamic icon */}
           {selected.icon}

@@ -1,10 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { usePrompt } from "@/app/context/PromptContext";
 import { useHeaderSettings } from "@/app/context/HeaderContext";
 import { useDropzone } from "react-dropzone";
 import { Textarea } from "../ui/textarea";
-import { Image, Plus, SlidersHorizontal, Square, Trash2 } from "lucide-react";
+import {
+  Image,
+  MoveUp,
+  Plus,
+  SlidersHorizontal,
+  Square,
+  Trash2,
+} from "lucide-react";
 import ImageSizeSelector from "./ImageSizeSelector";
 import {
   Popover,
@@ -20,11 +28,14 @@ import { generateImageAndSave } from "@/app/actions/generateImageAndSaveV3";
 import { Input } from "../ui/input";
 import AspectRatioPopover from "./AspectRatioPopover";
 import PresetPopover from "./PresetPopover";
+import HelpPopover from "./helpPopoever";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
   const { prompt, setPrompt } = usePrompt();
   const { ratio, quality } = useHeaderSettings();
+
+  const pathname = usePathname();
 
   // Multi-image support
   const [previews, setPreviews] = useState<string[]>([]);
@@ -119,6 +130,8 @@ export default function Header() {
     }
   };
 
+  if (pathname !== "/") return null;
+
   return (
     <header
       className={`sticky inset-0 bottom-4 z-50 w-full flex flex-col items-center pb-2 ${
@@ -126,7 +139,7 @@ export default function Header() {
       }`}
       onDropCapture={handleDropCapture}
     >
-      <div className="flex flex-col items-center w-full h-fit max-w-4xl rounded-2xl bg-white border-2 border-gray-200 px-4 py-2 gap-3 shadow-lg">
+      <div className="flex flex-col items-center w-full h-fit max-w-3xl rounded-2xl bg-white border-2 border-gray-200 px-4 py-2 gap-3 shadow-lg">
         {/* Upload image button & preview */}
         <div {...getRootProps()} className="flex items-start gap-2">
           {/* Image previews */}
@@ -165,7 +178,7 @@ export default function Header() {
             onClick={open}
             title="Add images"
           >
-            <Plus className="w-5 h-5 text-gray-500" />
+            <Plus className="w-5 h-5 text-black" />
           </button>
           {/* Prompt input */}
           <Input
@@ -183,36 +196,40 @@ export default function Header() {
           />
           {/* Buttons for aspect ratio / format / settings */}
         </div>
-        <div className="flex items-center gap-4 ml-2">
+        <div className="w-full flex justify-between gap-4 ml-2">
           {/* Example: 1:1, 1v, settings, etc. */}
-          <AspectRatioPopover/>
+          <div className="flex gap-4">
+            <AspectRatioPopover />
+            <button
+              type="button"
+              aria-label="version"
+              className="px-2 py-1 rounded-lg text-black text-sm bg-gray-100 hover:bg-gray-200"
+            >
+              1v
+            </button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  aria-label="btn-select"
+                  className="px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200"
+                >
+                  <SlidersHorizontal className="w-5 h-5 text-gray-500" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-fit">
+                <ImageSizeSelector />
+              </PopoverContent>
+            </Popover>
+            <PresetPopover />
+            {/* Remix/Generate Button */}
+            <HelpPopover />
+          </div>
           <button
             type="button"
-            aria-label="version"
-            className="px-2 py-1 rounded-lg text-sm bg-gray-100 hover:bg-gray-200"
+            aria-label="Presets"
+            className="flex gap-1 items-center p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm"
           >
-            1v
-          </button>
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                aria-label="btn-select"
-                className="px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200"
-              >
-                <SlidersHorizontal className="w-5 h-5 text-gray-500" />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-fit">
-              <ImageSizeSelector />
-            </PopoverContent>
-          </Popover>
-          {/* Remix/Generate Button */}
-          <PresetPopover />
-          <button
-            className="ml-3 px-5 py-2 rounded-2xl bg-black text-white font-semibold hover:bg-gray-900 transition"
-            onClick={handleGenerate}
-          >
-            Remix
+            <MoveUp size={20} />
           </button>
         </div>
       </div>

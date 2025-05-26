@@ -64,10 +64,11 @@ export default function PresetPopover() {
           <BookText className="w-5 h-5" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-72 p-0">
+      <PopoverContent className="w-72 p-2">
         <div className="flex justify-between items-center px-4 pt-2 pb-1">
           <span className="text-xs text-gray-500 font-semibold">Presets</span>
           <button
+          type="button"
             className="text-xs text-blue-500 hover:underline"
             tabIndex={-1}
             // Add handler if you want a manage dialog
@@ -75,13 +76,13 @@ export default function PresetPopover() {
             Manage
           </button>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
           {presets.map((opt) => (
             <button
               key={opt.value}
               className={`
-                flex items-center justify-between px-3 py-2 text-base 
-                hover:bg-gray-100 focus:bg-gray-100
+                flex items-center justify-between px-3 py-2 text-base rounded-lg 
+                hover:bg-gray-200 focus:bg-gray-100
                 ${preset === opt.value ? "bg-gray-100 font-semibold" : ""}
               `}
               onClick={() => {
