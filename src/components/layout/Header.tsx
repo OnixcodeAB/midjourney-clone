@@ -4,13 +4,10 @@ import { usePathname } from "next/navigation";
 import { usePrompt } from "@/app/context/PromptContext";
 import { useHeaderSettings } from "@/app/context/HeaderContext";
 import { useDropzone } from "react-dropzone";
-import { Textarea } from "../ui/textarea";
 import {
-  Image,
   MoveUp,
   Plus,
   SlidersHorizontal,
-  Square,
   Trash2,
 } from "lucide-react";
 import ImageSizeSelector from "./ImageSizeSelector";
@@ -29,7 +26,6 @@ import { Input } from "../ui/input";
 import AspectRatioPopover from "./AspectRatioPopover";
 import PresetPopover from "./PresetPopover";
 import HelpPopover from "./helpPopoever";
-import { Tooltip } from "@radix-ui/react-tooltip";
 import TooltipButton from "./button/TooltipButton";
 
 export default function Header() {
@@ -133,6 +129,7 @@ export default function Header() {
   };
 
   if (pathname !== "/") return null;
+  if (!user?.id) return null; // Ensure user is authenticated
 
   return (
     <header
