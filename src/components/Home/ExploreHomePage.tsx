@@ -32,13 +32,13 @@ export const ExploreHomePage = ({ images }: Props) => {
   // Memoize displayed images
   const displayed = useMemo(() => {
     if (!filter) return images;
-    const searchLower = filter.searchText?.toLowerCase();
-    console.log(searchLower, filter.tags);
-    return images.filter(
-      (img) =>
-        img.search_text?.toLowerCase().includes(searchLower) ||
-        img.tags.some((t) => filter.tags.includes(t))
-    );
+    const searchLower = filter.searchText?.toLowerCase() || "";
+    return images.filter((img) => {
+      const imgSearch = img.search_text?.toLowerCase() || "";
+      const matchesText = imgSearch.includes(searchLower);
+      const matchesTag = img.tags.some((t) => filter.tags.includes(t));
+      return matchesText || matchesTag;
+    });
   }, [images, filter]);
 
   // Handlers
