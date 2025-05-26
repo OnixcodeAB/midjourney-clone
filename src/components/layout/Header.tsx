@@ -29,6 +29,8 @@ import { Input } from "../ui/input";
 import AspectRatioPopover from "./AspectRatioPopover";
 import PresetPopover from "./PresetPopover";
 import HelpPopover from "./helpPopoever";
+import { Tooltip } from "@radix-ui/react-tooltip";
+import TooltipButton from "./button/TooltipButton";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
@@ -196,7 +198,7 @@ export default function Header() {
           />
           {/* Buttons for aspect ratio / format / settings */}
         </div>
-        <div className="w-full flex justify-between gap-4 ml-2">
+        <div className="w-full flex justify-between gap-4 mx-2">
           {/* Example: 1:1, 1v, settings, etc. */}
           <div className="flex gap-4">
             <AspectRatioPopover />
@@ -224,14 +226,14 @@ export default function Header() {
             {/* Remix/Generate Button */}
             <HelpPopover />
           </div>
-          <button
-            type="button"
-            aria-label="Generate"
-            className="flex gap-1 items-center p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm"
+
+          <TooltipButton
+            tooltipText="Generate"
             onClick={handleGenerate}
+            icon={<MoveUp size={20} />}
           >
-            <MoveUp size={20} />
-          </button>
+            {/* "" */}
+          </TooltipButton>
         </div>
       </div>
 
