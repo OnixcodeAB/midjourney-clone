@@ -226,8 +226,9 @@ export default function Header() {
           </div>
           <button
             type="button"
-            aria-label="Presets"
+            aria-label="Generate"
             className="flex gap-1 items-center p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm"
+            onClick={handleGenerate}
           >
             <MoveUp size={20} />
           </button>

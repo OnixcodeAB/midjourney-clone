@@ -43,15 +43,15 @@ export default function AspectRatioPopover() {
           {selected.label}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-xs p-2">
-        <div className="p-2 pb-0 text-xs text-gray-500 font-semibold">
+      <PopoverContent className="w-3xs p-2">
+        <div className="p-2 pb-0  text-gray-500 ">
           Aspect ratio
         </div>
         <div className="flex flex-col gap-2 mt-2">
           {aspectRatios.map((opt) => (
             <button
               key={opt.value}
-              className={`flex items-center justify-between px-3 py-2 text-base hover:bg-gray-200 focus:bg-gray-100 rounded-lg
+              className={`flex items-center justify-between px-3 py-2 text-base hover:bg-gray-200  rounded-lg
                 ${aspect === opt.value ? "bg-gray-100 font-semibold" : ""}`}
               onClick={() => {
                 setAspect(opt.value as AspectType);
