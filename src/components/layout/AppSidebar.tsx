@@ -19,12 +19,9 @@ import {
   CircleHelp,
   CircleUserRound,
   Compass,
-  Ellipsis,
   Globe,
-  Image,
   PaintbrushVertical,
   SquarePen,
-  Sun,
   SwatchBook,
   ThumbsUp,
 } from "lucide-react";
@@ -33,7 +30,6 @@ import Link from "next/link";
 import { BannerModal } from "./BannerModal";
 import { UserSettingsMenu } from "../User/UserSettingsMenu";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
-
 
 // Menu items.
 const items = [
@@ -46,7 +42,6 @@ const items = [
 ];
 
 const itemsFooter = [
-  
   { title: "Help", url: "/help", icon: CircleHelp },
   { title: "Update", url: "/update", icon: Bell },
 ];
@@ -66,7 +61,7 @@ export default function AppSidebar() {
       url.startsWith("/auth") ||
       url == "/help" ||
       url == "/subscription" ||
-      url == "/update" 
+      url == "/update"
     ) {
       setIsEditing(false);
       router.push(url);
@@ -85,7 +80,6 @@ export default function AppSidebar() {
       }
     } else {
       setIsEditing(true);
-      router.push(url);
     }
   };
 

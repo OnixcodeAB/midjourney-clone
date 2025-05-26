@@ -15,6 +15,7 @@ interface Props {
   children?: React.ReactNode; // 👈 added
   imgClassName?: string;
   handleOnClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => void;
+  handleOnSearch?: () => void;
 }
 
 export default function ImageCard({
@@ -25,6 +26,7 @@ export default function ImageCard({
   imgClassName = "h-auto",
   children,
   handleOnClick,
+  handleOnSearch,
 }: Props) {
   const [liked, setLiked] = useState(false);
   return (
@@ -53,6 +55,7 @@ export default function ImageCard({
               transition
               flex items-center justify-center
             "
+                  onClick={handleOnSearch}
                 >
                   <Search size={18} strokeWidth={3} />
                 </button>

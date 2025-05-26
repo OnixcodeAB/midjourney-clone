@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Masonry from "react-masonry-css";
 import ImageCard from "@/components/Home/ImageCard";
+import { LayoutPanelTop, X } from "lucide-react";
 
 interface ImageExplorePage {
   id: number;
@@ -11,6 +12,8 @@ interface ImageExplorePage {
   alt: string;
   author: string;
   description: string;
+  search_text: string;
+  tags: string[];
 }
 
 interface Props {
@@ -18,7 +21,30 @@ interface Props {
 }
 
 export const ExploreHomePage = ({ images }: Props) => {
+  // Local filter state
+  const [filter, setFilter] = useState<{
+    searchText: string;
+    tags: string[];
+  } | null>(null);
+
   const router = useRouter();
+
+  // Memoize displayed images
+  const displayed = useMemo(() => {
+    if (!filter) return images;
+    const searchLower = filter.searchText?.toLowerCase();
+    console.log(searchLower, filter.tags);
+    return images.filter(
+      (img) =>
+        img.search_text?.toLowerCase().includes(searchLower) ||
+        img.tags.some((t) => filter.tags.includes(t))
+    );
+  }, [images, filter]);
+
+  // Handlers
+  const handleSearch = useCallback((searchText: string, tags: string[]) => {
+    setFilter({ searchText, tags });
+  }, []);
 
   const handleClick = (id: number) => {
     router.push(`/jobs/img_${id}`);
@@ -32,26 +58,45 @@ export const ExploreHomePage = ({ images }: Props) => {
   };
 
   return (
-    <Masonry
-      breakpointCols={breakpointCols}
-      className="flex w-auto"
-      columnClassName="my-masonry-grid_column"
-    >
-      {images.map((img) => (
-        <div
-          key={img.id}
-          /* onClick={() => handleClick(img.id)} */
-          className="cursor-pointer"
-        >
-          <ImageCard
-            src={img.url}
-            alt={img.alt}
-            author={img.author}
-            description={img.description}
-            handleOnClick={() => handleClick(img.id)}
-          />
+    <div className="z-10">
+      {filter && (
+        <div className="sticky top-4 m-0 ml-1.5 left-0 z-50 flex items-center w-fit bg-white/50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 px-3 py-2 rounded-r-full shadow-md gap-2  mb-4">
+          <LayoutPanelTop className="w-5 h-5  opacity-90" />
+          <span className="font-medium">{filter.searchText}</span>
+          <button
+            type="button"
+            className="ml-1 p-1 rounded-full hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
+            onClick={() => setFilter(null)}
+            aria-label="Clear search"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
-      ))}
-    </Masonry>
+      )}
+      <Masonry
+        breakpointCols={breakpointCols}
+        className="flex w-auto"
+        columnClassName="my-masonry-grid_column"
+      >
+        {displayed.map((img) => (
+          <div
+            key={img.id}
+            /* onClick={() => handleClick(img.id)} */
+            className="cursor-pointer"
+          >
+            <ImageCard
+              src={img.url}
+              alt={img.alt}
+              author={img.author}
+              description={img.description}
+              handleOnClick={() => handleClick(img.id)}
+              handleOnSearch={() =>
+                handleSearch(img.search_text ?? "", img.tags)
+              }
+            />
+          </div>
+        ))}
+      </Masonry>
+    </div>
   );
 };

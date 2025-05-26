@@ -62,13 +62,6 @@ export default function PresetPopover() {
           onClick={() => setOpen(!open)}
           icon={<BookText className="w-5 h-5" />}
         />
-        {/*  <button
-          type="button"
-          aria-label="Presets"
-          className="flex gap-1 items-center p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm"
-        >
-          <BookText className="w-5 h-5" />
-        </button> */}
       </PopoverTrigger>
       <PopoverContent className="w-72 p-2">
         <div className="flex justify-between items-center px-4 pt-2 pb-1">
