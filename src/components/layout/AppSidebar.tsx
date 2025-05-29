@@ -30,13 +30,14 @@ import Link from "next/link";
 import { BannerModal } from "./BannerModal";
 import { UserSettingsMenu } from "../User/UserSettingsMenu";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
+import { OrganizeSidebarFolders } from "../organizer/OrganizeSidebarFolders";
 
 // Menu items.
 const items = [
   { title: "Explore", url: "/", icon: Compass },
   { title: "Create", url: "/create", icon: PaintbrushVertical },
   { title: "Edit", url: "/edit", icon: SquarePen },
-  { title: "Personalize", url: "/personalize", icon: SwatchBook },
+  { title: "organize", url: "/organize", icon: SwatchBook },
   { title: "Surveys", url: "/surveys", icon: ThumbsUp },
   { title: "Subscribe", url: "/subscription", icon: CircleUserRound },
 ];
@@ -46,7 +47,12 @@ const itemsFooter = [
   { title: "Update", url: "/update", icon: Bell },
 ];
 
+const initialFolders: FolderType[] = [];
+
 export default function AppSidebar() {
+  const [folders, setFolders] = useState<FolderType[]>(initialFolders);
+  const [selectedFolder, setSelectedFolder] = useState<string>(folders[0]?.id);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const { state } = useSidebar();
   const pathname = usePathname();
@@ -83,6 +89,28 @@ export default function AppSidebar() {
     }
   };
 
+  // Handlers to pass down
+  const handleAdd = () => {
+    const newId = Date.now().toString();
+    setFolders([...folders, { id: newId, name: "Untitled folder", items: [] }]);
+    setSelectedFolder(newId);
+    setEditingId(newId);
+  };
+
+  const handleRename = (id: string, name: string) => {
+    setFolders(folders.map((f) => (f.id === id ? { ...f, name } : f)));
+    setEditingId(null);
+  };
+
+  const handleDelete = (id: string) => {
+    setFolders(folders.filter((f) => f.id !== id));
+    if (selectedFolder === id && folders.length > 1) {
+      setSelectedFolder(folders[0].id);
+    }
+  };
+
+  const handleEdit = (id: string) => setEditingId(id);
+
   return (
     <>
       <Sidebar variant="inset" collapsible="icon">
@@ -116,6 +144,16 @@ export default function AppSidebar() {
                     </SidebarMenuItem>
                   );
                 })}
+                <OrganizeSidebarFolders
+                  folders={folders}
+                  selectedFolder={selectedFolder}
+                  onSelect={setSelectedFolder}
+                  onAdd={handleAdd}
+                  onDelete={handleDelete}
+                  onEdit={handleEdit}
+                  editingId={editingId}
+                  onRename={handleRename}
+                />
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

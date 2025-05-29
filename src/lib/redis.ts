@@ -162,7 +162,7 @@ export async function cacheResult<T>(
 }
 
 export async function getCached<T>(key: string): Promise<T | null> {
-  console.log("getCached", key);
+  /* console.log("getCached", key); */
   try {
     if (!(await checkRedisHealth())) {
       if (!isRedisConnected) {
@@ -171,13 +171,13 @@ export async function getCached<T>(key: string): Promise<T | null> {
 
       if (!isRedisConnected) {
         const fallback = fallbackCache.get(key);
-        console.log({ redisfallback: fallback });
+        /* console.log({ redisfallback: fallback }); */
         return fallback ? JSON.parse(fallback.value) : null;
       }
     }
 
     const result = await redis.get(key);
-    console.log({ redis: result });
+    /* console.log({ redis: result }); */
     return result ? JSON.parse(result) : null;
   } catch (error) {
     console.error(`Failed to get cached value for key ${key}:`, error);
