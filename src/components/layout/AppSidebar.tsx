@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { startTransition, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Sidebar,
@@ -31,6 +31,8 @@ import { BannerModal } from "./BannerModal";
 import { UserSettingsMenu } from "../User/UserSettingsMenu";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
 import { OrganizeSidebarFolders } from "../organizer/OrganizeSidebarFolders";
+import { addFolder } from "@/app/actions/folders/addFolder";
+import { renameFolder } from "@/app/actions/folders/renameFolder";
 
 // Menu items.
 const items = [
@@ -58,6 +60,27 @@ export default function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
+
+  // Fetch folders from the server if not already loaded
+  React.useEffect(() => {
+    const fetchFolders = async () => {
+      try {
+        const response = await fetch("/api/folder");
+        if (!response.ok) throw new Error("Failed to fetch folders");
+        const data: FolderType[] = await response.json();
+        setFolders(data);
+        if (data.length > 0) {
+          setSelectedFolder(data[0].id);
+        }
+      } catch (error) {
+        console.error("Error fetching folders:", error);
+      }
+    };
+
+    if (folders.length === 0) {
+      fetchFolders();
+    }
+  }, [folders.length]);
 
   // Handle navigation to the selected URL
   const handleNavigation = async (url: string) => {
@@ -89,17 +112,41 @@ export default function AppSidebar() {
     }
   };
 
-  // Handlers to pass down
+  // Handlers
+
+  // Add a new folder
   const handleAdd = () => {
-    const newId = Date.now().toString();
-    setFolders([...folders, { id: newId, name: "Untitled folder", items: [] }]);
-    setSelectedFolder(newId);
-    setEditingId(newId);
+    startTransition(async () => {
+      try {
+        const newFolder = await addFolder("New Folder");
+        setFolders((folders) => [...folders, newFolder]);
+        setSelectedFolder(newFolder.id);
+        setEditingId(newFolder.id);
+      } catch (error) {
+        console.error("Error creating folder:", error);
+      }
+    });
   };
 
-  const handleRename = (id: string, name: string) => {
-    setFolders(folders.map((f) => (f.id === id ? { ...f, name } : f)));
-    setEditingId(null);
+  // Rename an existing folder
+  const handleRename = (id: string, newName: string) => {
+    if (!newName || newName.trim() === "") {
+      console.error("Folder name cannot be empty");
+      return;
+    }
+    startTransition(async () => {
+      try {
+        const updatedFolder = await renameFolder(id, newName);
+        setFolders((folders) =>
+          folders.map((folder) =>
+            folder.id === id ? { ...folder, name: updatedFolder.name } : folder
+          )
+        );
+        setEditingId(null);
+      } catch (error) {
+        console.error("Error renaming folder:", error);
+      }
+    });
   };
 
   const handleDelete = (id: string) => {

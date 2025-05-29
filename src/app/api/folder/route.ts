@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
     // If not in cache, query the database
     const { rows } = await query(
-      `SELECT * FROM folders WHERE user_id = $1 ORDER BY created_at DESC`,
+      `SELECT * FROM "Folders" WHERE user_id = $1 ORDER BY created_at DESC`,
       [userId]
     );
 
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { rows } = await query(
-      `INSERT INTO folders (user_id, name) VALUES ($1, $2) RETURNING *`,
+      `INSERT INTO "Folders" (user_id, name) VALUES ($1, $2) RETURNING *`,
       [userId, name]
     );
 
