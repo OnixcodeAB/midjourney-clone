@@ -30,7 +30,7 @@ import Link from "next/link";
 import { BannerModal } from "./BannerModal";
 import { UserSettingsMenu } from "../User/UserSettingsMenu";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
-import { OrganizeSidebarFolders } from "../organizer/OrganizeSidebarFolders";
+import { FoldersSidebar } from "../folder/FoldersSidebar";
 import { addFolder } from "@/app/actions/folders/addFolder";
 import { renameFolder } from "@/app/actions/folders/renameFolder";
 
@@ -191,7 +191,7 @@ export default function AppSidebar() {
                     </SidebarMenuItem>
                   );
                 })}
-                <OrganizeSidebarFolders
+                <FoldersSidebar
                   folders={folders}
                   selectedFolder={selectedFolder}
                   onSelect={setSelectedFolder}

@@ -9,7 +9,7 @@ interface ChatCompletionMessageToolCall {
 }
 declare global {
   type QualityType = "low" | "medium" | "high";
-  
+
   type UsageResult = {
     allowed: boolean;
     error?: string;
@@ -23,4 +23,14 @@ declare global {
     name: string;
     items: { id: string; url: string; type: "image" | "video" }[];
   };
+
+  interface FolderItem {
+    id: string;
+    image_id: string;
+    image_title: string;
+    url: string;
+    type: "image" | "video";
+    folder_id: string;
+    created_at: string;
+  }
 }

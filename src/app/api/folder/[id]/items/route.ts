@@ -3,17 +3,6 @@ import { query } from "@/lib/db";
 import { cacheResult, getCached, invalidateCache } from "@/lib/redis";
 import { getAuth } from "@clerk/nextjs/server";
 
-// Define the ItemType interface according to your items table structure
-interface ItemType {
-  id: string;
-  image_id: string;
-  image_title: string;
-  url: string;
-  type: "image" | "video"; // Assuming type can be either 'image' or 'video'
-  folder_id: string;
-  created_at: string;
-  // Add other fields as needed
-}
 
 // GET items in folder
 export async function GET(
@@ -32,7 +21,7 @@ export async function GET(
     const cacheTTL = 3600; // 1 hour
 
     // Try to get the cached items
-    const cachedItems = await getCached<ItemType[]>(cacheKey);
+    const cachedItems = await getCached<FolderItem[]>(cacheKey);
     if (cachedItems !== null) {
       return NextResponse.json(cachedItems);
     }
@@ -41,12 +30,12 @@ export async function GET(
     const { rows } = await query(
       `SELECT fi.id, fi.image_id, fi.image_title fi.url, fi.type
      FROM "FolderItem" fi
-     JOIN "Folder" f ON fi.folder_id = f.id
+     JOIN "Folders" f ON fi.folder_id = f.id
      WHERE fi.folder_id = $1 AND f.user_id = $2`,
       [folderId, userId]
     );
 
-    const items: ItemType[] = rows;
+    const items: FolderItem[] = rows;
 
     // Cache the result
     await cacheResult(cacheKey, cacheTTL, items);
@@ -86,7 +75,7 @@ export async function POST(
       [image_id, image_title, url, type, folderId]
     );
 
-    const newItem: ItemType = rows[0];
+    const newItem: FolderItem = rows[0];
 
     if (!newItem) {
       return NextResponse.json(
