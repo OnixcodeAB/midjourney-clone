@@ -36,9 +36,9 @@ export default async function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <PromptProvider>
-            <SidebarProvider>
-              <FolderProvider>
+          <FolderProvider>
+            <PromptProvider>
+              <SidebarProvider>
                 <AppSidebar />
                 <HeaderProvider>
                   <div className="relative flex-1 z-10">
@@ -47,9 +47,9 @@ export default async function RootLayout({
                   </div>
                   <Toaster position="bottom-right" richColors />
                 </HeaderProvider>
-              </FolderProvider>
-            </SidebarProvider>
-          </PromptProvider>
+              </SidebarProvider>
+            </PromptProvider>
+          </FolderProvider>
         </body>
       </html>
     </ClerkProvider>
