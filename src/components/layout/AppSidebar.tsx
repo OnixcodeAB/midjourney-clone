@@ -49,38 +49,12 @@ const itemsFooter = [
   { title: "Update", url: "/update", icon: Bell },
 ];
 
-const initialFolders: FolderType[] = [];
-
 export default function AppSidebar() {
-  const [folders, setFolders] = useState<FolderType[]>(initialFolders);
-  const [selectedFolder, setSelectedFolder] = useState<string>(folders[0]?.id);
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const { state } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
-
-  // Fetch folders from the server if not already loaded
-  React.useEffect(() => {
-    const fetchFolders = async () => {
-      try {
-        const response = await fetch("/api/folder");
-        if (!response.ok) throw new Error("Failed to fetch folders");
-        const data: FolderType[] = await response.json();
-        setFolders(data);
-        if (data.length > 0) {
-          setSelectedFolder(data[0].id);
-        }
-      } catch (error) {
-        console.error("Error fetching folders:", error);
-      }
-    };
-
-    if (folders.length === 0) {
-      fetchFolders();
-    }
-  }, [folders.length]);
 
   // Handle navigation to the selected URL
   const handleNavigation = async (url: string) => {
@@ -111,52 +85,6 @@ export default function AppSidebar() {
       setIsEditing(true);
     }
   };
-
-  // Handlers
-
-  // Add a new folder
-  const handleAdd = () => {
-    startTransition(async () => {
-      try {
-        const newFolder = await addFolder("New Folder");
-        setFolders((folders) => [...folders, newFolder]);
-        setSelectedFolder(newFolder.id);
-        setEditingId(newFolder.id);
-      } catch (error) {
-        console.error("Error creating folder:", error);
-      }
-    });
-  };
-
-  // Rename an existing folder
-  const handleRename = (id: string, newName: string) => {
-    if (!newName || newName.trim() === "") {
-      console.error("Folder name cannot be empty");
-      return;
-    }
-    startTransition(async () => {
-      try {
-        const updatedFolder = await renameFolder(id, newName);
-        setFolders((folders) =>
-          folders.map((folder) =>
-            folder.id === id ? { ...folder, name: updatedFolder.name } : folder
-          )
-        );
-        setEditingId(null);
-      } catch (error) {
-        console.error("Error renaming folder:", error);
-      }
-    });
-  };
-
-  const handleDelete = (id: string) => {
-    setFolders(folders.filter((f) => f.id !== id));
-    if (selectedFolder === id && folders.length > 1) {
-      setSelectedFolder(folders[0].id);
-    }
-  };
-
-  const handleEdit = (id: string) => setEditingId(id);
 
   return (
     <>

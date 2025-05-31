@@ -8,6 +8,7 @@ import { PromptProvider } from "./context/PromptContext";
 import { HeaderProvider } from "@/app/context/HeaderContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
+import { FolderProvider } from "./context/FolderContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,11 +40,13 @@ export default async function RootLayout({
             <SidebarProvider>
               <AppSidebar />
               <HeaderProvider>
-                <div className="relative flex-1 z-10">
-                  {children}
-                  <Header />
-                </div>
-                <Toaster position="bottom-right" richColors />
+                <FolderProvider>
+                  <div className="relative flex-1 z-10">
+                    {children}
+                    <Header />
+                  </div>
+                  <Toaster position="bottom-right" richColors />
+                </FolderProvider>
               </HeaderProvider>
             </SidebarProvider>
           </PromptProvider>
