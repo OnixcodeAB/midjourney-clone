@@ -3,6 +3,24 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DonutLoader } from "./DonutLoader ";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from "@/components/ui/dropdown-menu";
+import {
+  MoreHorizontal,
+  Star,
+  Plus,
+  Download,
+  Folder,
+  LayoutGrid,
+} from "lucide-react";
+import { useFolders } from "@/app/context/FolderContext";
 
 interface ImageCardProps {
   id: string;
@@ -10,7 +28,7 @@ interface ImageCardProps {
   prompt?: string;
   status?: "pending" | "complete" | "running";
   progress_pct?: number;
-  blurUrl?: string; // optional low-res preview (optional feature for blur-up)
+  blurUrl?: string;
 }
 
 const ImageCard = ({
@@ -22,18 +40,23 @@ const ImageCard = ({
   blurUrl,
 }: ImageCardProps) => {
   const [loaded, setLoaded] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
   const router = useRouter();
+  const { folders, handleAdd } = useFolders();
 
   useEffect(() => {
     const img = imgRef.current;
-    if (img && img.complete) {
-      setLoaded(true);
-    }
+    if (img && img.complete) setLoaded(true);
   }, []);
 
   const handleClick = () => {
     router.push(`/jobs/create_${id}`);
+  };
+
+  const handleAddToFolder = async (folderId: string) => {
+    await handleAdd();
+    // Puedes mostrar un toast de éxito si quieres
   };
 
   return (
@@ -41,8 +64,75 @@ const ImageCard = ({
       className="relative w-50 border border-gray-300 overflow-hidden cursor-pointer group"
       onClick={handleClick}
     >
-      {/* Skeleton shimmer */}
-
+      {/* Menu contextual arriba a la derecha */}
+      <div
+        className={
+          "absolute top-2 right-2 z-30 transition " +
+          (!menuOpen
+            ? "opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+            : "opacity-100 pointer-events-auto")
+        }
+        onClick={(e) => e.stopPropagation()}
+      >
+        <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label="text"
+              className="cursor-pointer p-1 outline-none border-none"
+            >
+              <MoreHorizontal className="w-5 h-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-56 rounded-2xl shadow-xl p-2 space-y-1"
+            align="end"
+          >
+            <DropdownMenuItem>
+              <Plus className="w-4 h-4 mr-2" /> Select
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Star className="w-4 h-4 mr-2" /> Favorite
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <a
+                href={url}
+                download
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center"
+              >
+                <Download className="w-4 h-4 mr-2" /> Download
+              </a>
+            </DropdownMenuItem>
+            {/* Submenú Add to folder */}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="flex items-center">
+                <Folder className="w-4 h-4 mr-2" /> Add to folder
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="w-48 rounded-xl p-1">
+                {folders.length === 0 ? (
+                  <span className="px-3 py-2 text-sm text-neutral-400 block">
+                    No folders
+                  </span>
+                ) : (
+                  folders.map((folder) => (
+                    <DropdownMenuItem
+                      key={folder.id}
+                      onClick={() => handleAddToFolder(folder.id)}
+                    >
+                      {folder.name}
+                    </DropdownMenuItem>
+                  ))
+                )}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <DropdownMenuItem>
+              <LayoutGrid className="w-4 h-4 mr-2" /> View variations
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      {/* ... el resto del código igual ... */}
       {status === "pending" || status === "running" ? (
         <div className="absolute inset-0 bg-gray-200 flex flex-col items-center justify-center z-10">
           <DonutLoader
@@ -56,13 +146,8 @@ const ImageCard = ({
       ) : (
         <>
           {!loaded && (
-            <div
-              className="absolute inset-0 z-10 bg-[linear-gradient(110deg,#e5e7eb_25%,#f3f4f6_50%,#e5e7eb_75%)]
-          bg-[length:200%_100%] animate-shimmer"
-            />
+            <div className="absolute inset-0 z-10 bg-[linear-gradient(110deg,#e5e7eb_25%,#f3f4f6_50%,#e5e7eb_75%)] bg-[length:200%_100%] animate-shimmer" />
           )}
-
-          {/* Main image with blur-up + fade-in */}
           <img
             ref={imgRef}
             src={url}
@@ -82,7 +167,6 @@ const ImageCard = ({
           />
         </>
       )}
-
       {/* Prompt overlay on hover */}
       {prompt && (
         <div className="absolute bottom-0 left-0 w-full bg-black/50 text-white text-xs p-4 opacity-0 group-hover:opacity-100 transition-opacity z-20 truncate ">
