@@ -54,13 +54,13 @@ export async function GET(
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { userId } = getAuth(req);
-  const folderId = params.id;
+  const { id: folderId } = await params;
 
   if (!userId) {
-    return NextResponse.json({ error: "Not authorized" }, { status: 400 });
+    return NextResponse.json({ error: "Not authorized" }, { status: 401 });
   }
 
   try {

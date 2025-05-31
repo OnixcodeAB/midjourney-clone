@@ -3,12 +3,12 @@ import { query } from "@/lib/db";
 import { cacheResult, getCached, invalidateCache } from "@/lib/redis";
 import { getAuth } from "@clerk/nextjs/server";
 
-// GET all folders for user
+// GET all folders for current user
 export async function GET(req: NextRequest) {
   const { userId } = getAuth(req);
 
   if (!userId) {
-    return NextResponse.json({ error: "Not authorized" }, { status: 400 });
+    return NextResponse.json({ error: "Not authorized" }, { status: 401 });
   }
 
   try {
