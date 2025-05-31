@@ -38,16 +38,16 @@ export default async function RootLayout({
         >
           <PromptProvider>
             <SidebarProvider>
-              <AppSidebar />
-              <HeaderProvider>
-                <FolderProvider>
+              <FolderProvider>
+                <AppSidebar />
+                <HeaderProvider>
                   <div className="relative flex-1 z-10">
                     {children}
                     <Header />
                   </div>
                   <Toaster position="bottom-right" richColors />
-                </FolderProvider>
-              </HeaderProvider>
+                </HeaderProvider>
+              </FolderProvider>
             </SidebarProvider>
           </PromptProvider>
         </body>

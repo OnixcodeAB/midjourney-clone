@@ -31,17 +31,9 @@ type FolderContextType = {
 
 const FolderContext = createContext<FolderContextType | undefined>(undefined);
 
-export function useFolders() {
-  const ctx = useContext(FolderContext);
-  if (!ctx) throw new Error("useFolders must be used inside FolderProvider");
-  return ctx;
-}
-
 export function FolderProvider({ children }: { children: React.ReactNode }) {
   const [folders, setFolders] = useState<FolderType[]>([]);
-  const [selectedFolder, setSelectedFolder] = useState<string | undefined>(
-    undefined
-  );
+  const [selectedFolder, setSelectedFolder] = useState<string | undefined>(undefined);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -113,20 +105,29 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <FolderContext.Provider
-      value={{
-        folders,
-        selectedFolder,
-        editingId,
-        setSelectedFolder,
-        setEditingId,
-        handleAdd,
-        handleRename,
-        handleDelete,
-        handleEdit,
-        refreshFolders,
-      }}
+      value={
+        {
+          folders,
+          selectedFolder,
+          editingId,
+          setSelectedFolder,
+          setEditingId,
+          handleAdd,
+          handleRename,
+          handleDelete,
+          handleEdit,
+          refreshFolders,
+        } as FolderContextType
+      }
     >
       {children}
     </FolderContext.Provider>
   );
+}
+
+export function useFolders() {
+  const context = useContext(FolderContext);
+  if (!context)
+    throw new Error("useFolders must be used inside FolderProvider");
+  return context;
 }

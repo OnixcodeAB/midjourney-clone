@@ -31,8 +31,6 @@ import { BannerModal } from "./BannerModal";
 import { UserSettingsMenu } from "../User/UserSettingsMenu";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
 import { FoldersSidebar } from "../folder/FoldersSidebar";
-import { addFolder } from "@/app/actions/folders/addFolder";
-import { renameFolder } from "@/app/actions/folders/renameFolder";
 
 // Menu items.
 const items = [
@@ -119,16 +117,7 @@ export default function AppSidebar() {
                     </SidebarMenuItem>
                   );
                 })}
-                <FoldersSidebar
-                  folders={folders}
-                  selectedFolder={selectedFolder}
-                  onSelect={setSelectedFolder}
-                  onAdd={handleAdd}
-                  onDelete={handleDelete}
-                  onEdit={handleEdit}
-                  editingId={editingId}
-                  onRename={handleRename}
-                />
+                <FoldersSidebar />
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
