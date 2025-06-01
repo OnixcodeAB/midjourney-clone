@@ -21,6 +21,7 @@ export default function FolderContentPage({ params }: FolderContentPageProps) {
   const { id } = React.use(params);
   const folder = folders.find((f) => f.id === id);
 
+  console.log('folderItems', folderItems);
   React.useEffect(() => {
     setRenameValue(folder?.name ?? "");
     setIsEditing(false);
@@ -41,6 +42,7 @@ export default function FolderContentPage({ params }: FolderContentPageProps) {
         const response = await fetch(`/api/folder/${id}`);
         if (!response.ok) throw new Error("Failed to fetch folder");
         const data = await response.json();
+
         setFolderItems(Array.isArray(data) ? data : [data]);
       } catch (error) {
         console.error("Error fetching folder:", error);

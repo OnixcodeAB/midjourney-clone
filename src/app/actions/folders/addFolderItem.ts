@@ -11,8 +11,7 @@ export async function addFolderItem(
     image_title: string;
     url: string;
     type: string;
-  },
-  auth: { userId: string | null }
+  }
 ) {
   const user = await currentUser();
   const { image_id, image_title, url, type } = itemData;

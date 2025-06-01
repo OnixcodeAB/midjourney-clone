@@ -5,7 +5,7 @@ import { cacheResult, getCached } from "@/lib/redis";
 
 // Cache key and TTL constants
 const IMAGES_CACHE_KEY = "api:images:all";
-const CACHE_TTL = 60 * 10; // 5 minutes in seconds
+const CACHE_TTL = 60 * 10; // 10 minutes in seconds
 
 export async function GET() {
   // Try to get from cache first

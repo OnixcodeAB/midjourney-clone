@@ -4,10 +4,10 @@ import { useCallback, useMemo, useState } from "react";
 import ImageCard from "./ImageCard";
 import { useSocket } from "@/hooks/useSocket"; // Updated to useSocket
 
-
 interface Image {
   id: string;
   url: string;
+  search_text?: string;
   prompt: string;
   status?: "pending" | "running" | "complete";
   progress_pct?: number;
@@ -140,6 +140,7 @@ const CreateGrid = ({ images: initialImages }: Props) => {
                     key={img.id}
                     id={img.id}
                     url={img.url}
+                    search_text={img.search_text}
                     status={img.status}
                     progress_pct={img.progress_pct}
                     prompt={

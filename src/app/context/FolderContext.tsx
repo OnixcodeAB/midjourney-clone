@@ -33,7 +33,9 @@ const FolderContext = createContext<FolderContextType | undefined>(undefined);
 
 export function FolderProvider({ children }: { children: React.ReactNode }) {
   const [folders, setFolders] = useState<FolderType[]>([]);
-  const [selectedFolder, setSelectedFolder] = useState<string | undefined>(undefined);
+  const [selectedFolder, setSelectedFolder] = useState<string | undefined>(
+    undefined
+  );
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 

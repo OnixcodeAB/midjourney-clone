@@ -21,10 +21,12 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import { useFolders } from "@/app/context/FolderContext";
+import { addFolderItem } from "@/app/actions/folders/addFolderItem";
 
 interface ImageCardProps {
   id: string;
   url: string;
+  search_text?: string;
   prompt?: string;
   status?: "pending" | "complete" | "running";
   progress_pct?: number;
@@ -34,6 +36,7 @@ interface ImageCardProps {
 const ImageCard = ({
   id,
   url,
+  search_text,
   prompt,
   status = "pending",
   progress_pct,
@@ -54,11 +57,28 @@ const ImageCard = ({
     router.push(`/jobs/create_${id}`);
   };
 
-  const handleAddToFolder = async (folderId: string) => {
-    await handleAdd();
-    // Puedes mostrar un toast de éxito si quieres
+  const handleAddItem = async (
+    FolderId: string,
+    itemData: {
+      image_id: string;
+      image_title: string;
+      url: string;
+      type: string;
+    }
+  ) => {
+    const result = await addFolderItem(FolderId, itemData);
+
+    if (result.error) {
+      // Handle error
+      console.error("Error adding item to folder:", result.error);
+    } else {
+      // Handle success
+      console.log("Item added successfully:", result.item);
+    }
   };
 
+  // ... your component JSX
+  // Move the return statement inside the function
   return (
     <div
       className="relative w-50 border border-gray-300 overflow-hidden cursor-pointer group"
@@ -118,7 +138,14 @@ const ImageCard = ({
                   folders.map((folder) => (
                     <DropdownMenuItem
                       key={folder.id}
-                      onClick={() => handleAddToFolder(folder.id)}
+                      onClick={() =>
+                        handleAddItem(folder.id, {
+                          image_id: id,
+                          image_title: search_text || "Untitled",
+                          url: url,
+                          type: "image",
+                        })
+                      }
                     >
                       {folder.name}
                     </DropdownMenuItem>
