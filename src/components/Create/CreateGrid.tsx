@@ -126,7 +126,7 @@ const CreateGrid = ({ images: initialImages }: Props) => {
   }, [images]);
 
   return (
-    <div className="p-6 w-full max-w-fit space-y-6">
+    <div className="p-8 w-full max-w-fit space-y-6">
       {Object.entries(grouped).map(
         ([section, imgs]) =>
           imgs.length > 0 && (
