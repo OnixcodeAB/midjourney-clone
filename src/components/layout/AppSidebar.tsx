@@ -117,7 +117,7 @@ export default function AppSidebar() {
                     </SidebarMenuItem>
                   );
                 })}
-                <FoldersSidebar />
+                {user ? <FoldersSidebar /> : null}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
