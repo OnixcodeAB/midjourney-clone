@@ -81,11 +81,16 @@ const CreateGrid = ({ images: initialImages }: Props) => {
 
   // Group images by time
   const grouped = useMemo(() => {
-    const groups: { [key: string]: Image[] } = {
+    const groups: {
+      Today: Image[];
+      "This Week": Image[];
+      "This Month": Image[];
+      Older: { [date: string]: Image[] };
+    } = {
       Today: [],
       "This Week": [],
       "This Month": [],
-      Older: [],
+      Older: {},
     };
 
     const isToday = (dateStr: string) => {
@@ -119,55 +124,110 @@ const CreateGrid = ({ images: initialImages }: Props) => {
       if (isToday(img.createdat)) groups["Today"].push(img);
       else if (isThisWeek(img.createdat)) groups["This Week"].push(img);
       else if (isThisMonth(img.createdat)) groups["This Month"].push(img);
-      else groups["Older"].push(img);
+      else {
+        // Group by date string, e.g. 3-06-2025
+        const d = new Date(img.createdat);
+        const dateLabel = `${d.getDate().toString().padStart(2, "0")}-${(
+          d.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}-${d.getFullYear()}`;
+        if (!groups["Older"][dateLabel]) groups["Older"][dateLabel] = [];
+        groups["Older"][dateLabel].push(img);
+      }
     }
-
     return groups;
   }, [images]);
 
   return (
-  <div className="px-2 sm:px-4 md:px-8 w-full max-w-full space-y-6">
-    {Object.entries(grouped).map(
-      ([section, imgs]) =>
-        imgs.length > 0 && (
-          <div key={section}>
-            <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-700 text-left">
-              {section}
-            </h2>
-            <div className="
-              grid 
-              grid-cols-1 
-              sm:grid-cols-2 
-              md:grid-cols-3 
-              lg:grid-cols-4 
-              xl:grid-cols-6 
-              2xl:grid-cols-8 
-              gap-y-4 
-              gap-x-3
-              "
-            >
-              {imgs.map((img) => (
-                <ImageCard
-                  key={img.id}
-                  id={img.id}
-                  url={img.url}
-                  search_text={img.search_text}
-                  status={img.status}
-                  progress_pct={img.progress_pct}
-                  prompt={
-                    img.status === "pending" || img.status === "running"
-                      ? "Generating..."
-                      : img.prompt
-                  }
-                />
-              ))}
+    <div className="px-2 sm:px-4 md:px-8 w-full max-w-full space-y-6">
+      {Object.entries(grouped).map(([section, imgs]) =>
+        imgs && Object.keys(imgs).length > 0 ? (
+          section !== "Older" ? (
+            <div key={section}>
+              <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-700 text-left">
+                {section}
+              </h2>
+              <div
+                className="
+            grid 
+            grid-cols-1 
+            sm:grid-cols-2 
+            md:grid-cols-3 
+            lg:grid-cols-4 
+            xl:grid-cols-6 
+            2xl:grid-cols-8 
+            gap-y-4 
+            gap-x-3
+            "
+              >
+                {(imgs as Image[]).map((img) => (
+                  <ImageCard
+                    key={img.id}
+                    id={img.id}
+                    url={img.url}
+                    search_text={img.search_text}
+                    status={img.status}
+                    progress_pct={img.progress_pct}
+                    prompt={
+                      img.status === "pending" || img.status === "running"
+                        ? "Generating..."
+                        : img.prompt
+                    }
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        )
-    )}
-  </div>
-);
-
+          ) : (
+            // "Older" section: Group by date
+            <div key={section}>
+              <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-700 text-left">
+                Older
+              </h2>
+              {Object.entries(imgs as { [date: string]: Image[] }).map(
+                ([date, dateImgs]) => (
+                  <div key={date} className="mb-8">
+                    <div className="font-medium text-gray-500 mb-2 pl-1">
+                      {date}
+                    </div>
+                    <div
+                      className="
+                  grid 
+                  grid-cols-1 
+                  sm:grid-cols-2 
+                  md:grid-cols-3 
+                  lg:grid-cols-4 
+                  xl:grid-cols-6 
+                  2xl:grid-cols-8 
+                  gap-y-4 
+                  gap-x-3
+                  "
+                    >
+                      {dateImgs.map((img) => (
+                        <ImageCard
+                          key={img.id}
+                          id={img.id}
+                          url={img.url}
+                          search_text={img.search_text}
+                          status={img.status}
+                          progress_pct={img.progress_pct}
+                          prompt={
+                            img.status === "pending" || img.status === "running"
+                              ? "Generating..."
+                              : img.prompt
+                          }
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
+          )
+        ) : null
+      )}
+    </div>
+  );
 };
 
 export default CreateGrid;
