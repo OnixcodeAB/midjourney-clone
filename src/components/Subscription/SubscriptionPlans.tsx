@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Card,
@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, Check } from "lucide-react";
 import { SubscribeButton } from "@/components/Subscription/SubscribeButton";
-import { clerkClient } from "@clerk/nextjs/server";
 import { useUser } from "@clerk/nextjs";
 
 interface Plan {
@@ -42,37 +41,43 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   const { user } = useUser();
 
   // Check if the user has a subscription
-  const userSubscription = user?.publicMetadata
-    ?.subscription as UserSubscription;
-
-  // If the user has a subscription, set the selected plan to their current plan
-  if (userSubscription) {
-    const currentPlan = plans.find(
-      (plan) => plan.id === userSubscription?.subscription_id
-    );
-    setSelectedPlan(currentPlan?.id || null);
-  }
+  useEffect(() => {
+    const userSubscription = user?.publicMetadata
+      ?.subscription as UserSubscription;
+    if (userSubscription) {
+      const currentPlan = plans.find(
+        (plan) => plan.id === userSubscription?.subscription_id
+      );
+      setSelectedPlan(currentPlan?.id || null);
+    }
+    // Only run when user or plans change
+  }, [user, plans]);
 
   // Filter plans based on the current billing state
   const filteredPlans = plans.filter((plan) => plan.frequency === billing);
 
   return (
-    <div className="space-y-8 mt-8 p-6">
+    <div className="space-y-8 mt-8 px-2 sm:px-4 md:px-6">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">Purchase a subscription</h1>
-        <p className="text-gray-600">Choose the plan that works for you</p>
+        <h1 className="text-2xl md:text-3xl font-bold">
+          Purchase a subscription
+        </h1>
+        <p className="text-gray-600 text-base">
+          Choose the plan that works for you
+        </p>
       </div>
 
-      <div className="flex flex-col justify-center items-center px-8 gap-4">
+      {/* Toggle Billing */}
+      <div className="flex flex-col items-center gap-4">
         <ToggleGroup
           type="single"
-          value={billing || "monthly"}
+          value={billing}
           onValueChange={(value) => setBilling(value as "monthly" | "yearly")}
           className="inline-flex rounded-full bg-[#e3e4e8]"
         >
           <ToggleGroupItem
             value="yearly"
-            className={`px-8 py-2 text-md cursor-pointer font-medium rounded-full transition-all ease-in-out ${
+            className={`px-5 md:px-8 py-2 text-md font-medium rounded-full transition-all ${
               billing === "yearly"
                 ? "bg-[#303030]! text-white! "
                 : "text-gray-900 rounded-none"
@@ -82,7 +87,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
           </ToggleGroupItem>
           <ToggleGroupItem
             value="monthly"
-            className={`px-8 py-2 text-md cursor-pointer font-medium rounded-full ${
+            className={`px-5 md:px-8 py-2 text-md font-medium rounded-full ${
               billing === "monthly"
                 ? "bg-[#303030]! text-white! "
                 : "bg-[#e3e4e8] text-gray-900 rounded-none"
@@ -91,31 +96,45 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
             Monthly Billing
           </ToggleGroupItem>
         </ToggleGroup>
-        <p>Switch to Yearly to save 20%.</p>
+        <p className="text-sm">Switch to Yearly to save 20%.</p>
       </div>
 
-      <div className="px-4 flex gap-24 justify-center ">
+      {/* Plans */}
+      <div
+        className="
+          flex flex-col gap-6 items-center 
+          md:flex-row md:gap-8 md:justify-center
+          lg:gap-24
+          overflow-x-auto
+          md:overflow-visible
+          pb-4
+          "
+      >
         {filteredPlans.map((plan) => {
           const isSelected = selectedPlan === plan.id;
           return (
             <Card
               key={plan.id}
-              className={`border w-[400px] ${
-                isSelected ? "border-indigo-500" : "border-gray-200"
-              }`}
+              className={`border w-[90vw] max-w-xs md:max-w-[400px] flex-shrink-0
+                ${isSelected ? "border-indigo-500" : "border-gray-200"}
+              `}
             >
               <CardHeader>
-                <CardTitle className="py-2">{plan.name} Plan</CardTitle>
+                <CardTitle className="py-2 text-lg md:text-xl">
+                  {plan.name} Plan
+                </CardTitle>
                 <div className="flex items-baseline space-x-1">
-                  <span className="text-4xl font-bold">${plan.price}</span>
-                  <span className="text-xl text-gray-500 font-semibold">
+                  <span className="text-3xl md:text-4xl font-bold">
+                    ${plan.price}
+                  </span>
+                  <span className="text-base md:text-xl text-gray-500 font-semibold">
                     / {plan.frequency}
                   </span>
                 </div>
                 {plan.frequency === "yearly" && (
                   <Badge
                     variant="outline"
-                    className="mt-4 text-sm bg-green-200"
+                    className="mt-4 text-xs md:text-sm bg-green-200"
                   >
                     20% off billed annually
                   </Badge>
@@ -123,7 +142,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 {plan.frequency === "monthly" && (
                   <Badge
                     variant="outline"
-                    className="mt-4 text-lg border-none text-black/60"
+                    className="mt-4 text-sm border-none text-black/60"
                   >
                     Billed Monthly
                   </Badge>
