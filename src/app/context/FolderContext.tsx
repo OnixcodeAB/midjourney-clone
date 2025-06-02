@@ -56,12 +56,12 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
     }
   }, [selectedFolder]);
 
-  if (user) {
-    useEffect(() => {
+  useEffect(() => {
+    if (user) {
       FetchFolders();
       // eslint-disable-next-line
-    }, []);
-  }
+    }
+  }, []);
 
   // Add folder
   const handleAdd = () => {

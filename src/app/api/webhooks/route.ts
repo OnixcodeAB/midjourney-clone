@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const evt = await verifyWebhook(req);
     const { id } = evt.data;
     const eventType = evt.type;
-    
+
     if (eventType === "user.created") {
       // Extrac relevant fields
       const userId = id;
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
       // Insert into DB
       await query(
-        `INSERT INTO user (id, email, name) VALUES ($1, $2, $3)
+        `INSERT INTO users (id, email, name) VALUES ($1, $2, $3)
         ON CONFLICT (id) DO NOTHING`,
         [userId, email, fullName]
       );
