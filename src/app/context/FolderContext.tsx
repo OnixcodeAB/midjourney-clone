@@ -27,7 +27,7 @@ type FolderContextType = {
   handleRename: (id: string, name: string) => void;
   handleDelete: (id: string) => void;
   handleEdit: (id: string) => void;
-  refreshFolders: () => void;
+  FetchFolders: () => void;
 };
 
 const FolderContext = createContext<FolderContextType | undefined>(undefined);
@@ -42,7 +42,7 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
 
   // Fetch all folders
-  const refreshFolders = React.useCallback(async () => {
+  const FetchFolders = React.useCallback(async () => {
     try {
       const response = await fetch("/api/folder");
       if (!response.ok) throw new Error("Failed to fetch folders");
@@ -58,7 +58,7 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
 
   if (user) {
     useEffect(() => {
-      refreshFolders();
+      FetchFolders();
       // eslint-disable-next-line
     }, []);
   }
@@ -122,7 +122,7 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
           handleRename,
           handleDelete,
           handleEdit,
-          refreshFolders,
+          FetchFolders,
         } as FolderContextType
       }
     >
