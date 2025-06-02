@@ -21,7 +21,6 @@ export default function FolderContentPage({ params }: FolderContentPageProps) {
   const { id } = React.use(params);
   const folder = folders.find((f) => f.id === id);
 
-  console.log('folderItems', folderItems);
   React.useEffect(() => {
     setRenameValue(folder?.name ?? "");
     setIsEditing(false);
