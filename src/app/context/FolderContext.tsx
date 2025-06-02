@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { addFolder } from "@/app/actions/folders/addFolder";
 import { renameFolder } from "@/app/actions/folders/renameFolder";
+import { useUser } from "@clerk/nextjs";
 
 // --- Types
 export type FolderType = {
@@ -38,6 +39,7 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
   );
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { user } = useUser();
 
   // Fetch all folders
   const refreshFolders = React.useCallback(async () => {
@@ -54,10 +56,12 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
     }
   }, [selectedFolder]);
 
-  useEffect(() => {
-    refreshFolders();
-    // eslint-disable-next-line
-  }, []);
+  if (user) {
+    useEffect(() => {
+      refreshFolders();
+      // eslint-disable-next-line
+    }, []);
+  }
 
   // Add folder
   const handleAdd = () => {
