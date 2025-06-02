@@ -126,36 +126,48 @@ const CreateGrid = ({ images: initialImages }: Props) => {
   }, [images]);
 
   return (
-    <div className="p-8 w-full max-w-fit space-y-6">
-      {Object.entries(grouped).map(
-        ([section, imgs]) =>
-          imgs.length > 0 && (
-            <div key={section}>
-              <h2 className="text-lg font-semibold mb-2 text-gray-700">
-                {section}
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-y-2 gap-x-8">
-                {imgs.map((img) => (
-                  <ImageCard
-                    key={img.id}
-                    id={img.id}
-                    url={img.url}
-                    search_text={img.search_text}
-                    status={img.status}
-                    progress_pct={img.progress_pct}
-                    prompt={
-                      img.status === "pending" || img.status === "running"
-                        ? "Generating..."
-                        : img.prompt
-                    }
-                  />
-                ))}
-              </div>
+  <div className="px-2 sm:px-4 md:px-8 w-full max-w-full space-y-6">
+    {Object.entries(grouped).map(
+      ([section, imgs]) =>
+        imgs.length > 0 && (
+          <div key={section}>
+            <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-700 text-left">
+              {section}
+            </h2>
+            <div className="
+              grid 
+              grid-cols-1 
+              sm:grid-cols-2 
+              md:grid-cols-3 
+              lg:grid-cols-4 
+              xl:grid-cols-6 
+              2xl:grid-cols-8 
+              gap-y-4 
+              gap-x-3
+              "
+            >
+              {imgs.map((img) => (
+                <ImageCard
+                  key={img.id}
+                  id={img.id}
+                  url={img.url}
+                  search_text={img.search_text}
+                  status={img.status}
+                  progress_pct={img.progress_pct}
+                  prompt={
+                    img.status === "pending" || img.status === "running"
+                      ? "Generating..."
+                      : img.prompt
+                  }
+                />
+              ))}
             </div>
-          )
-      )}
-    </div>
-  );
+          </div>
+        )
+    )}
+  </div>
+);
+
 };
 
 export default CreateGrid;

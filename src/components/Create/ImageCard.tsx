@@ -81,13 +81,13 @@ const ImageCard = ({
   // Move the return statement inside the function
   return (
     <div
-      className="relative w-50 border border-gray-300 overflow-hidden cursor-pointer group"
+      className="relative sm:w-fit lg:w-50 border border-gray-300 overflow-hidden cursor-pointer group"
       onClick={handleClick}
     >
       {/* Menu contextual arriba a la derecha */}
       <div
         className={
-          "absolute top-2 right-2 z-30 transition " +
+          "absolute top-2 right-2 pr-2 z-30 transition " +
           (!menuOpen
             ? "opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
             : "opacity-100 pointer-events-auto")
@@ -196,7 +196,7 @@ const ImageCard = ({
       )}
       {/* Prompt overlay on hover */}
       {prompt && (
-        <div className="absolute bottom-0 left-0 w-full bg-black/50 text-white text-xs p-4 opacity-0 group-hover:opacity-100 transition-opacity z-20 truncate ">
+        <div className="absolute bottom-0 left-0  w-full bg-black/50 text-white text-xs px-2 py-2 opacity-0 group-hover:opacity-100 transition-opacity z-20 truncate ">
           {prompt}
         </div>
       )}
