@@ -140,16 +140,16 @@ const CreateGrid = ({ images: initialImages }: Props) => {
   }, [images]);
 
   return (
-    <div className="px-2 sm:px-4 md:px-8 w-full max-w-full space-y-6">
+    <div className="px-2 sm:px-2 w-full max-w-full space-y-6">
       {Object.entries(grouped).map(([section, imgs]) =>
         imgs && Object.keys(imgs).length > 0 ? (
           section !== "Older" ? (
-            <div key={section}>
+            <div key={section} className="w-full">
               <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-700 text-left">
                 {section}
               </h2>
               <div
-                className="
+                className=" w-full
             grid 
             grid-cols-1 
             sm:grid-cols-2 
