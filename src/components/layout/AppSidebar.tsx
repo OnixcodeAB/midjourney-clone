@@ -36,8 +36,8 @@ import { FoldersSidebar } from "../folder/FoldersSidebar";
 const items = [
   { title: "Explore", url: "/", icon: Compass },
   { title: "Create", url: "/create", icon: PaintbrushVertical },
-  { title: "Edit", url: "/edit", icon: SquarePen },
-  { title: "organize", url: "/organize", icon: SwatchBook },
+  /* { title: "Edit", url: "/edit", icon: SquarePen }, */
+ /*  { title: "organize", url: "/organize", icon: SwatchBook }, */
   { title: "Surveys", url: "/surveys", icon: ThumbsUp },
   { title: "Subscribe", url: "/subscription", icon: CircleUserRound },
 ];
@@ -49,10 +49,24 @@ const itemsFooter = [
 
 export default function AppSidebar() {
   const [isEditing, setIsEditing] = useState(false);
+  const [onboardedUser, setOnboardedUser] = useState<boolean | null>(null);
   const { state } = useSidebar();
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useUser();
+
+  // Check onboarding status when user changes
+  React.useEffect(() => {
+    const checkStatus = async () => {
+      if (user) {
+        const onboarded = await checkOnboardingStatus(user.id);
+        setOnboardedUser(onboarded);
+      } else {
+        setOnboardedUser(null);
+      }
+    };
+    checkStatus();
+  }, [user]);
 
   // Handle navigation to the selected URL
   const handleNavigation = async (url: string) => {
@@ -70,7 +84,6 @@ export default function AppSidebar() {
     }
     // For other routes, require authentication
     if (user) {
-      const onboardedUser = await checkOnboardingStatus(user.id);
       if (!onboardedUser) {
         // If the user is not onboarded, show the modal
         setIsEditing(true);
@@ -117,7 +130,7 @@ export default function AppSidebar() {
                     </SidebarMenuItem>
                   );
                 })}
-                {user ? <FoldersSidebar /> : null}
+                {user && onboardedUser ? <FoldersSidebar /> : null}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
