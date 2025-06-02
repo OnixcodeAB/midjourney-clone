@@ -18,6 +18,8 @@ export function FoldersSidebar() {
 
   const router = useRouter();
 
+  console.log(folders)
+
   // Handle navigation to the selected folder url
   const handleFolderNavigation = (url: string) => {
     if (url) {
@@ -32,7 +34,7 @@ export function FoldersSidebar() {
       <button
         type="button"
         onClick={handleAdd}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
+        className="flex items-center gap-2 px-3 py-3 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
       >
         <FolderPlus className="w-5 h-5" />
         <span className="font-medium">New folder</span>
@@ -72,7 +74,7 @@ export function FoldersSidebar() {
               </div>
             ) : (
               <span
-                className="flex-1 text-sm truncate"
+                className="flex-1 font-medium truncate"
                 onDoubleClick={() => handleEdit(f.id)}
               >
                 {f.name}

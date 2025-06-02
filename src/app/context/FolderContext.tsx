@@ -61,7 +61,7 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
       FetchFolders();
       // eslint-disable-next-line
     }
-  }, []);
+  }, [user]);
 
   // Add folder
   const handleAdd = () => {
