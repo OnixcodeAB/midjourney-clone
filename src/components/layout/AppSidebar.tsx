@@ -190,7 +190,7 @@ export default function AppSidebar() {
                                 : "rounded-2xl bg-[#f9e8e6] hover:bg-[#ffd6da] py-5"
                             }
                           `}
-                          onClick={() => handleNavigation("#")}
+                          onClick={() => handleNavigation("/auth/sign-up")}
                         >
                           <a className="text-[#f25b44] flex items-center ">
                             <Globe className="size-[22px]! mr-2" />
