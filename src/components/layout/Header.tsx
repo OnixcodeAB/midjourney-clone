@@ -4,12 +4,7 @@ import { usePathname } from "next/navigation";
 import { usePrompt } from "@/app/context/PromptContext";
 import { useHeaderSettings } from "@/app/context/HeaderContext";
 import { useDropzone } from "react-dropzone";
-import {
-  MoveUp,
-  Plus,
-  SlidersHorizontal,
-  Trash2,
-} from "lucide-react";
+import { MoveUp, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import ImageSizeSelector from "./ImageSizeSelector";
 import {
   Popover,
@@ -128,7 +123,8 @@ export default function Header() {
     }
   };
 
-  if (pathname !== "/") return null;
+  if (pathname !== "/" && pathname !== "/create" && pathname !== "/create")
+    return null;
   if (!user?.id) return null; // Ensure user is authenticated
 
   return (
