@@ -22,6 +22,7 @@ import AspectRatioPopover from "./AspectRatioPopover";
 import PresetPopover from "./PresetPopover";
 import HelpPopover from "./helpPopoever";
 import TooltipButton from "./button/TooltipButton";
+import { Textarea } from "../ui/textarea";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
@@ -181,7 +182,7 @@ export default function Header() {
             <Plus className="w-5 h-5 text-black" />
           </button>
           {/* Prompt input */}
-          <Input
+          <Textarea
             className="border-none bg-transparent text-base placeholder:text-gray-400"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
