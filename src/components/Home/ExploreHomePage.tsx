@@ -88,7 +88,7 @@ export const ExploreHomePage = ({ images }: Props) => {
               src={img.url}
               alt={img.alt}
               author={img.author}
-              description={img.description}
+              prompt={img.description}
               handleOnClick={() => handleClick(img.id)}
               handleOnSearch={() =>
                 handleSearch(img.search_text ?? "", img.tags)

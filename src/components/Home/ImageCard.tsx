@@ -11,7 +11,7 @@ interface Props {
   src: string;
   alt: string;
   author?: string;
-  description?: string;
+  prompt?: string;
   children?: React.ReactNode; // 👈 added
   imgClassName?: string;
   showAuthor?: boolean;
@@ -25,7 +25,7 @@ export default function ImageCard({
   src,
   alt,
   author,
-  description,
+  prompt,
   imgClassName = "h-auto",
   children,
   handleOnClick,

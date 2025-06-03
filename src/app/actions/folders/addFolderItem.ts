@@ -10,11 +10,12 @@ export async function addFolderItem(
     image_id: string;
     image_title: string;
     url: string;
+    prompt: string;
     type: string;
   }
 ) {
   const user = await currentUser();
-  const { image_id, image_title, url, type } = itemData;
+  const { image_id, image_title, url, prompt, type } = itemData;
 
   if (!user?.id) {
     return { error: "Not authorized" };
@@ -26,9 +27,9 @@ export async function addFolderItem(
 
   try {
     const { rows } = await query(
-      `INSERT INTO "FolderItem" (image_id, image_title, url, type, folder_id)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [image_id, image_title, url, type, folderId]
+      `INSERT INTO "FolderItem" (image_id, image_title, url, prompt, type, folder_id)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [image_id, image_title, url, prompt, type, folderId]
     );
 
     const newItem: FolderItem = rows[0];

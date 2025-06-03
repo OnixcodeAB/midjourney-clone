@@ -29,6 +29,7 @@ declare global {
     image_id: number;
     image_title: string;
     url: string;
+    prompt: string;
     type: "image" | "video";
     folder_id: string;
     created_at: string;

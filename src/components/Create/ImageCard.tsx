@@ -62,6 +62,7 @@ const ImageCard = ({
     itemData: {
       image_id: string;
       image_title: string;
+      prompt: string;
       url: string;
       type: string;
     }
@@ -142,6 +143,7 @@ const ImageCard = ({
                         handleAddItem(folder.id, {
                           image_id: id,
                           image_title: search_text || "Untitled",
+                          prompt: prompt || "",
                           url: url,
                           type: "image",
                         })
