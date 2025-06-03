@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { useFolders } from "@/app/context/FolderContext";
 import { addFolderItem } from "@/app/actions/folders/addFolderItem";
-import { deleteFolderItem } from "@/app/actions/folders/deleteFolderItem";
 
 interface ImageCardProps {
   id: string;
