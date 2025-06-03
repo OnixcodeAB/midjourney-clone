@@ -46,7 +46,7 @@ const ImageCard = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
   const router = useRouter();
-  const { folders, handleAdd } = useFolders();
+  const { folders } = useFolders();
 
   useEffect(() => {
     const img = imgRef.current;
