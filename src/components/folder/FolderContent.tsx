@@ -40,7 +40,7 @@ export const FolderContent: React.FC<{ items: FolderItem[] | null }> = ({
   const { folders, handleAdd } = useFolders();
   const router = useRouter();
 
-  console.log(items)
+  console.log(items);
 
   const handleClick = (id: string) => {
     router.push(`/jobs/img_${id}`);
