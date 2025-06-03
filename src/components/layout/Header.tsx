@@ -183,7 +183,7 @@ export default function Header() {
           </button>
           {/* Prompt input */}
           <Textarea
-            className="border-none bg-transparent text-base placeholder:text-gray-400"
+            className="border-none outline-none bg-transparent text-base placeholder:text-gray-400"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             onClick={handleOnboarding}
