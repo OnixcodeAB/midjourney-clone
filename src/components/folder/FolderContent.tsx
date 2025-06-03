@@ -23,7 +23,6 @@ import {
   X,
 } from "lucide-react";
 import { useFolders } from "@/app/context/FolderContext";
-import { deleteFolderItem } from "@/app/actions/folders/deleteFolderItem";
 
 // Define responsive breakpoints for masonry
 const breakpointCols = {
@@ -36,7 +35,6 @@ export const FolderContent: React.FC<{
   items: FolderItem[] | null;
   handleDelItem: (id: string, folderId: string) => void;
 }> = ({ items, handleDelItem }) => {
-  
   const [menuOpen, setMenuOpen] = useState(false);
 
   const { folders } = useFolders();
