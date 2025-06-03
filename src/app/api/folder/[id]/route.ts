@@ -51,7 +51,6 @@ export async function GET(
 } */
 
 // GET items in folder
-
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -75,7 +74,7 @@ export async function GET(
 
     // If not in cache, query the database
     const { rows } = await query(
-      `SELECT fi.id, fi.image_id, fi.image_title, fi.url, fi.prompt, fi.type
+      `SELECT fi.id, fi.folder_id, fi.image_id, fi.image_title, fi.url, fi.prompt, fi.type
      FROM "FolderItem" fi
      JOIN "Folders" f ON fi.folder_id = f.id
      WHERE fi.folder_id = $1 AND f.user_id = $2`,

@@ -26,7 +26,7 @@ declare global {
 
   interface FolderItem {
     id: string;
-    image_id: number;
+    image_id: string;
     image_title: string;
     url: string;
     prompt: string;

@@ -20,8 +20,10 @@ import {
   MoreHorizontal,
   Plus,
   Star,
+  X,
 } from "lucide-react";
 import { useFolders } from "@/app/context/FolderContext";
+import { deleteFolderItem } from "@/app/actions/folders/deleteFolderItem";
 
 // Define responsive breakpoints for masonry
 const breakpointCols = {
@@ -37,8 +39,22 @@ export const FolderContent: React.FC<{ items: FolderItem[] | null }> = ({
 
   const { folders, handleAdd } = useFolders();
   const router = useRouter();
-  const handleClick = (id: number) => {
+
+  console.log(items)
+
+  const handleClick = (id: string) => {
     router.push(`/jobs/img_${id}`);
+  };
+
+  const handleDelItem = async (id: string, FolderId: string) => {
+    const result = await deleteFolderItem(id, FolderId);
+    if (result.error) {
+      // Handle error
+      console.error("Error deleting item to folder:", result.error);
+    } else {
+      // Handle success
+      console.log("Item deleting successfully");
+    }
   };
 
   if (!items || items.length === 0) {
@@ -130,6 +146,13 @@ export const FolderContent: React.FC<{ items: FolderItem[] | null }> = ({
                       )}
                     </DropdownMenuSubContent>
                   </DropdownMenuSub>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      handleDelItem(img.id, img.folder_id);
+                    }}
+                  >
+                    <X className="w-4 h-4 mr-2" /> Remove from folder
+                  </DropdownMenuItem>
                   <DropdownMenuItem>
                     <LayoutGrid className="w-4 h-4 mr-2" /> View variations
                   </DropdownMenuItem>

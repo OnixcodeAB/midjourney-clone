@@ -19,9 +19,11 @@ import {
   Download,
   Folder,
   LayoutGrid,
+  X,
 } from "lucide-react";
 import { useFolders } from "@/app/context/FolderContext";
 import { addFolderItem } from "@/app/actions/folders/addFolderItem";
+import { deleteFolderItem } from "@/app/actions/folders/deleteFolderItem";
 
 interface ImageCardProps {
   id: string;
@@ -155,6 +157,7 @@ const ImageCard = ({
                 )}
               </DropdownMenuSubContent>
             </DropdownMenuSub>
+
             <DropdownMenuItem>
               <LayoutGrid className="w-4 h-4 mr-2" /> View variations
             </DropdownMenuItem>
