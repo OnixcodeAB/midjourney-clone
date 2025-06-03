@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteFolderItem } from "@/app/actions/folders/deleteFolderItem";
 import { useFolders } from "@/app/context/FolderContext";
 import { FolderContent } from "@/components/folder/FolderContent";
 import { FolderHeader } from "@/components/folder/FolderHeader";
@@ -20,6 +21,19 @@ export default function FolderContentPage({ params }: FolderContentPageProps) {
 
   const { id } = React.use(params);
   const folder = folders.find((f) => f.id === id);
+
+  const handleDelItem = async (id: string, FolderId: string) => {
+    const result = await deleteFolderItem(id, FolderId);
+    if (result.error) {
+      // Handle error
+      console.error("Error deleting item to folder:", result.error);
+    } else {
+      // Remove from local state
+      setFolderItems((prev) =>
+        prev ? prev.filter((item) => item.id !== id) : []
+      );
+    }
+  };
 
   React.useEffect(() => {
     setRenameValue(folder?.name ?? "");
@@ -82,7 +96,7 @@ export default function FolderContentPage({ params }: FolderContentPageProps) {
         onDelete={() => handleDelete(folder.id)}
         inputRef={inputRef}
       />
-      <FolderContent items={folderItems} />
+      <FolderContent items={folderItems} handleDelItem={handleDelItem} />
     </main>
   );
 }

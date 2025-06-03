@@ -32,29 +32,20 @@ const breakpointCols = {
   640: 1,
 };
 
-export const FolderContent: React.FC<{ items: FolderItem[] | null }> = ({
-  items,
-}) => {
+export const FolderContent: React.FC<{
+  items: FolderItem[] | null;
+  handleDelItem: (id: string, folderId: string) => void;
+}> = ({ items, handleDelItem }) => {
+  
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const { folders, handleAdd } = useFolders();
+  const { folders } = useFolders();
   const router = useRouter();
 
   console.log(items);
 
   const handleClick = (id: string) => {
     router.push(`/jobs/img_${id}`);
-  };
-
-  const handleDelItem = async (id: string, FolderId: string) => {
-    const result = await deleteFolderItem(id, FolderId);
-    if (result.error) {
-      // Handle error
-      console.error("Error deleting item to folder:", result.error);
-    } else {
-      // Handle success
-      console.log("Item deleting successfully");
-    }
   };
 
   if (!items || items.length === 0) {
