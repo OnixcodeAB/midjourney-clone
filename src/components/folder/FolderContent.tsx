@@ -93,7 +93,7 @@ export const FolderContent: React.FC<{
                     className="cursor-pointer p-1 outline-none border-none"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <MoreHorizontal className="w-5 h-5" />
+                    <MoreHorizontal strokeWidth={3} className="w-5 h-5" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent

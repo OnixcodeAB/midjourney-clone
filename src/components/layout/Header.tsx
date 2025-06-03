@@ -123,7 +123,12 @@ export default function Header() {
     }
   };
 
-  if (pathname !== "/" && pathname !== "/create" && pathname !== "/create")
+  if (
+    pathname !== "/" &&
+    pathname !== "/create" &&
+    pathname !== "/create" &&
+    !pathname.startsWith("/folder")
+  )
     return null;
   if (!user?.id) return null; // Ensure user is authenticated
 
