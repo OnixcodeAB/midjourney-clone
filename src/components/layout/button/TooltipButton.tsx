@@ -21,7 +21,7 @@ const TooltipButton = forwardRef<HTMLButtonElement, TooltipButtonProps>(
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="flex items-center gap-2 p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-black text-sm relative"
+        className="flex items-center gap-2 p-2 rounded-md bg-gray-200 hover:bg-gray-300 text-black text-sm relative"
       >
         {icon && <span className="flex items-center">{icon}</span>}
         {children}

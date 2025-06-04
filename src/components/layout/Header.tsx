@@ -4,7 +4,15 @@ import { usePathname } from "next/navigation";
 import { usePrompt } from "@/app/context/PromptContext";
 import { useHeaderSettings } from "@/app/context/HeaderContext";
 import { useDropzone } from "react-dropzone";
-import { MoveUp, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
+import {
+  MoveUp,
+  Plus,
+  SlidersHorizontal,
+  Trash2,
+  TrendingUpDown,
+  Video,
+  VideoIcon,
+} from "lucide-react";
 import ImageSizeSelector from "./ImageSizeSelector";
 import {
   Popover,
@@ -201,16 +209,14 @@ export default function Header() {
           {/* Example: 1:1, 1v, settings, etc. */}
           <div className="flex gap-4">
             <AspectRatioPopover />
-            <button
-              type="button"
-              aria-label="version"
-              className="px-2 py-1 rounded-lg text-black text-sm bg-gray-100 hover:bg-gray-200"
-            >
-              1v
-            </button>
+            <TooltipButton
+              tooltipText="Variations"
+              icon={<TrendingUpDown className="w-5 h-5 " />}
+            />
             <Popover>
               <PopoverTrigger asChild>
                 <button
+                  type="button"
                   aria-label="btn-select"
                   className="px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200"
                 >
