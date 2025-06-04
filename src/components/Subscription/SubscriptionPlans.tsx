@@ -178,7 +178,10 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                   isSelected={isSelected}
                 /> */}
 
-                <PayPalSubscriptionDialog planId={plan.id} />
+                <PayPalSubscriptionDialog
+                  planId={plan.id}
+                  isSelected={isSelected}
+                />
 
                 {billing === "monthly" && (
                   <Button
