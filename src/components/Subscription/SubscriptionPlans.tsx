@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, Check } from "lucide-react";
 import { SubscribeButton } from "@/components/Subscription/SubscribeButton";
 import { useUser } from "@clerk/nextjs";
+import { PayPalSubscriptionDialog } from "./paypal-subscription-dialog";
 
 interface Plan {
   id: string;
@@ -164,7 +165,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
               </CardHeader>
 
               <CardContent className="flex flex-col justify-center space-y-2">
-                <SubscribeButton
+                {/* <SubscribeButton
                   key={plan.id}
                   planId={plan.id}
                   subscriber={{
@@ -175,7 +176,9 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                     email_address: user?.emailAddresses[0]?.emailAddress,
                   }}
                   isSelected={isSelected}
-                />
+                /> */}
+
+                <PayPalSubscriptionDialog planId={plan.id} />
 
                 {billing === "monthly" && (
                   <Button
