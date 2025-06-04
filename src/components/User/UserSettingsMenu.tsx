@@ -32,7 +32,7 @@ export function UserSettingsMenu() {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="p-2 rounded hover:bg-gray-100"
+            className="p-2 rounded cursor-pointer"
             aria-label="Open user settings"
           >
             <Ellipsis className="size-[22px]" />
