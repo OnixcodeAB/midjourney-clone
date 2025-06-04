@@ -11,7 +11,6 @@ interface Plan {
 }
 
 export default async function SubscriptionPage() {
-
   const { rows } = await query(`SELECT * FROM plans `);
 
   const Plans: Plan[] = rows;

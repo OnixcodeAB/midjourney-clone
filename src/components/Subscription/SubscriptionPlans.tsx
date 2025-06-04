@@ -56,6 +56,18 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   // Filter plans based on the current billing state
   const filteredPlans = plans.filter((plan) => plan.frequency === billing);
 
+  // Sort filterPlans to always show Free, Basic, Pro
+  const sortedPlans = filteredPlans.sort((a, b) => {
+    const order = ["Free", "Basic", "Pro"];
+
+    if (billing === "monthly") {
+      const indexA = order.indexOf(a.name);
+      const indexB = order.indexOf(b.name);
+      return indexA - indexB;
+    }
+    return 0;
+  });
+
   return (
     <div className="space-y-8 mt-8 px-2 sm:px-4 md:px-6">
       <div className="text-center space-y-2">
@@ -68,7 +80,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
       </div>
 
       {/* Toggle Billing */}
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center  gap-4">
         <ToggleGroup
           type="single"
           value={billing}
@@ -102,7 +114,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
       {/* Plans */}
       <div
         className="
-          flex flex-col gap-6 items-center 
+          flex flex-col gap-6 items-start 
           md:flex-row md:gap-8 md:justify-center
           lg:gap-24
           overflow-x-auto
@@ -110,7 +122,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
           pb-4
           "
       >
-        {filteredPlans.map((plan) => {
+        {sortedPlans.map((plan) => {
           const isSelected = selectedPlan === plan.id;
           return (
             <Card
