@@ -17,6 +17,7 @@ import { useUser } from "@clerk/nextjs";
 
 interface Plan {
   id: string;
+  plan_id: string;
   name: string;
   frequency: string;
   price: number;
@@ -42,12 +43,12 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
 
   // Check if the user has a subscription
   useEffect(() => {
-    const userSubscription = user?.publicMetadata
-      ?.subscription as UserSubscription;
+    const userSubscription = user?.publicMetadata;
     if (userSubscription) {
-      const currentPlan = plans.find(
-        (plan) => plan.id === userSubscription?.subscription_id
-      );
+      const currentPlan = plans.find((plan) => {
+        return plan.plan_id === userSubscription?.subscription_id;
+      });
+
       setSelectedPlan(currentPlan?.id || null);
     }
     // Only run when user or plans change
@@ -128,7 +129,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
             <Card
               key={plan.id}
               className={`border w-[90vw] max-w-xs md:max-w-[400px] flex-shrink-0
-                ${isSelected ? "border-indigo-500" : "border-gray-200"}
+                ${isSelected ? "border-[#f25b44]" : "border-gray-200"}
               `}
             >
               <CardHeader>

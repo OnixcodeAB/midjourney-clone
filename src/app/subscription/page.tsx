@@ -4,6 +4,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 
 interface Plan {
   id: string;
+  plan_id: string;
   name: string;
   frequency: string;
   price: number;
