@@ -47,8 +47,10 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   useEffect(() => {
     const userSubscription = user?.publicMetadata
       .subscription as UserSubscription;
+      console.log("userSubscription",userSubscription)
     if (userSubscription) {
       const currentPlan = plans.find((plan) => {
+        console.log("plan id",plan.id)
         return plan.plan_id === userSubscription?.plan_id;
       });
 
