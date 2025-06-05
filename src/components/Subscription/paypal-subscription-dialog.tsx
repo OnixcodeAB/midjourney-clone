@@ -10,6 +10,8 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { updateUserSubscription } from "@/app/actions/subscriptions/updateUserSubscription";
+import { toast } from "sonner";
 
 declare global {
   interface Window {
@@ -77,8 +79,40 @@ export function PayPalSubscriptionButton({
               plan_id: planId,
             });
           },
-          onApprove: function (data: any) {
-            alert(`Subscription created with ID: ${data.subscriptionID}`);
+          onApprove: async function (data: any) {
+            try {
+              // Update user subscription in database and Clerk
+              const result = await updateUserSubscription({
+                plan_id: planId,
+                subscriptionId: data.subscriptionID,
+                status: "active",
+              });
+              if (result.success) {
+                toast.success("Subscription Activated", {
+                  description: "Your subscription was successfully updated",
+                });
+                return setIsOpen(false);
+              } else {
+                throw new Error(
+                  result.error || "Failed to update subscription"
+                );
+              }
+            } catch (error) {
+              console.error("Subscription approval error:", error);
+              toast.error("Subscription Error", {
+                description:
+                  error instanceof Error
+                    ? error.message
+                    : "Failed to process subscription",
+              });
+            }
+          },
+          onError: (err: Error) => {
+            console.error("PayPal error:", err);
+            toast.error("Payment Error", {
+              description:
+                err.message || "An error occurred during payment processing",
+            });
           },
         })
         .render(paypalContainerRef.current);
