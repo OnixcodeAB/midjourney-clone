@@ -23,7 +23,7 @@ interface PayPalSubscriptionDialogProps {
   clientId?: string; // Your PayPal Client ID
 }
 
-export function PayPalSubscriptionDialog({
+export function PayPalSubscriptionButton({
   planId,
   isSelected,
 }: PayPalSubscriptionDialogProps) {

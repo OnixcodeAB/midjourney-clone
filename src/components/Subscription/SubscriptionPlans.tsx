@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, Check } from "lucide-react";
 import { SubscribeButton } from "@/components/Subscription/SubscribeButton";
 import { useUser } from "@clerk/nextjs";
-import { PayPalSubscriptionDialog } from "./paypal-subscription-dialog";
+import { PayPalSubscriptionButton } from "./paypal-subscription-dialog";
 
 interface Plan {
   id: string;
@@ -177,7 +177,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                   isSelected={isSelected}
                 /> */}
 
-                <PayPalSubscriptionDialog
+                <PayPalSubscriptionButton
                   planId={plan.id}
                   isSelected={isSelected}
                 />
