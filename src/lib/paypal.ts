@@ -5,7 +5,7 @@ export const PAYPAL_API =
     : "https://api-m.sandbox.paypal.com";
 
 export async function getAccessToken(): Promise<string> {
-  const clientId = process.env.PAYPAL_CLIENT_ID!;
+  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!;
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET!;
   const creds = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
