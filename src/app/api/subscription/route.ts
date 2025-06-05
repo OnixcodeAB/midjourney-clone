@@ -87,11 +87,11 @@ export async function POST(req: Request) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          private_metadata: { payer_id: subscriptionId },
           public_metadata: {
+            plan_id: planId,
             subscription: {
               subscription_plan: plan?.name || "free",
-              subscription_id: planId || "",
+              subscription_id: subscriptionId || "",
               subscription_status: status || "active",
               subscription_frequency: plan?.frequency || "monthly",
             },

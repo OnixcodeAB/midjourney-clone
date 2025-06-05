@@ -39,5 +39,9 @@ export default function SubscriptionReviseButton({
       setIsLoading(false);
     }
   };
-  return <div>SubscriptionReviseButton</div>;
+  return (
+    <Button onClick={handleClick} disabled={isLoading}>
+      {isLoading ? "Updating…" : "Update Subscription"}
+    </Button>
+  );
 }

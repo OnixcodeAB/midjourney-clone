@@ -30,6 +30,7 @@ interface SubscriptionPlansProps {
 }
 
 interface UserSubscription {
+  plan_id: string;
   subscription_id: string;
   subscription_plan: string;
   subscription_status: string;
@@ -48,7 +49,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
       .subscription as UserSubscription;
     if (userSubscription) {
       const currentPlan = plans.find((plan) => {
-        return plan.plan_id === userSubscription?.subscription_id;
+        return plan.plan_id === userSubscription?.plan_id;
       });
 
       setSelectedPlan(currentPlan?.id || null);
