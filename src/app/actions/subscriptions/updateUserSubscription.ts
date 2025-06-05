@@ -2,7 +2,6 @@
 
 import { query } from "@/lib/db"; // Assuming you have a query utility
 import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 
 interface Props {
   subscriptionId: string;
