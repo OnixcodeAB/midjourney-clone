@@ -88,8 +88,8 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           public_metadata: {
-            plan_id: planId,
             subscription: {
+              plan_id: planId,
               subscription_plan: plan?.name || "free",
               subscription_id: subscriptionId || "",
               subscription_status: status || "active",
