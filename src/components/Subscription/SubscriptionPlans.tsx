@@ -117,9 +117,8 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
       {/* Plans */}
       <div
         className="
-          flex flex-col gap-6 items-start 
-          md:flex-row md:gap-8 md:justify-center
-          lg:gap-24
+          flex flex-col gap-6 items-center md:gap-8 md:justify-center
+          lg:flex-row lg:items-start lg:gap-24
           overflow-x-auto
           md:overflow-visible
           pb-4
