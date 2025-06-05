@@ -16,6 +16,14 @@ export async function updateUserSubscription({
 }: Props) {
   try {
     const { userId } = await auth();
+
+    if (!userId) {
+      return {
+        success: false,
+        error: "user not authorized",
+      };
+    }
+
     // Fetch the plan details
     const { rows } = await query(`SELECT * FROM plans WHERE id = $1`, [
       plan_id,
