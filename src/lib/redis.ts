@@ -72,7 +72,7 @@ async function initializeRedis(): Promise<boolean> {
     }
 
     redis = createClient({
-      url: process.env.REDIS_URL,
+      url: process.env.REDIS_URL || "redis://localhost:6379",
       socket: {
         reconnectStrategy: (retries) => {
           if (retries > 5) {
