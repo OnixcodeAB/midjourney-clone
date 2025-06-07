@@ -1,6 +1,4 @@
 import { NextResponse, NextRequest } from "next/server";
-import { query } from "@/lib/db";
-import { cacheResult, getCached, invalidateCache } from "@/lib/redis";
 import { getAuth } from "@clerk/nextjs/server";
 import { getAccessToken, PAYPAL_API } from "@/lib/paypal";
 
