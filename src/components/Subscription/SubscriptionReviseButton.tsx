@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
@@ -13,12 +13,52 @@ export default function SubscriptionReviseButton({
   newPlanId,
 }: Props) {
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
+  const [isChecking, setIsChecking] = useState(true);
 
+  // Fetch current subscription details on mount
+  useEffect(() => {
+    async function fetchSubscription() {
+      try {
+        const res = await fetch(
+          `/api/subscription/get-subscription?subscriptionId=${subscriptionId}`
+        );
+        const data = await res.json();
+        if (res.ok) {
+          setCurrentPlanId(data.plan_id);
+        } else {
+          console.error("Error fetching subscription:", data.error);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsChecking(false);
+      }
+    }
+    fetchSubscription();
+  }, [subscriptionId]);
+
+  // If still checking, disable button until we know
+  if (isChecking) {
+    return (
+      <Button variant="outline" disabled>
+        Checking...
+      </Button>
+    );
+  }
+
+  // If already on target plan, render disabled 'Current Plan' button
+  if (currentPlanId === newPlanId) {
+    return (
+      <Button variant="outline" disabled>
+        Current Plan
+      </Button>
+    );
+  }
+
+  // Otherwise, normal update button
   const handleClick = async () => {
     setIsLoading(true);
-
-    // check is user has already subscribe to the plan newPlanId
-
     try {
       const res = await fetch("/api/subscription/revise-subscription", {
         method: "POST",
