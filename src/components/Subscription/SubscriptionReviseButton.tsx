@@ -17,6 +17,8 @@ export default function SubscriptionReviseButton({
   const handleClick = async () => {
     setIsLoading(true);
 
+    // check is user has already subscribe to the plan newPlanId
+
     try {
       const res = await fetch("/api/subscription/revise-subscription", {
         method: "POST",

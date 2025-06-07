@@ -184,6 +184,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 <PayPalSubscriptionButton
                   planId={plan.id}
                   isSelected={isSelected}
+                  SubscriptionId={userMetadata?.subscription_id}
                 />
 
                 {billing === "monthly" && (
