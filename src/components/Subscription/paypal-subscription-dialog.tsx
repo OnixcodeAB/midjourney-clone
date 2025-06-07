@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { updateUserSubscription } from "@/app/actions/subscriptions/updateUserSubscription";
 import { toast } from "sonner";
+import SubscriptionReviseButton from "./SubscriptionReviseButton";
 
 declare global {
   interface Window {
@@ -122,37 +123,78 @@ export function PayPalSubscriptionButton({
   }, [scriptLoaded, isOpen]);
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant={isSelected ? "outline" : "default"}
-          disabled={isSelected}
-        >
-          {isSelected ? "Seleted" : "Subscribe"}
-        </Button>
-      </AlertDialogTrigger>
+    <>
+      {isSelected ? (
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant={isSelected ? "outline" : "default"}
+              disabled={isSelected}
+            >
+              {isSelected ? "Seleted" : "Subscribe"}
+            </Button>
+          </AlertDialogTrigger>
 
-      <AlertDialogContent className="p-4 w-fit">
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            Choose a subscription payment method
-          </AlertDialogTitle>
-          <AlertDialogDescription className="p-2">
-            Please use one button below to complete your subscription process.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+          <AlertDialogContent className="p-4 w-fit">
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Choose a subscription payment method
+              </AlertDialogTitle>
+              <AlertDialogDescription className="p-2">
+                Please use one button below to complete your subscription
+                process.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
 
-        {/* PayPal container - only renders when dialog is open */}
-        <div
-          className=""
-          ref={paypalContainerRef}
-          id={`paypal-button-container-${planId}}`}
-        />
+            {/* PayPal container - only renders when dialog is open */}
+            <div
+              className=""
+              ref={paypalContainerRef}
+              id={`paypal-button-container-${planId}`}
+            />
 
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      ) : !isSelected ? (
+        <SubscriptionReviseButton subscriptionId="1" newPlanId="" />
+      ) : (
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant={isSelected ? "outline" : "default"}
+              disabled={isSelected}
+            >
+              {isSelected ? "Seleted" : "Subscribe"}
+            </Button>
+          </AlertDialogTrigger>
+
+          <AlertDialogContent className="p-4 w-fit">
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Choose a subscription payment method
+              </AlertDialogTitle>
+              <AlertDialogDescription className="p-2">
+                Please use one button below to complete your subscription
+                process.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            {/* PayPal container - only renders when dialog is open */}
+            <div
+              className=""
+              ref={paypalContainerRef}
+              id={`paypal-button-container-${planId}`}
+            />
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+    </>
   );
 }

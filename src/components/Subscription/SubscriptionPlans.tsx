@@ -12,9 +12,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, Check } from "lucide-react";
-import { SubscribeButton } from "@/components/Subscription/SubscribeButton";
 import { useUser } from "@clerk/nextjs";
 import { PayPalSubscriptionButton } from "./paypal-subscription-dialog";
+import SubscriptionReviseButton from "./SubscriptionReviseButton";
 
 interface Plan {
   id: string;
@@ -44,14 +44,15 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   const { user } = useUser();
 
   // Check if the user has a subscription
+  let userMetadata: UserSubscription;
+
   useEffect(() => {
-    const userSubscription = user?.publicMetadata
-      .subscription as UserSubscription;
-      console.log("userSubscription",userSubscription)
-    if (userSubscription) {
+    userMetadata = user?.publicMetadata.subscription as UserSubscription;
+    console.log("userSubscription", userMetadata);
+    if (userMetadata) {
       const currentPlan = plans.find((plan) => {
-        console.log("plan id",plan.id)
-        return plan.plan_id === userSubscription?.plan_id;
+        console.log("plan id", plan.id);
+        return plan.plan_id === userMetadata?.plan_id;
       });
 
       setSelectedPlan(currentPlan?.id || null);
