@@ -1,9 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-import { Loader } from "lucide-react";
 import { toast } from "sonner";
+import { PayPalSubscriptionButton } from "./paypal-subscription-dialog";
+import SubscriptionReviseButton from "./SubscriptionReviseButton";
+import { useUser } from "@clerk/nextjs";
 
 interface subscriberInfo {
   name?: {
@@ -13,19 +15,26 @@ interface subscriberInfo {
   email_address?: string;
 }
 
-interface SubscribeButtonProps {
+interface Props {
   planId: string;
   subscriber?: subscriberInfo;
   isSelected?: boolean;
+  subscriptionId: string | undefined;
+  SubscriptionStatus: string | undefined;
 }
 
 export const SubscribeButton = ({
   planId,
   subscriber,
   isSelected,
-}: SubscribeButtonProps) => {
+  subscriptionId,
+  SubscriptionStatus,
+}: Props) => {
   const router = useRouter();
+  const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
+  const [isChecking, setIsChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubscribe = async () => {
@@ -66,19 +75,54 @@ export const SubscribeButton = ({
     }
   };
 
-  return (
-    <Button
-      variant={isSelected ? "secondary" : "default"}
-      className="w-full h-9 flex items-center justify-center cursor-pointer"
-      onClick={handleSubscribe}
-    >
-      {isSelected ? (
-        "Selected"
-      ) : isLoading ? (
-        <Loader className="animate-spin h-7 w-7 size-1" />
-      ) : (
-        "Subscribe"
-      )}
-    </Button>
-  );
+  // Fetch current subscription details on mount
+  useEffect(() => {
+    async function fetchSubscription() {
+      try {
+        setIsChecking(true);
+        const res = await fetch(
+          `/api/subscription/get-subscription?subscriptionId=${subscriptionId}`
+        );
+        const data = await res.json();
+        if (res.ok) {
+          setCurrentPlanId(data.plan_id);
+        } else {
+          console.error("Error fetching subscription:", data.error);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsChecking(false);
+      }
+    }
+    if (user) fetchSubscription();
+  }, [subscriptionId]);
+
+  // If still checking, disable button until we know
+  if (isChecking) {
+    return (
+      <Button variant="outline" disabled>
+        Checking...
+      </Button>
+    );
+  }
+
+  if (currentPlanId === planId) {
+    return (
+      <Button variant="outline" disabled>
+        Current Plan
+      </Button>
+    );
+  }
+
+  if (SubscriptionStatus) {
+    return (
+      <SubscriptionReviseButton
+        subscriptionId={subscriptionId || ""}
+        newPlanId={planId}
+      />
+    );
+  }
+
+  return <PayPalSubscriptionButton planId={planId} isSelected />;
 };

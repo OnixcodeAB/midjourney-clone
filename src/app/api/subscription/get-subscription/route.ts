@@ -5,19 +5,23 @@ import { getAuth } from "@clerk/nextjs/server";
 import { getAccessToken, PAYPAL_API } from "@/lib/paypal";
 
 // Fetch the current subscription's plan_id
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ subscriptionId: string }> }
-) {
+export async function GET(req: NextRequest) {
   const { userId } = getAuth(req);
 
   if (!userId) {
     return NextResponse.json({ error: "Not authorized" }, { status: 401 });
   }
-
-  const { subscriptionId } = await params;
-
   try {
+    const { searchParams } = new URL(req.url);
+    const subscriptionId = searchParams.get("subscriptionId");
+
+    if (!subscriptionId) {
+      NextResponse.json(
+        { error: "Missing subscriptionId query parameter" },
+        { status: 400 } // Bad Request
+      );
+    }
+
     const accessToken = await getAccessToken();
     const paypal = await fetch(
       `${PAYPAL_API}/v1/billing/subscriptions/${subscriptionId}`,

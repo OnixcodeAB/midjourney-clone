@@ -13,8 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, Check } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import { PayPalSubscriptionButton } from "./paypal-subscription-dialog";
-import SubscriptionReviseButton from "./SubscriptionReviseButton";
+import { SubscribeButton } from "./SubscribeButton";
 
 interface Plan {
   id: string;
@@ -39,25 +38,25 @@ interface UserSubscription {
 export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [userSubscription, setUserSubscription] =
+    useState<UserSubscription | null>(null);
 
   // Get the current user from Clerk
   const { user } = useUser();
 
-  // Check if the user has a subscription
-  let userMetadata: UserSubscription;
-
   useEffect(() => {
-    userMetadata = user?.publicMetadata.subscription as UserSubscription;
-    console.log("userSubscription", userMetadata);
-    if (userMetadata) {
-      const currentPlan = plans.find((plan) => {
-        console.log("plan id", plan.id);
-        return plan.plan_id === userMetadata?.plan_id;
-      });
+    if (user) {
+      const subscriptionData = user.publicMetadata
+        .subscription as UserSubscription;
+      setUserSubscription(subscriptionData);
 
-      setSelectedPlan(currentPlan?.id || null);
+      if (subscriptionData) {
+        const currentPlan = plans.find(
+          (plan) => plan.plan_id === subscriptionData.plan_id
+        );
+        setSelectedPlan(currentPlan?.id || null);
+      }
     }
-    // Only run when user or plans change
   }, [user, plans]);
 
   // Filter plans based on the current billing state
@@ -168,9 +167,10 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
               </CardHeader>
 
               <CardContent className="flex flex-col justify-center space-y-2">
-                {/* <SubscribeButton
+                <SubscribeButton
                   key={plan.id}
-                  planId={plan.id}
+                  subscriptionId={userSubscription?.subscription_id}
+                  planId={plan.plan_id}
                   subscriber={{
                     name: {
                       given_name: user?.firstName ?? undefined,
@@ -178,13 +178,8 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                     },
                     email_address: user?.emailAddresses[0]?.emailAddress,
                   }}
+                  SubscriptionStatus={userSubscription?.subscription_status}
                   isSelected={isSelected}
-                /> */}
-
-                <PayPalSubscriptionButton
-                  planId={plan.id}
-                  isSelected={isSelected}
-                  SubscriptionId={userMetadata?.subscription_id}
                 />
 
                 {billing === "monthly" && (
