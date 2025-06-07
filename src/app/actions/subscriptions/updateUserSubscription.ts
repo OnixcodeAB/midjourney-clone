@@ -25,7 +25,7 @@ export async function updateUserSubscription({
     }
 
     // Fetch the plan details
-    const { rows } = await query(`SELECT * FROM plans WHERE id = $1`, [
+    const { rows } = await query(`SELECT * FROM plans WHERE plan_id = $1`, [
       plan_id,
     ]);
     const plan = rows[0];
