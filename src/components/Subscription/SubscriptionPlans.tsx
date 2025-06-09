@@ -177,21 +177,6 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                   <PayPalSubscriptionButton planId={plan.id} isSelected />
                 )}
 
-                {/* <SubscribeButton
-                  key={plan.id}
-                  subscriptionId={userSubscription?.subscription_id}
-                  planId={plan.plan_id}
-                  subscriber={{
-                    name: {
-                      given_name: user?.firstName ?? undefined,
-                      surname: user?.lastName ?? undefined,
-                    },
-                    email_address: user?.emailAddresses[0]?.emailAddress,
-                  }}
-                  SubscriptionStatus={userSubscription?.subscription_status}
-                  isSelected={isSelected}
-                /> */}
-
                 {billing === "monthly" && (
                   <Button
                     className="cursor-pointer"
