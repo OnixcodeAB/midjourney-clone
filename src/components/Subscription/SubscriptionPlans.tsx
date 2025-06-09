@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, Check } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import { SubscribeButton } from "./SubscribeButton";
 import SubscriptionReviseButton from "./SubscriptionReviseButton";
 import { PayPalSubscriptionButton } from "./paypal-subscription-dialog";
 
