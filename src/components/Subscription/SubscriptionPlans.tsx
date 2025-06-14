@@ -38,7 +38,7 @@ interface UserSubscription {
 
 export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [currentPlan, setCurrentPlan] = useState<Plan>();
   const [userSubscription, setUserSubscription] =
     useState<UserSubscription | null>(null);
 
@@ -52,10 +52,10 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
       setUserSubscription(subscriptionData);
 
       if (subscriptionData) {
-        const currentPlan = plans.find(
+        const CurrentPlan = plans.find(
           (plan) => plan.plan_id === subscriptionData.plan_id
         );
-        setSelectedPlan(currentPlan?.id || null);
+        setCurrentPlan(CurrentPlan);
       }
     }
   }, [user, plans]);
@@ -129,7 +129,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
           "
       >
         {sortedPlans.map((plan) => {
-          const isSelected = selectedPlan === plan.id;
+          const isSelected = currentPlan?.id === plan.id;
           return (
             <Card
               key={plan.id}
@@ -171,6 +171,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 {userSubscription?.subscription_status ? (
                   <SubscriptionReviseButton
                     subscriptionId={userSubscription.subscription_id || ""}
+                    currentPlanId={userSubscription.plan_id || ""}
                     newPlanId={plan.plan_id || ""}
                   />
                 ) : (

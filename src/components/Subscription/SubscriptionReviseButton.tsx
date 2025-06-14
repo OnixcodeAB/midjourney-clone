@@ -1,51 +1,20 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
   subscriptionId: string;
   newPlanId: string;
+  currentPlanId: string | null;
 }
 
 export default function SubscriptionReviseButton({
   subscriptionId,
   newPlanId,
+  currentPlanId = null, // Default to null if not provided
 }: Props) {
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
-  const [isChecking, setIsChecking] = useState(true);
-
-  // Fetch current subscription details on mount
-  useEffect(() => {
-    async function fetchSubscription() {
-      try {
-        const res = await fetch(
-          `/api/subscription/get-subscription?subscriptionId=${subscriptionId}`
-        );
-        const data = await res.json();
-        if (res.ok) {
-          setCurrentPlanId(data.plan_id);
-        } else {
-          console.error("Error fetching subscription:", data.error);
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsChecking(false);
-      }
-    }
-    fetchSubscription();
-  }, [subscriptionId]);
-
-  // If still checking, disable button until we know
-  if (isChecking) {
-    return (
-      <Button variant="outline" disabled>
-        Checking...
-      </Button>
-    );
-  }
 
   // If already on target plan, render disabled 'Current Plan' button
   if (currentPlanId === newPlanId) {
@@ -81,9 +50,10 @@ export default function SubscriptionReviseButton({
       setIsLoading(false);
     }
   };
+
   return (
     <Button onClick={handleClick} disabled={isLoading}>
-      {isLoading ? "Updating…" : "Update Subscription"}
+      Update Subscription
     </Button>
   );
 }
