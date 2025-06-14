@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { use, useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
