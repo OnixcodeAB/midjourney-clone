@@ -14,14 +14,14 @@ import { PayPalSubscribeButton } from "./PayPalSubscribeButton";
 import { PayPalSubscriptionUpdatedButton } from "./PayPalSubscriptionUpdatedButton";
 
 interface PayPalButtonProps {
-  isUpdate: boolean;
+  isSelect: boolean;
   currentSubsCriptionId?: string;
   newPlanId: string;
   planId?: string;
 }
 
 export function PayPalButton({
-  isUpdate,
+  isSelect,
   currentSubsCriptionId,
   newPlanId,
   planId,
@@ -44,13 +44,13 @@ export function PayPalButton({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        {isUpdate && currentSubsCriptionId ? (
+        {isSelect && currentSubsCriptionId ? (
           <PayPalSubscriptionUpdatedButton
             currentSubsCriptionId={currentSubsCriptionId}
             newPlanId={newPlanId}
           />
         ) : (
-          planId && <PayPalSubscribeButton planId={planId} isSelected={false} />
+          planId && <PayPalSubscribeButton planId={planId} />
         )}
 
         <AlertDialogFooter>

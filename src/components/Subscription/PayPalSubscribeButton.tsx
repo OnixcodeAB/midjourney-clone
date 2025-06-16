@@ -10,12 +10,10 @@ declare global {
 
 interface PayPalSubscriptionButtonProps {
   planId: string; // El ID del plan de PayPal
-  isSelected: boolean;
 }
 
 export function PayPalSubscribeButton({
   planId,
-  isSelected,
 }: PayPalSubscriptionButtonProps) {
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const paypalContainerRef = useRef<HTMLDivElement>(null);
