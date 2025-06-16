@@ -1,81 +1,64 @@
 import { getAccessToken, PAYPAL_API } from "@/lib/paypal";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 
-type Data = {
-  success: boolean;
-  data?: any;
-  error?: string;
-};
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  if (req.method !== "POST") {
-    return res
-      .status(405)
-      .json({ success: false, error: "Method Not Allowed" });
-  }
-
-  const {
-    subscriptionId,
-    newPlanId,
-  }: { subscriptionId?: string; newPlanId?: string } = req.body;
-
-  if (!subscriptionId || !newPlanId) {
-    return res.status(400).json({
-      success: false,
-      error: "subscriptionId and newPlanId are required",
-    });
-  }
-  let accessToken: string;
+export async function POST(req: Request) {
   try {
-    accessToken = await getAccessToken();
-  } catch (error: any) {
-    console.log("Error fetching Paypal token", error);
-    return res
-      .status(500)
-      .json({ success: false, error: "Failed to get PayPal access token" });
-  }
+    const { subscriptionId, newPlanId } = await req.json();
 
-  // Build the PATCH payload to revise (upgrade/downgrade) the subscription
-  const patchBody = [
-    {
-      op: "replace",
-      path: "/plan_id",
-      value: newPlanId,
-    },
-  ];
-  try {
-    const paypalRes = await fetch(
-      `${PAYPAL_API}/v1/billing/subscriptions/${subscriptionId}`,
+    // Validate required fields
+    if (!subscriptionId || !newPlanId) {
+      return NextResponse.json(
+        { success: false, error: "subscriptionId and newPlanId are required" },
+        { status: 400 }
+      );
+    }
+
+    // Get PayPal access token
+    const accessToken = await getAccessToken();
+    console.log(accessToken);
+
+    // Prepare subscription update payload
+    const patchBody = [
       {
-        method: "PATCH",
+        op: "replace",
+        path: "/plan/plan_id",
+        value: newPlanId,
+      },
+    ];
+
+    // Update PayPal subscription
+    const paypalRes = await fetch(
+      `${PAYPAL_API}/v1/billing/subscriptions/${subscriptionId}/revise`,
+      {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify(patchBody),
+        body: JSON.stringify({ plan_id: newPlanId }),
       }
     );
 
+    // Handle PayPal response
     if (paypalRes.status === 204) {
-      // PayPal returns 204 No Content when revise is successful
-      return res
-        .status(200)
-        .json({ success: true, data: { message: "Subscription updated" } });
+      return NextResponse.json(
+        { success: true, data: { message: "Subscription updated" } },
+        { status: 200 }
+      );
     }
 
-    // If PayPal sends an error payload, forward it
+    // Forward PayPal API errors
     const errorPayload = await paypalRes.json();
-    console.error("PayPal revise error:", errorPayload);
-    return res
-      .status(paypalRes.status)
-      .json({ success: false, error: JSON.stringify(errorPayload) });
+    return NextResponse.json(
+      { success: false, error: errorPayload },
+      { status: paypalRes.status }
+    );
   } catch (err: any) {
-    console.error("Fetch error when revising subscription:", err);
-    return res
-      .status(500)
-      .json({ success: false, error: "Internal server error" });
+    console.error("Internal server error:", err);
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

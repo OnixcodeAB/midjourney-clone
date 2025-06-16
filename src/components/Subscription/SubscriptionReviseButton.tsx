@@ -34,10 +34,25 @@ export default function SubscriptionReviseButton({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subscriptionId, newPlanId }),
       });
-      const json = await res.json();
-      if (!res.ok || !json.success) {
-        throw new Error(json.error || "Unknown error");
+
+      // Handle non-JSON responses
+      if (!res.headers.get("content-type")?.includes("application/json")) {
+        throw new Error(`Unexpected response: ${await res.text()}`);
       }
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        // Handle PayPal API errors
+        throw new Error(
+          json.error?.message ||
+            json.error?.error_description ||
+            JSON.stringify(json.error) ||
+            `Request failed with status ${res.status}`
+        );
+      }
+
+      // Handle success case
       toast("Subscription Updated", {
         description: "Your subscription has been successfully updated!",
       });
