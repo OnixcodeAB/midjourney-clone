@@ -26,7 +26,6 @@ export default function PayPalButton({
   currentSubsCriptionId,
   currentPlanId,
   newPlanId,
-  planId,
 }: PayPalButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 

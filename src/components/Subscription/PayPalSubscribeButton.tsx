@@ -8,13 +8,7 @@ declare global {
   }
 }
 
-interface PayPalSubscriptionButtonProps {
-  planId: string; // El ID del plan de PayPal
-}
-
-export function PayPalSubscribeButton({
-  planId,
-}: PayPalSubscriptionButtonProps) {
+export function PayPalSubscribeButton({ planId }: { planId: string }) {
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const paypalContainerRef = useRef<HTMLDivElement>(null);
   const buttonRendered = useRef(false);
@@ -100,8 +94,9 @@ export function PayPalSubscribeButton({
   }, [scriptLoaded, planId]);
 
   return (
-    <div ref={paypalContainerRef} id={`paypal-button-container-${planId}`}>
-      {!scriptLoaded && <p>Loading PayPal button...</p>}
-    </div>
+    <div
+      ref={paypalContainerRef}
+      id={`paypal-button-container-${planId}`}
+    ></div>
   );
 }
