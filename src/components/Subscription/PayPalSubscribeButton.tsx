@@ -38,7 +38,7 @@ export function PayPalSubscribeButton({
       setScriptLoaded(false);
       buttonRendered.current = false;
     };
-  }, [scriptLoaded]);
+  }, []);
 
   // Renderizar el botón de PayPal
   useEffect(() => {

@@ -30,6 +30,8 @@ export default function PayPalButton({
 }: PayPalButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  console.log(newPlanId);
+
   if (currentPlanId === newPlanId) {
     return (
       <Button variant="outline" disabled>
@@ -41,7 +43,7 @@ export default function PayPalButton({
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant={"default"}>
+        <Button variant={"default"} className="cursor-pointer">
           {isSubscription ? "Upgrade subscription" : "Subscribe"}
         </Button>
       </AlertDialogTrigger>
@@ -55,15 +57,15 @@ export default function PayPalButton({
             Please use one button below to complete your subscription process.
           </AlertDialogDescription>
         </AlertDialogHeader>
-
-        {currentSubsCriptionId ? (
-          <PayPalSubscriptionUpdatedButton
-            currentSubsCriptionId={currentSubsCriptionId}
-            newPlanId={newPlanId}
-          />
-        ) : (
-          planId && <PayPalSubscribeButton planId={planId} />
-        )}
+        <>
+          {isSubscription && (
+            <PayPalSubscriptionUpdatedButton
+              currentSubsCriptionId={currentSubsCriptionId || ""}
+              newPlanId={newPlanId}
+            />
+          )}
+          {newPlanId && <PayPalSubscribeButton planId={newPlanId} />}
+        </>
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
