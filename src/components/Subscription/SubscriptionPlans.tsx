@@ -15,6 +15,7 @@ import { ArrowUpRight, Check } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import SubscriptionReviseButton from "./SubscriptionReviseButton";
 import { PayPalSubscriptionButton } from "./paypal-subscription-dialog";
+import { PayPalSubscriptionUpdatedButton } from "./paypal-subscription-UpdatedButton";
 
 interface Plan {
   id: string;
@@ -169,9 +170,10 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
 
               <CardContent className="flex flex-col justify-center space-y-2">
                 {userSubscription?.subscription_status ? (
-                  <SubscriptionReviseButton
-                    subscriptionId={userSubscription.subscription_id || ""}
-                    currentPlanId={userSubscription.plan_id || ""}
+                  <PayPalSubscriptionUpdatedButton
+                    currentSubsCriptionId={
+                      userSubscription.subscription_id || ""
+                    }
                     newPlanId={plan.plan_id || ""}
                   />
                 ) : (
