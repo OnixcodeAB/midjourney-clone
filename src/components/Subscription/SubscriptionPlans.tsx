@@ -90,7 +90,11 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
         <ToggleGroup
           type="single"
           value={billing}
-          onValueChange={(value) => setBilling(value as "monthly" | "yearly")}
+          onValueChange={(value) => {
+            if (value === "monthly" || value === "yearly") {
+              setBilling(value);
+            }
+          }}
           className="inline-flex rounded-full bg-[#e3e4e8]"
         >
           <ToggleGroupItem

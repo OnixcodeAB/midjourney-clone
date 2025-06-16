@@ -29,8 +29,6 @@ export default function PayPalButton({
 }: PayPalButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log(newPlanId);
-
   if (currentPlanId === newPlanId) {
     return (
       <Button variant="outline" disabled>
