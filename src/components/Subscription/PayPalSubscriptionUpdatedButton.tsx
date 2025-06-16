@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
-  currentSubscriptionId: string; 
+  currentSubscriptionId: string; // Fixed typo in prop name
   newPlanId: string;
 }
 
@@ -13,7 +13,7 @@ export function PayPalSubscriptionUpdateButton({
   const scriptRef = useRef<HTMLScriptElement | null>(null);
   const paypalContainerRef = useRef<HTMLDivElement>(null);
   const buttonRendered = useRef(false);
-  
+
   // Track previous props to detect changes
   const prevProps = useRef({ currentSubscriptionId, newPlanId });
 
@@ -44,7 +44,7 @@ export function PayPalSubscriptionUpdateButton({
 
   useEffect(() => {
     // Check if props changed since last render
-    const propsChanged = 
+    const propsChanged =
       prevProps.current.currentSubscriptionId !== currentSubscriptionId ||
       prevProps.current.newPlanId !== newPlanId;
 

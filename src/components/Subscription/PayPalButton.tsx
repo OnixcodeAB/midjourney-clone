@@ -61,7 +61,7 @@ export default function PayPalButton({
               newPlanId={newPlanId}
             />
           )}
-          {newPlanId && <PayPalSubscribeButton planId={newPlanId} />}
+          {!isSubscription && <PayPalSubscribeButton planId={newPlanId} />}
         </>
 
         <AlertDialogFooter>
