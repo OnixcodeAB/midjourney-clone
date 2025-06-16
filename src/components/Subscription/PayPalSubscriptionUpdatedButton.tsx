@@ -62,9 +62,5 @@ export function PayPalSubscriptionUpdatedButton({
     }
   }, [scriptLoaded, currentSubsCriptionId, newPlanId]);
 
-  return (
-    <div ref={paypalContainerRef} id="paypal-button-container">
-      {!scriptLoaded && <p>Loading PayPal button...</p>}
-    </div>
-  );
+  return <div ref={paypalContainerRef} id="paypal-button-container"></div>;
 }
