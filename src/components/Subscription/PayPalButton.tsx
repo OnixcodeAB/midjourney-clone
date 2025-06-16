@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { PayPalSubscribeButton } from "./PayPalSubscribeButton";
-import { PayPalSubscriptionUpdatedButton } from "./PayPalSubscriptionUpdatedButton";
+import { PayPalSubscriptionUpdateButton } from "./PayPalSubscriptionUpdatedButton";
 
 interface PayPalButtonProps {
   isSubscription?: boolean;
@@ -56,8 +56,8 @@ export default function PayPalButton({
         </AlertDialogHeader>
         <>
           {isSubscription && (
-            <PayPalSubscriptionUpdatedButton
-              currentSubsCriptionId={currentSubsCriptionId || ""}
+            <PayPalSubscriptionUpdateButton
+              currentSubscriptionId={currentSubsCriptionId || ""}
               newPlanId={newPlanId}
             />
           )}
