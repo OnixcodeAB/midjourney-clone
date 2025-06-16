@@ -1,42 +1,29 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { updateUserSubscription } from "@/app/actions/subscriptions/updateUserSubscription";
 import { toast } from "sonner";
 
 declare global {
   interface Window {
-    paypal: any; // Declare paypal to avoid TypeScript errors
+    paypal: any; // Declarar paypal para evitar errores de TypeScript
   }
 }
 
-interface PayPalSubscriptionDialogProps {
-  planId: string; // The PayPal Plan ID
+interface PayPalSubscriptionButtonProps {
+  planId: string; // El ID del plan de PayPal
   isSelected: boolean;
-  clientId?: string; // Your PayPal Client ID
 }
 
 export function PayPalSubscriptionButton({
   planId,
   isSelected,
-}: PayPalSubscriptionDialogProps) {
-  const [isOpen, setIsOpen] = useState(false);
+}: PayPalSubscriptionButtonProps) {
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const paypalContainerRef = useRef<HTMLDivElement>(null);
   const buttonRendered = useRef(false);
 
-  // Load PayPal script when dialog opens
+  // Cargar el script de PayPal
   useEffect(() => {
-    if (!isOpen || scriptLoaded) return;
+    if (scriptLoaded) return;
 
     const script = document.createElement("script");
     script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&vault=true&intent=subscription`;
@@ -53,16 +40,11 @@ export function PayPalSubscriptionButton({
       setScriptLoaded(false);
       buttonRendered.current = false;
     };
-  }, [isOpen]);
+  }, [scriptLoaded]);
 
-  // Render PayPal button when script is loaded and dialog is open
+  // Renderizar el botón de PayPal
   useEffect(() => {
-    if (
-      !isOpen ||
-      !scriptLoaded ||
-      !paypalContainerRef.current ||
-      buttonRendered.current
-    )
+    if (!scriptLoaded || !paypalContainerRef.current || buttonRendered.current)
       return;
 
     if (window.paypal) {
@@ -81,7 +63,6 @@ export function PayPalSubscriptionButton({
           },
           onApprove: async function (data: any) {
             try {
-              // Update user subscription in database and Clerk
               const result = await updateUserSubscription({
                 plan_id: planId,
                 subscriptionId: data.subscriptionID,
@@ -91,7 +72,6 @@ export function PayPalSubscriptionButton({
                 toast.success("Subscription Activated", {
                   description: "Your subscription was successfully updated",
                 });
-                return setIsOpen(false);
               } else {
                 throw new Error(
                   result.error || "Failed to update subscription"
@@ -119,37 +99,11 @@ export function PayPalSubscriptionButton({
 
       buttonRendered.current = true;
     }
-  }, [scriptLoaded, isOpen]);
+  }, [scriptLoaded, planId]);
 
   return (
-    <>
-      <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-        <AlertDialogTrigger asChild>
-          <Button variant={"default"}>Subscribe</Button>
-        </AlertDialogTrigger>
-
-        <AlertDialogContent className="p-4 w-fit">
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Choose a subscription payment method
-            </AlertDialogTitle>
-            <AlertDialogDescription className="p-2">
-              Please use one button below to complete your subscription process.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          {/* PayPal container - only renders when dialog is open */}
-          <div
-            className=""
-            ref={paypalContainerRef}
-            id={`paypal-button-container-${planId}`}
-          />
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+    <div ref={paypalContainerRef} id={`paypal-button-container-${planId}`}>
+      {!scriptLoaded && <p>Loading PayPal button...</p>}
+    </div>
   );
 }

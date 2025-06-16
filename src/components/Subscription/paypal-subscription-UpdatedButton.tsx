@@ -1,13 +1,21 @@
 import { use, useEffect, useRef, useState } from "react";
 
+interface Props {
+  currentSubsCriptionId: string; // The current subscription ID to update
+  newPlanId: string; // The new plan ID to switch to
+  isOpen?: boolean; // Optional prop to control dialog visibility
+  scriptLoaded?: boolean; // Optional prop to control script loading
+  setScriptLoaded?: (loaded: boolean) => void; // Optional callback to set script loaded state
+}
+
 export function PayPalSubscriptionUpdatedButton({
   currentSubsCriptionId,
   newPlanId,
-}: {
-  currentSubsCriptionId: string;
-  newPlanId: string;
-}) {
-  const [scriptLoaded, setScriptLoaded] = useState(false);
+  isOpen,
+  scriptLoaded = false,
+  setScriptLoaded,
+}: Props) {
+  const scriptRef = useRef<HTMLScriptElement | null>(null);
   const paypalContainerRef = useRef<HTMLDivElement>(null);
   const buttonRendered = useRef(false);
 
@@ -26,11 +34,13 @@ export function PayPalSubscriptionUpdatedButton({
     document.body.appendChild(script);
 
     return () => {
-      document.body.removeChild(script);
+      if (scriptRef.current && document.body.contains(scriptRef.current)) {
+        document.body.removeChild(scriptRef.current);
+      }
       setScriptLoaded(false);
       buttonRendered.current = false;
     };
-  }, [scriptLoaded]);
+  }, []);
 
   useEffect(() => {
     if (scriptLoaded && paypalContainerRef.current && !buttonRendered.current) {
@@ -55,7 +65,7 @@ export function PayPalSubscriptionUpdatedButton({
 
       buttonRendered.current = true;
     }
-  }, [scriptLoaded]);
+  }, [scriptLoaded, currentSubsCriptionId, newPlanId]);
 
   return (
     <div ref={paypalContainerRef} id="paypal-button-container">
