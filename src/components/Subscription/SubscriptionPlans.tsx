@@ -13,9 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, Check } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import SubscriptionReviseButton from "./SubscriptionReviseButton";
-import { PayPalSubscriptionButton } from "./paypal-subscription-dialog";
-import { PayPalSubscriptionUpdatedButton } from "./paypal-subscription-UpdatedButton";
+import PayPalButton from "./PayPalButton";
 
 interface Plan {
   id: string;
@@ -169,16 +167,16 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
               </CardHeader>
 
               <CardContent className="flex flex-col justify-center space-y-2">
-                {userSubscription?.subscription_status ? (
-                  <PayPalSubscriptionUpdatedButton
-                    currentSubsCriptionId={
-                      userSubscription.subscription_id || ""
-                    }
-                    newPlanId={plan.plan_id || ""}
-                  />
-                ) : (
-                  <PayPalSubscriptionButton planId={plan.id} isSelected />
-                )}
+                <PayPalButton
+                  isSubscription={
+                    userSubscription?.subscription_status ? true : false
+                  }
+                  currentPlanId={currentPlan?.plan_id || ""}
+                  currentSubsCriptionId={
+                    userSubscription?.subscription_id || ""
+                  }
+                  newPlanId={plan.plan_id || ""}
+                />
 
                 {billing === "monthly" && (
                   <Button

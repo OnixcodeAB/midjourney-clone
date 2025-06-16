@@ -45,7 +45,7 @@ export function PayPalSubscriptionUpdatedButton({
             shape: "rect",
             color: "gold",
             layout: "vertical",
-            label: "subscribe",
+            label: "",
           },
           createSubscription: function (data: any, actions: any) {
             return actions.subscription.revise(currentSubsCriptionId, {
