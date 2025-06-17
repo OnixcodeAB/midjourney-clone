@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
-  currentSubscriptionId: string; // Fixed typo in prop name
+  currentSubscriptionId: string;
   newPlanId: string;
 }
 
@@ -12,19 +12,32 @@ export function PayPalSubscriptionUpdateButton({
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
   const paypalContainerRef = useRef<HTMLDivElement>(null);
-  const buttonRendered = useRef(false);
+  const buttonInstanceRef = useRef<any>(null); // Store PayPal button instance
 
-  // Track previous props to detect changes
-  const prevProps = useRef({ currentSubscriptionId, newPlanId });
-
+  // Cleanup resources on component unmount
   useEffect(() => {
-    if (scriptLoaded) return;
+    return () => {
+      // Clean up PayPal button instance
+      if (buttonInstanceRef.current) {
+        buttonInstanceRef.current.close();
+        buttonInstanceRef.current = null;
+      }
+
+      // Clean up PayPal SDK script
+      if (scriptRef.current && document.body.contains(scriptRef.current)) {
+        document.body.removeChild(scriptRef.current);
+      }
+    };
+  }, []);
+
+  // Load PayPal SDK
+  useEffect(() => {
+    if (scriptLoaded || scriptRef.current) return;
 
     const script = document.createElement("script");
     script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&vault=true&intent=subscription`;
     script.dataset.sdkIntegrationSource = "button-factory";
     script.async = true;
-
     scriptRef.current = script;
 
     script.onload = () => setScriptLoaded(true);
@@ -33,62 +46,50 @@ export function PayPalSubscriptionUpdateButton({
     document.body.appendChild(script);
 
     return () => {
-      if (scriptRef.current) {
+      if (scriptRef.current && document.body.contains(scriptRef.current)) {
         document.body.removeChild(scriptRef.current);
-        scriptRef.current = null;
       }
-      setScriptLoaded(false);
-      buttonRendered.current = false;
     };
-  }, []);
+  }, [scriptLoaded]);
 
+  // Render PayPal button
   useEffect(() => {
-    // Check if props changed since last render
-    const propsChanged =
-      prevProps.current.currentSubscriptionId !== currentSubscriptionId ||
-      prevProps.current.newPlanId !== newPlanId;
+    if (!scriptLoaded || !paypalContainerRef.current) return;
 
-    // Clean up previous button if props changed or script just loaded
-    if (propsChanged || (scriptLoaded && !buttonRendered.current)) {
-      if (paypalContainerRef.current && buttonRendered.current) {
-        // Clear existing button
-        while (paypalContainerRef.current.firstChild) {
-          paypalContainerRef.current.removeChild(
-            paypalContainerRef.current.firstChild
-          );
-        }
-      }
-      buttonRendered.current = false;
-      prevProps.current = { currentSubscriptionId, newPlanId };
+    // Clean up previous button instance
+    if (buttonInstanceRef.current) {
+      buttonInstanceRef.current.close();
+      buttonInstanceRef.current = null;
     }
 
-    // Render new button if needed
-    if (scriptLoaded && paypalContainerRef.current && !buttonRendered.current) {
-      window.paypal
-        .Buttons({
-          style: {
-            shape: "rect",
-            color: "gold",
-            layout: "vertical",
-            label: "",
-          },
-          createSubscription: function (data: any, actions: any) {
-            return actions.subscription.revise(currentSubscriptionId, {
-              plan_id: newPlanId,
-            });
-          },
-          onApprove: async function (data: any) {
-            console.log("Subscription update approved:", data);
-            // Add your post-approval logic here
-          },
-          onError: (err: Error) => {
-            console.error("PayPal button error:", err);
-          },
-        })
-        .render(paypalContainerRef.current);
-
-      buttonRendered.current = true;
+    // Ensure container is empty
+    if (paypalContainerRef.current.hasChildNodes()) {
+      paypalContainerRef.current.innerHTML = "";
     }
+
+    // Render new button
+    buttonInstanceRef.current = window.paypal.Buttons({
+      style: {
+        shape: "rect",
+        color: "gold",
+        layout: "vertical",
+        label: "",
+      },
+      createSubscription: function (data: any, actions: any) {
+        return actions.subscription.revise(currentSubscriptionId, {
+          plan_id: newPlanId,
+        });
+      },
+      onApprove: async function (data: any) {
+        console.log("Subscription update approved:", data);
+        // Add your post-approval logic here
+      },
+      onError: (err: Error) => {
+        console.error("PayPal button error:", err);
+      },
+    });
+
+    buttonInstanceRef.current.render(paypalContainerRef.current);
   }, [scriptLoaded, currentSubscriptionId, newPlanId]);
 
   return <div ref={paypalContainerRef} id="paypal-button-container" />;
