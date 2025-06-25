@@ -57,6 +57,8 @@ export async function checkUsageLimit(
       return acc;
     }, {});
 
+    //console.log({ Plan: planRows }, { Usage: usageRows });
+
     // Define the limits for each quality type
     const limits: Record<QualityType, number> = {
       low: plan.low_quality_limit,
@@ -67,8 +69,10 @@ export async function checkUsageLimit(
     const current = usage[quality] || 0;
     const limit = limits[quality];
 
+    console.log({ current: current, limit: limit, quality: quality });
+
     // Check if the user has reached their monthly limit for the requested quality
-    if (limits !== null && current >= limit) {
+    if (current >= limit) {
       const result = {
         allowed: false,
         error: `Monthly ${quality}-quality generation limit reached`,
@@ -79,11 +83,10 @@ export async function checkUsageLimit(
       await cacheResult(cacheKey, CACHE_TTL, result);
       return result;
     }
-
     const result = {
-      allowed: false,
-      error: `Monthly ${quality}-quality generation limit reached`,
-      description: "Upgrade your plan to generate more images.",
+      allowed: true,
+      error: undefined,
+      description: undefined,
       current,
       limit,
     };

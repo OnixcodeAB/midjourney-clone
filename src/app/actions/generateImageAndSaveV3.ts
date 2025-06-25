@@ -7,6 +7,7 @@ import { OpenAI } from "openai";
 import { v2 as cloudinary } from "cloudinary";
 import { AspectRatio } from "../context/HeaderContext";
 import { checkUsageLimit } from "@/lib/usageLimits";
+import { invalidateCache } from "@/lib/redis";
 
 type Aspect = "1024x1024" | "1024x1536" | "1536x1024";
 interface GenerateImageParams {
@@ -71,6 +72,8 @@ export async function generateImageAndSave({
       search_text,
     ]
   );
+
+  await invalidateCache(`api:create:all`);
 
   const imageId: string = insertRes.rows[0].id;
 
