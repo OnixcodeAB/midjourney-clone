@@ -4,21 +4,6 @@ import { query } from "@/lib/db";
 import { getCached, cacheResult } from "@/lib/redis";
 import { auth } from "@clerk/nextjs/server";
 
-interface Image {
-  id: string;
-  user_id: string;
-  user_name: string;
-  url: string;
-  search_text: string;
-  prompt: string;
-  provider: string;
-  task_id: string;
-  status?: "pending" | "complete" | "running";
-  progress_pct?: number;
-  createdat: string;
-  tags: string[];
-}
-
 interface GetImagesResponse {
   images?: Image[];
   error?: string;
