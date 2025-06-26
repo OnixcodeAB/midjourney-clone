@@ -1,22 +1,18 @@
 import CreateGrid from "@/components/Create/CreateGrid";
-import { getData } from "../actions/api/create/getData";
+import { getImagesForUser } from "../actions/getImagesForUser";
 
-interface Image {
-  id: string;
-  user_id: string;
-  user_name: string;
-  url: string;
-  prompt: string;
-  provider: string;
-  task_id: string;
-  status?: "pending" | "complete" | "running";
-  progress_pct?: number;
-  createdat: string;
-}
+
 
 export default async function CreatePage() {
   // Fetch from DB or external API
-  const images: Image[] = await getData();
+  const response = await getImagesForUser();
+  let images: Image[] = [];
+
+  if (response.error) {
+    console.error("Error fetching images:", response.error);
+  } else {
+    images = response.images || [];
+  }
 
   return (
     <div className="flex-1">

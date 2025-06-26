@@ -1,6 +1,11 @@
 "use server";
 
+import { auth } from "@clerk/nextjs/server";
+
 export async function getData() {
+  const {userId} = await auth()
+
+  console.log(userId)
   // Fetch from DB or external API
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${process.env.PORT}/api/create`, {
     cache: "no-store", // optional: ensure fresh data

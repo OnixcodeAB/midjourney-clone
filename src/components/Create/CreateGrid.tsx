@@ -4,16 +4,6 @@ import { useCallback, useMemo, useState } from "react";
 import ImageCard from "./ImageCard";
 import { useSocket } from "@/hooks/useSocket"; // Updated to useSocket
 
-interface Image {
-  id: string;
-  url: string;
-  search_text?: string;
-  prompt: string;
-  status?: "pending" | "running" | "complete";
-  progress_pct?: number;
-  createdat: string;
-}
-
 interface Props {
   images: Image[];
   currentUserId?: string;

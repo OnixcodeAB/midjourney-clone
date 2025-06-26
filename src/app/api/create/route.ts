@@ -1,26 +1,31 @@
-// app/api/create/route.ts
 import { query } from "@/lib/db";
 import { getCached, cacheResult } from "@/lib/redis";
-import { currentUser } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { NextResponse, NextRequest } from "next/server";
 
-export async function GET() {
-  // Get the current user from Clerk
-  const user = await currentUser();
-
-  // Cache key and TTL constants
-  const IMAGES_CACHE_KEY = `api:create:${user?.id}`;
-  const CACHE_TTL = 60 * 5; // 5 minutes in seconds
-
-  // Try to get from cache first
-  const cachedImages = await getCached<any[]>(IMAGES_CACHE_KEY);
-  if (cachedImages) {
-    return NextResponse.json(cachedImages);
-  }
-
-  // If not in cache, query the database
-  // and cache the result
+export async function GET(req: NextRequest, res: NextResponse) {
   try {
+    // Get the current user from Clerk
+    const { userId } = await auth();
+
+    if (!userId) {
+      console.log("No user signed in");
+    }
+    console.log(userId);
+
+    // Cache key and TTL constants
+    const IMAGES_CACHE_KEY = `api:create:${userId}`;
+    const CACHE_TTL = 60 * 1; // 5 minutes in seconds
+
+    // Try to get from cache first
+    const cachedImages = await getCached<any[]>(IMAGES_CACHE_KEY);
+    if (cachedImages) {
+      return NextResponse.json(cachedImages);
+    }
+
+    // If not in cache, query the database
+    // and cache the result
+
     const { rows: images } = await query(
       `
       SELECT
@@ -44,9 +49,9 @@ export async function GET() {
       WHERE i.user_id = $1
       ORDER BY i."createdat" DESC;
     `,
-      [user?.id]
+      [userId]
     );
-
+    console.log(images);
     // Cache the images for future requests
     await cacheResult(IMAGES_CACHE_KEY, CACHE_TTL, images);
     return NextResponse.json(images);

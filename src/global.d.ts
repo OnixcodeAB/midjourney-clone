@@ -34,4 +34,18 @@ declare global {
     folder_id: string;
     created_at: string;
   }
+  interface Image {
+    id: string;
+    user_id: string;
+    user_name: string;
+    url: string;
+    search_text: string;
+    prompt: string;
+    provider: string;
+    task_id: string;
+    status?: "pending" | "complete" | "running";
+    progress_pct?: number;
+    createdat: string;
+    tags: string[];
+  }
 }
