@@ -1,14 +1,30 @@
+import React from "react";
+import type { JSX } from "react";
+import { updateUserSubscription } from "@/app/actions/subscriptions/updateUserSubscription";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
+// Extend Window interface to include PayPal for TypeScript
 interface Props {
   currentSubscriptionId: string;
   newPlanId: string;
 }
 
+/**
+ * Renders a PayPal button for updating a user's subscription.
+ * It loads the PayPal SDK, renders a subscription revision button,
+ * and handles the approval and error callbacks. On successful subscription update,
+ * it displays a success toast and a confetti animation.
+ *
+ * @param {Props} { currentSubscriptionId, newPlanId } - The ID of the current subscription
+ * to be revised and the ID of the new plan to subscribe to.
+ * @returns {JSX.Element} A div element that will contain the PayPal button.
+ */
+
 export function PayPalSubscriptionUpdateButton({
   currentSubscriptionId,
   newPlanId,
-}: Props) {
+}: Props): JSX.Element {
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
   const paypalContainerRef = useRef<HTMLDivElement>(null);
@@ -32,31 +48,33 @@ export function PayPalSubscriptionUpdateButton({
 
   // Load PayPal SDK
   useEffect(() => {
+    // Prevent multiple script loads
     if (scriptLoaded || scriptRef.current) return;
 
     const script = document.createElement("script");
     script.src = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&vault=true&intent=subscription`;
     script.dataset.sdkIntegrationSource = "button-factory";
     script.async = true;
-    scriptRef.current = script;
+    scriptRef.current = script; // Store reference to the script element
 
     script.onload = () => setScriptLoaded(true);
     script.onerror = () => console.error("PayPal SDK failed to load");
 
     document.body.appendChild(script);
 
+    // Cleanup function for this effect: remove the script if component unmounts before load
     return () => {
       if (scriptRef.current && document.body.contains(scriptRef.current)) {
         document.body.removeChild(scriptRef.current);
       }
     };
-  }, [scriptLoaded]);
+  }, [scriptLoaded]); //Depend on scriptLoaded to avoid re-running
 
   // Render PayPal button
   useEffect(() => {
     if (!scriptLoaded || !paypalContainerRef.current) return;
 
-    // Clean up previous button instance
+    // Clean up previous button instance to prevent duplicate rendering
     if (buttonInstanceRef.current) {
       buttonInstanceRef.current.close();
       buttonInstanceRef.current = null;
@@ -75,20 +93,55 @@ export function PayPalSubscriptionUpdateButton({
         layout: "vertical",
         label: "",
       },
-      createSubscription: function (data: any, actions: any) {
+      /**
+       * Creates the subscription revision order for PayPal.
+       * @param {any} data - Data passed by PayPal.
+       * @param {any} actions - Actions provided by PayPal to revise the subscription.
+       * @returns {Promise<string>} A promise that resolves with the PayPal order ID.
+       */
+      createSubscription: function (data: any, actions: any): Promise<string> {
         return actions.subscription.revise(currentSubscriptionId, {
           plan_id: newPlanId,
         });
       },
-      onApprove: async function (data: any) {
-        console.log("Subscription update approved:", data);
-        // Add your post-approval logic here
+      /**
+       * Callback function executed when the PayPal payment is approved.
+       * @param {any} data - Data containing subscription details from PayPal.
+       */
+      onApprove: async function (data: any): Promise<void> {
+        try {
+          const result = await updateUserSubscription({
+            plan_id: newPlanId,
+            subscriptionId: data.subscriptionID,
+            status: "active",
+          });
+          if (result.success) {
+            toast.success("Subscription Activated", {
+              description: "Your subscription was successfully updated",
+            });
+          } else {
+            throw new Error(result.error || "Failed to update subscription");
+          }
+        } catch (error) {
+          console.error("Subscription approval error:", error);
+          toast.error("Subscription Error", {
+            description:
+              error instanceof Error
+                ? error.message
+                : "Failed to process subscription",
+          });
+        }
       },
       onError: (err: Error) => {
-        console.error("PayPal button error:", err);
+        console.error("PayPal error:", err);
+        toast.error("Payment Error", {
+          description:
+            err.message || "An error occurred during payment processing",
+        });
       },
     });
 
+    // Render the PayPal button into the designated container
     buttonInstanceRef.current.render(paypalContainerRef.current);
   }, [scriptLoaded, currentSubscriptionId, newPlanId]);
 
