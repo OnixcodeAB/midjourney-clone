@@ -115,6 +115,7 @@ export function PayPalSubscriptionUpdateButton({
             plan_id: newPlanId,
             subscriptionId: data.subscriptionID,
             status: "active",
+            OldSubscriptionId: currentSubscriptionId,
           });
           if (result.success) {
             toast.success("Subscription Activated", {

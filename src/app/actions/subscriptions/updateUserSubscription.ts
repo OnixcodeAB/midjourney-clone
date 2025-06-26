@@ -1,18 +1,21 @@
 "use server";
 
+import { cancelPayPalSubscription } from "@/components/Subscription/CancelSubscription";
 import { query } from "@/lib/db"; // Assuming you have a query utility
 import { auth } from "@clerk/nextjs/server";
 
 interface Props {
+  plan_id: string;
   subscriptionId: string;
   status: string;
-  plan_id: string;
+  OldSubscriptionId?: string; // Optional: for updating existing subscriptions
 }
 
 export async function updateUserSubscription({
   plan_id,
   subscriptionId,
   status = "active",
+  OldSubscriptionId, // Optional: for updating existing subscriptions
 }: Props) {
   try {
     const { userId } = await auth();
@@ -90,6 +93,14 @@ export async function updateUserSubscription({
         success: false,
         error: errors.join(" | "),
       };
+    }
+
+    // If OldSubscriptionId is provided, cancel the previous subscription
+    if (OldSubscriptionId) {
+      await cancelPayPalSubscription(
+        OldSubscriptionId,
+        "User updated subscription"
+      );
     }
 
     return {
