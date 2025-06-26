@@ -86,7 +86,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
       </div>
 
       {/* Toggle Billing */}
-      <div className="flex flex-col items-center  gap-4">
+      <div className="flex flex-col items-center  gap-4 ">
         <ToggleGroup
           type="single"
           value={billing}
@@ -95,11 +95,11 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
               setBilling(value);
             }
           }}
-          className="inline-flex rounded-full bg-[#e3e4e8]"
+          className="inline-flex rounded-full bg-[#e3e4e8] cursor-pointer"
         >
           <ToggleGroupItem
             value="yearly"
-            className={`px-5 md:px-8 py-2 text-md font-medium rounded-full transition-all ${
+            className={`px-5 md:px-8 py-2 text-md font-medium rounded-full cursor-pointer transition-all ${
               billing === "yearly"
                 ? "bg-[#303030]! text-white! "
                 : "text-gray-900 rounded-none"
@@ -109,7 +109,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
           </ToggleGroupItem>
           <ToggleGroupItem
             value="monthly"
-            className={`px-5 md:px-8 py-2 text-md font-medium rounded-full ${
+            className={`px-5 md:px-8 py-2 text-md font-medium rounded-full cursor-pointer ${
               billing === "monthly"
                 ? "bg-[#303030]! text-white! "
                 : "bg-[#e3e4e8] text-gray-900 rounded-none"
