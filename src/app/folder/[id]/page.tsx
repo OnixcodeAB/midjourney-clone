@@ -76,9 +76,9 @@ export default function FolderContentPage({ params }: FolderContentPageProps) {
     setIsEditing(false);
   };
 
-  if (!folder) {
+  if (!folder && !folderItems) {
     return (
-      <main className="flex-1 flex flex-col items-center justify-center p-4">
+      <main className="h-[97vh] flex-1 flex flex-col items-center justify-center p-4">
         <div>Loading...</div>
       </main>
     );
@@ -86,16 +86,18 @@ export default function FolderContentPage({ params }: FolderContentPageProps) {
 
   return (
     <main className="flex-1 flex flex-col items-center justify-start p-4">
-      <FolderHeader
-        folder={folder}
-        isEditing={isEditing}
-        renameValue={renameValue}
-        onRenameChange={setRenameValue}
-        onFinishRename={finishRename}
-        onStartEditing={() => setIsEditing(true)}
-        onDelete={() => handleDelete(folder.id)}
-        inputRef={inputRef}
-      />
+      {folder && (
+        <FolderHeader
+          folder={folder}
+          isEditing={isEditing}
+          renameValue={renameValue}
+          onRenameChange={setRenameValue}
+          onFinishRename={finishRename}
+          onStartEditing={() => setIsEditing(true)}
+          onDelete={() => handleDelete(folder.id)}
+          inputRef={inputRef}
+        />
+      )}
       <FolderContent items={folderItems} handleDelItem={handleDelItem} />
     </main>
   );
