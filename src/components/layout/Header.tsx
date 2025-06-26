@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 import { BannerModal } from "./BannerModal";
 import { useUser } from "@clerk/nextjs";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
-import { generateImageAndSave } from "@/app/actions/generateImageAndSaveV3";
+import { generateImageAndSave } from "@/app/actions/openAI/generateImageAndSaveV3";
 import { Input } from "../ui/input";
 import AspectRatioPopover from "./AspectRatioPopover";
 import PresetPopover from "./PresetPopover";

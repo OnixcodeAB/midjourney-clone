@@ -1,5 +1,5 @@
 import CreateGrid from "@/components/Create/CreateGrid";
-import { getImagesForUser } from "../actions/getImagesForUser";
+import { getImagesForUser } from "../actions/image/getImagesForUser";
 
 
 

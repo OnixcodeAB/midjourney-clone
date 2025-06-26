@@ -5,7 +5,7 @@ import { generateImageMetadata, logError, parseAspect } from "@/lib/helper";
 import { query } from "@lib/db";
 import { OpenAI } from "openai";
 import { v2 as cloudinary } from "cloudinary";
-import { AspectRatio } from "../context/HeaderContext";
+import { AspectRatio } from "../../context/HeaderContext";
 import { checkUsageLimit } from "@/lib/usageLimits";
 import { invalidateCache } from "@/lib/redis";
 

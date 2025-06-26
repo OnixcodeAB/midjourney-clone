@@ -1,5 +1,5 @@
 import { ExploreHomePage } from "@/components/Home/ExploreHomePage";
-import { getAllData } from "./actions/getAllData";
+import { getAllData } from "./actions/data/getAllData";
 
 export default async function Home() {
   const images = await getAllData();
