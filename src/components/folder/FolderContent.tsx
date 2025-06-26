@@ -64,7 +64,7 @@ export const FolderContent: React.FC<{
   return (
     <Masonry
       breakpointCols={breakpointCols}
-      className="flex w-[90%]"
+      className="flex w-[90%] h-screen"
       columnClassName="my-masonry-grid_column"
     >
       {items.map((img) => {
