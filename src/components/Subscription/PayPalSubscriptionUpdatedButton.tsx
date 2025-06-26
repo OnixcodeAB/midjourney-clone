@@ -3,6 +3,7 @@ import type { JSX } from "react";
 import { updateUserSubscription } from "@/app/actions/subscriptions/updateUserSubscription";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import confetti from "canvas-confetti";
 
 // Extend Window interface to include PayPal for TypeScript
 interface Props {
@@ -118,6 +119,12 @@ export function PayPalSubscriptionUpdateButton({
           if (result.success) {
             toast.success("Subscription Activated", {
               description: "Your subscription was successfully updated",
+            });
+            // Trigger confetti animation on success
+            confetti({
+              particleCount: 500,
+              spread: 200,
+              origin: { y: 0.5 }, // Originates from the middle of the screen vertically
             });
           } else {
             throw new Error(result.error || "Failed to update subscription");
