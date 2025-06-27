@@ -23,6 +23,9 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useUser } from "@clerk/nextjs";
+import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 interface SettingsAlertDialogProps {
   open: boolean;
@@ -171,12 +174,22 @@ export function SettingsAlertDialog({
             )}
           </section>
         </div>
-        <AlertDialogFooter className="flex justify-end">
-          <AlertDialogCancel asChild className="">
-            <button type="button" className="btn">
-              Done
-            </button>
-          </AlertDialogCancel>
+        <AlertDialogFooter className="w-full flex justify-between">
+          <div className=" w-full flex justify-between items-center gap-2">
+            <AlertDialogAction asChild>
+              <Link
+                href="/subscription"
+                className="p-2 rounded-lg border-2  border-gray-200 hover:bg-gray-100 transition-colorss font-semibold"
+              >
+                Manage subscription{" "}
+              </Link>
+            </AlertDialogAction>
+            <AlertDialogCancel asChild className="">
+              <button type="button" className="btn">
+                Done
+              </button>
+            </AlertDialogCancel>
+          </div>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
