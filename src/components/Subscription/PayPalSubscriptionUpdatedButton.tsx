@@ -9,6 +9,7 @@ import confetti from "canvas-confetti";
 interface Props {
   currentSubscriptionId: string;
   newPlanId: string;
+  onOpenChange?: (open: boolean) => void; // Optional callback for open state change
 }
 
 /**
@@ -25,6 +26,7 @@ interface Props {
 export function PayPalSubscriptionUpdateButton({
   currentSubscriptionId,
   newPlanId,
+  onOpenChange
 }: Props): JSX.Element {
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
@@ -118,6 +120,12 @@ export function PayPalSubscriptionUpdateButton({
             OldSubscriptionId: currentSubscriptionId,
           });
           if (result.success) {
+            // Optionally, you can call onOpenChange if provided
+           
+              if (onOpenChange) {
+                onOpenChange(false); // Close the modal or perform any other action
+              }
+            
             toast.success("Subscription Activated", {
               description: "Your subscription was successfully updated",
             });

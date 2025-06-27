@@ -1,6 +1,5 @@
 import { SubscriptionPlans } from "@/components/Subscription/SubscriptionPlans";
 import { query } from "@/lib/db";
-import { clerkClient } from "@clerk/nextjs/server";
 
 interface Plan {
   id: string;

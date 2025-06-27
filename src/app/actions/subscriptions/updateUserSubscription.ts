@@ -1,6 +1,5 @@
 "use server";
 
-import { cancelPayPalSubscription } from "@/components/Subscription/CancelSubscription";
 import { query } from "@/lib/db"; // Assuming you have a query utility
 import { auth } from "@clerk/nextjs/server";
 
@@ -97,10 +96,27 @@ export async function updateUserSubscription({
 
     // If OldSubscriptionId is provided, cancel the previous subscription
     if (OldSubscriptionId) {
-      await cancelPayPalSubscription(
-        OldSubscriptionId,
-        "User updated subscription"
+      const cancelResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/subscriptions/cancel`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            OldSubscriptionId,
+            msg: "User requested cancellation",
+          }),
+        }
       );
+
+      if (!cancelResponse.ok) {
+        const errorData = await cancelResponse.json();
+        return {
+          success: false,
+          error: errorData.error || "Failed to cancel previous subscription",
+        };
+      }
     }
 
     return {

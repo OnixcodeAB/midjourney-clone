@@ -59,6 +59,7 @@ export default function PayPalButton({
             <PayPalSubscriptionUpdateButton
               currentSubscriptionId={currentSubsCriptionId || ""}
               newPlanId={newPlanId}
+              onOpenChange={setIsOpen}
             />
           )}
           {!isSubscription && <PayPalSubscribeButton planId={newPlanId} />}
