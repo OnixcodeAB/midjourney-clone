@@ -94,31 +94,6 @@ export async function updateUserSubscription({
       };
     }
 
-    // If OldSubscriptionId is provided, cancel the previous subscription
-    if (OldSubscriptionId) {
-      const cancelResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/subscriptions/cancel`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            OldSubscriptionId,
-            msg: "User requested cancellation",
-          }),
-        }
-      );
-
-      if (!cancelResponse.ok) {
-        const errorData = await cancelResponse.json();
-        return {
-          success: false,
-          error: errorData.error || "Failed to cancel previous subscription",
-        };
-      }
-    }
-
     return {
       success: true,
       message: "Subscription updated successfully",
