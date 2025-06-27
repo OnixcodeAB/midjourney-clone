@@ -11,8 +11,6 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -24,7 +22,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useUser } from "@clerk/nextjs";
 import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
-import { Button } from "../ui/button";
 import Link from "next/link";
 
 interface SettingsAlertDialogProps {
@@ -38,7 +35,6 @@ export function SettingsAlertDialog({
   onOpenChange,
   trigger,
 }: SettingsAlertDialogProps) {
-  const [username, setUsername] = useState("velcrox");
   const [theme, setTheme] = useState("light");
   const [publishExplore, setPublishExplore] = useState(true);
   const [improveModel, setImproveModel] = useState(true);
@@ -149,6 +145,7 @@ export function SettingsAlertDialog({
                       </p>
                     </div>
                     <Switch
+                      disabled={true}
                       checked={improveModel}
                       onCheckedChange={setImproveModel}
                     />
