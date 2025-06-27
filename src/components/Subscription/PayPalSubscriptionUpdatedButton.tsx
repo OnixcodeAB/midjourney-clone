@@ -26,7 +26,7 @@ interface Props {
 export function PayPalSubscriptionUpdateButton({
   currentSubscriptionId,
   newPlanId,
-  onOpenChange
+  onOpenChange,
 }: Props): JSX.Element {
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
@@ -117,15 +117,14 @@ export function PayPalSubscriptionUpdateButton({
             plan_id: newPlanId,
             subscriptionId: data.subscriptionID,
             status: "active",
-            OldSubscriptionId: currentSubscriptionId,
           });
           if (result.success) {
             // Optionally, you can call onOpenChange if provided
-           
-              if (onOpenChange) {
-                onOpenChange(false); // Close the modal or perform any other action
-              }
-            
+
+            if (onOpenChange) {
+              onOpenChange(false); // Close the modal or perform any other action
+            }
+
             toast.success("Subscription Activated", {
               description: "Your subscription was successfully updated",
             });
