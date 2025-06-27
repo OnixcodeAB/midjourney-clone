@@ -2,9 +2,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useClerk, UserProfile } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 import { Ellipsis, Settings, LogOut, User as UserIcon } from "lucide-react";
-import Link from "next/link";
 
 import {
   DropdownMenu,
@@ -14,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { SettingsAlertDialog } from "./SettingsAlertDialog";
-import { UserProfileModal } from "./UserProfileDialog";
+import { UserProfileModal } from "./UserProfileModal";
 
 export function UserSettingsMenu() {
   const { signOut } = useClerk();

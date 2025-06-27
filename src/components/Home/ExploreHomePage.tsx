@@ -58,7 +58,7 @@ export const ExploreHomePage = ({ images }: Props) => {
   };
 
   return (
-    <div className="z-10">
+    <div className="">
       {filter && (
         <div className="sticky top-4 m-0 ml-1.5 left-0 z-50 flex items-center w-fit bg-white/50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 px-3 py-2 rounded-r-full shadow-md gap-2  mb-4">
           <LayoutPanelTop className="w-5 h-5  opacity-90" />
