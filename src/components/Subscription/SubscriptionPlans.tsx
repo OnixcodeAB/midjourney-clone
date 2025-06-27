@@ -75,7 +75,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   });
 
   return (
-    <div className="space-y-8 mt-8 px-2 sm:px-4 md:px-6">
+    <div className="space-y-8 mt-8 px-2 sm:px-4 md:px-6 z-0">
       <div className="text-center space-y-2">
         <h1 className="text-2xl md:text-3xl font-bold">
           Purchase a subscription

@@ -25,7 +25,7 @@ import {
   SwatchBook,
   ThumbsUp,
 } from "lucide-react";
-import { useUser, useClerk } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { BannerModal } from "./BannerModal";
 import { UserSettingsMenu } from "../User/UserSettingsMenu";

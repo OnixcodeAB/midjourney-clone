@@ -41,7 +41,7 @@ export default async function RootLayout({
               <SidebarProvider>
                 <AppSidebar />
                 <HeaderProvider>
-                  <div className="relative flex-1 z-10">
+                  <div className="relative flex-1 ">
                     {children}
                     <Header />
                   </div>

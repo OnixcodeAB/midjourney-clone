@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, UserProfile } from "@clerk/nextjs";
 import { Ellipsis, Settings, LogOut, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -13,8 +13,8 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
-import { UserProfileDialog } from "./UserProfileDialog";
 import { SettingsAlertDialog } from "./SettingsAlertDialog";
+import { UserProfileModal } from "./UserProfileDialog";
 
 export function UserSettingsMenu() {
   const { signOut } = useClerk();
@@ -92,7 +92,8 @@ export function UserSettingsMenu() {
       </DropdownMenu>
 
       {/* 4) PROFILE DIALOG */}
-      <UserProfileDialog open={profileOpen} setOpen={setProfileOpen} />
+      <UserProfileModal open={profileOpen} setOpen={setProfileOpen} />
+      
 
       {/* 5) SETTINGS DIALOG */}
       <SettingsAlertDialog

@@ -22,7 +22,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Pencil } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 interface SettingsAlertDialogProps {
   open: boolean;
@@ -40,6 +40,7 @@ export function SettingsAlertDialog({
   const [publishExplore, setPublishExplore] = useState(true);
   const [improveModel, setImproveModel] = useState(true);
   const [section, setSection] = useState<"general" | "plan">("general");
+  const { user } = useUser();
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -91,13 +92,13 @@ export function SettingsAlertDialog({
                 {/* Username row */}
                 <div className="flex justify-between pr-7 items-center border-b pb-3">
                   <label className="text-md font-medium">Username</label>
-                  <span className=" text-end pr-18">{username}</span>
+                  <span className=" text-end pr-18">{user?.username}</span>
                 </div>
                 {/* Email row */}
                 <div className="flex justify-between gap-4 items-center border-b pb-3">
                   <label className="text-md font-medium">Email</label>
                   <span className=" text-sm text-end text-gray-700">
-                    abelmejia.e@gmail.com
+                    {user?.emailAddresses[0]?.emailAddress || "Not set"}
                   </span>
                 </div>
                 {/* Theme row */}
