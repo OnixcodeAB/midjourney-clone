@@ -7,14 +7,12 @@ interface Props {
   plan_id: string;
   subscriptionId: string;
   status: string;
-  OldSubscriptionId?: string; // Optional: for updating existing subscriptions
 }
 
 export async function updateUserSubscription({
   plan_id,
   subscriptionId,
   status = "active",
-  OldSubscriptionId, // Optional: for updating existing subscriptions
 }: Props) {
   try {
     const { userId } = await auth();
