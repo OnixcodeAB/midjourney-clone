@@ -15,13 +15,11 @@ export function UserProfileModal({ open, setOpen }: UserProfileModalProps) {
   return (
     // Outer modal overlay and backdrop
     <div
-      className="fixed inset-0 z-[9999] bg-[#212121]/50 flex items-center justify-center" // High z-index for the modal itself
+      className="fixed inset-0 z-50 bg-[#212121]/50 flex items-center justify-center transition-all transition-discrete " // High z-index for the modal itself
       onClick={() => setOpen(false)} // Close when clicking outside the content
     >
-      {/* Modal content container - This is the main white box */}
       <div
-        className="relative  bg-transparent rounded-lg shadow-xl w-[90vw] max-w-4xl p-0 m-0 flex flex-col" // Use flex-col for internal layout
-        style={{ minHeight: "500px", maxHeight: "90vh" }} // Set explicit min/max height for the modal box
+        className="relative bg-transparent rounded-lg shadow-xl w-[90vw] max-w-4xl p-0 m-0 flex flex-col user-profile-modal-box" // Use flex-col for internal layout
         onClick={(e) => e.stopPropagation()} // Prevent clicks inside from closing the modal
       >
         {/* Close button - Ensure it's always on top */}
@@ -33,7 +31,7 @@ export function UserProfileModal({ open, setOpen }: UserProfileModalProps) {
             hover:bg-gray-200 
             focus:outline-none 
             focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500
-            z-50 // Even higher z-index to ensure it's above any of Clerk's internal overlays
+            z-50 
           "
           aria-label="Close profile"
           onClick={() => setOpen(false)}
@@ -43,7 +41,7 @@ export function UserProfileModal({ open, setOpen }: UserProfileModalProps) {
 
         {/* Clerk UserProfile component container */}
         {/* This div will contain Clerk's UI and manage its own scrolling if Clerk's content overflows */}
-        <div className="flex-grow w-full overflow-y-auto">
+        <div className="flex-grow w-full overflow-y-auto ">
           <UserProfile routing="hash" />
         </div>
       </div>
