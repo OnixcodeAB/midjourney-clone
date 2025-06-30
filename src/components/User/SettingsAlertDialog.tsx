@@ -25,6 +25,7 @@ import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { updatePublicImage } from "@/app/actions/user/updatePublicImage";
 import { getPublicImage } from "./getPublicImage";
+import { getUserPlanById } from "@/app/actions/user/getUserPlanById";
 
 interface SettingsAlertDialogProps {
   open: boolean;
@@ -34,6 +35,7 @@ interface SettingsAlertDialogProps {
 
 interface Subscription {
   subscription_plan: string;
+  plan_id: string;
   // Add other subscription-related fields if they exist
 }
 
@@ -61,11 +63,17 @@ export function SettingsAlertDialog({
   });
   const [publishExplore, setPublishExplore] = useState<boolean | undefined>();
   const [section, setSection] = useState<"general" | "plan">("general");
+  const [subscriptionPlan, setSubscriptionPlan] = useState<any>(null);
+
+  console.log(subscriptionPlan, "subscriptionPlan");
   const { user } = useUser();
 
-  const subscriptionPlan =
+  const subscriptionPlanType =
     (user?.publicMetadata as UserPublicMetadata)?.subscription
       ?.subscription_plan || "Basic";
+
+  const subscriptionPlanId =
+    (user?.publicMetadata as UserPublicMetadata)?.subscription?.plan_id || "";
 
   console.log(improveModel, "improveModel");
 
@@ -76,6 +84,17 @@ export function SettingsAlertDialog({
         setPublishExplore(publicImage);
       }
     };
+    const subscriptionPlan = async () => {
+      const result = await getUserPlanById(subscriptionPlanId);
+      // Check if result has the expected Subscription shape
+      if (result) {
+        setSubscriptionPlan(result);
+      } else {
+        setSubscriptionPlan(null);
+      }
+    };
+
+    subscriptionPlan();
     fetchPublicImage();
   }, [user]);
 
@@ -151,7 +170,7 @@ export function SettingsAlertDialog({
                   </span>
                   {key === "plan" && (
                     <Badge className="ml-4" variant="outline">
-                      {subscriptionPlan}
+                      {subscriptionPlanType}
                     </Badge>
                   )}
                 </button>
@@ -231,7 +250,9 @@ export function SettingsAlertDialog({
               </div>
             ) : (
               <div className="space-y-6 px-4">
-                <h3 className="text-xl font-semibold border-b pb-2">{subscriptionPlan}</h3>
+                <h3 className="text-xl font-semibold border-b pb-2">
+                  {subscriptionPlanType}
+                </h3>
                 {/* Feature row */}
                 <div className="flex gap-10 items-start border-b pb-2">
                   <div className="flex flex-col gap-2 w-[60%]">
