@@ -67,10 +67,6 @@ export function SettingsAlertDialog({
 
   const { user } = useUser();
 
-  const subscriptionPlanType =
-    (user?.publicMetadata as UserPublicMetadata)?.subscription
-      ?.subscription_plan || "Basic";
-
   const subscriptionPlanId =
     (user?.publicMetadata as UserPublicMetadata)?.subscription?.plan_id || "";
 
@@ -246,12 +242,12 @@ export function SettingsAlertDialog({
                 </div>
               </div>
             ) : (
-              <div className="space-y-6 px-4">
+              <div className="space-y-5 px-4">
                 <h3 className="text-xl font-semibold border-b pb-2">
                   {subscriptionPlan?.name || "Free"}
                 </h3>
                 {/* Feature row */}
-                <div className="flex gap-10 items-start border-b pb-2">
+                {/* <div className="flex gap-10 items-start border-b pb-2">
                   <div className="flex flex-col gap-2 w-[60%]">
                     <label className="text-md font-medium">
                       Max concurrent generations
@@ -261,7 +257,69 @@ export function SettingsAlertDialog({
                     </span>
                   </div>
                   <span className="col-span-2 text-end pr-18">1</span>
-                </div>
+                </div> */}
+                {/* Feature row */}
+                {subscriptionPlan?.features &&
+                  subscriptionPlan.features
+                    .slice(
+                      subscriptionPlan.features.findIndex((feature) =>
+                        feature.startsWith("Limited generations:")
+                      )
+                    )
+                    .map((feature, index) => {
+                      const parts = feature.split(":");
+                      let label = parts[0]?.trim() || feature.trim();
+                      let value = "";
+
+                      // Specific handling for "Limited generations:"
+                      if (label === "Limited generations") {
+                        if (parts.length > 1) {
+                          value = parts.slice(1).join(":").trim();
+                        }
+                      } else {
+                        // For other features, try to extract numerical values for the right column
+                        const match = feature.match(
+                          /(\d+GB|\d+|\d+)/
+                        );
+                        if (match) {
+                          value = match[0];
+                          label = feature.replace(value, "").trim();
+                          // Remove any leading hyphens or "~" from the label
+                          if (label.startsWith("-"))
+                            label = label.substring(1).trim();
+                          if (label.startsWith("~"))
+                            label = label.substring(1).trim();
+                          // Remove trailing slashes or other extraneous characters if they appear after trimming
+                          label = label.replace(/\/$/, "").trim();
+                        } else if (parts.length > 1) {
+                          label = parts[0].trim();
+                          value = parts.slice(1).join(":").trim(); // Fallback for things like "Image Output size: All sizes aspect ratios"
+                        }
+                      }
+
+                      return (
+                        <div
+                          key={index}
+                          className="flex justify-between items-start border-b pb-2"
+                        >
+                          <div className="flex flex-col gap-1 w-fit">
+                            <label className="text-md font-medium">
+                              {label}:
+                            </label>
+                            {feature.includes("Limited generations:") &&
+                              value && (
+                                <span className="text-sm text-gray-500">
+                                  {value}
+                                </span>
+                              )}
+                          </div>
+                          {value &&
+                            !feature.includes("Limited generations:") && (
+                              <span className="text-end pr-18">{value}</span>
+                            )}
+                        </div>
+                      );
+                    })}
               </div>
             )}
           </section>
