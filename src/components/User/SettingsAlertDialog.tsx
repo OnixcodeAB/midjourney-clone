@@ -44,18 +44,6 @@ interface UserPublicMetadata {
   // Add other public metadata fields if they exist
 }
 
-interface SubscriptionPlan {
-  features: string[];
-  frequency: "monthly" | "yearly" | "one-time";
-  high_quality_limit: number;
-  id: string;
-  low_quality_limit: number;
-  medium_quality_limit: number;
-  name: string;
-  plan_id: string;
-  price: number;
-}
-
 export function SettingsAlertDialog({
   open,
   onOpenChange,
