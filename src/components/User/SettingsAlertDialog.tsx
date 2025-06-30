@@ -10,6 +10,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogCancel,
+  AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -21,11 +22,9 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useUser } from "@clerk/nextjs";
-import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
 import Link from "next/link";
 import { updatePublicImage } from "@/app/actions/user/updatePublicImage";
 import { getPublicImage } from "./getPublicImage";
-import { fail } from "assert";
 
 interface SettingsAlertDialogProps {
   open: boolean;
@@ -38,9 +37,19 @@ export function SettingsAlertDialog({
   onOpenChange,
   trigger,
 }: SettingsAlertDialogProps) {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("theme") || "light";
+    }
+    return "light"; // Default to light theme if localStorage is not available
+  });
+  const [improveModel, setImproveModel] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("improveModel") === "true";
+    }
+    return true; // Default to true if localStorage is not available
+  });
   const [publishExplore, setPublishExplore] = useState<boolean | undefined>();
-  const [improveModel, setImproveModel] = useState(true);
   const [section, setSection] = useState<"general" | "plan">("general");
   const { user } = useUser();
 
@@ -54,6 +63,20 @@ export function SettingsAlertDialog({
     fetchPublicImage();
   }, [user]);
 
+  useEffect(() => {
+    // Save theme to localStorage whenever it changes
+    if (typeof window !== "undefined") {
+      localStorage.setItem("theme", theme);
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    // Save improveModel to localStorage whenever it changes
+    if (typeof window !== "undefined") {
+      localStorage.setItem("improveModel", String(improveModel));
+    }
+  }, [improveModel]);
+
   const handlePublishExploreChange = async (checked: boolean) => {
     //console.log("handlePublishExploreChange", checked);
     setPublishExplore(checked);
@@ -66,6 +89,16 @@ export function SettingsAlertDialog({
         );
       }
     }
+  };
+
+  const handleThemeChange = (value: string) => {
+    setTheme(value);
+    // The useEffect above will handle saving to localStorage
+  };
+
+  const handleImproveModelChange = (checked: boolean) => {
+    setImproveModel(checked);
+    // The useEffect above will handle saving to localStorage
   };
 
   return (
@@ -131,7 +164,7 @@ export function SettingsAlertDialog({
                 <div className="flex justify-between  gap-4 items-center border-b pb-3">
                   <label className="text-md font-medium ">Theme</label>
                   <div className="pr-18">
-                    <Select value={theme} onValueChange={setTheme}>
+                    <Select value={theme} onValueChange={handleThemeChange}>
                       <SelectTrigger className=" col-span-2">
                         <SelectValue placeholder="Select theme" />
                       </SelectTrigger>
@@ -154,6 +187,7 @@ export function SettingsAlertDialog({
                       </p>
                     </div>
                     <Switch
+                      className="cursor-pointer"
                       checked={publishExplore}
                       onCheckedChange={handlePublishExploreChange}
                     />
@@ -174,7 +208,7 @@ export function SettingsAlertDialog({
                     <Switch
                       disabled={true}
                       checked={improveModel}
-                      onCheckedChange={setImproveModel}
+                      onCheckedChange={handleImproveModelChange}
                     />
                   </div>
                 </div>
