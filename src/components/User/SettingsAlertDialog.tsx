@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -23,6 +23,9 @@ import { Badge } from "@/components/ui/badge";
 import { useUser } from "@clerk/nextjs";
 import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
 import Link from "next/link";
+import { updatePublicImage } from "@/app/actions/user/updatePublicImage";
+import { getPublicImage } from "./getPublicImage";
+import { fail } from "assert";
 
 interface SettingsAlertDialogProps {
   open: boolean;
@@ -36,10 +39,34 @@ export function SettingsAlertDialog({
   trigger,
 }: SettingsAlertDialogProps) {
   const [theme, setTheme] = useState("light");
-  const [publishExplore, setPublishExplore] = useState(true);
+  const [publishExplore, setPublishExplore] = useState<boolean | undefined>();
   const [improveModel, setImproveModel] = useState(true);
   const [section, setSection] = useState<"general" | "plan">("general");
   const { user } = useUser();
+
+  useEffect(() => {
+    const fetchPublicImage = async () => {
+      if (user?.id) {
+        const publicImage = await getPublicImage(user.id);
+        setPublishExplore(publicImage);
+      }
+    };
+    fetchPublicImage();
+  }, [user]);
+
+  const handlePublishExploreChange = async (checked: boolean) => {
+    //console.log("handlePublishExploreChange", checked);
+    setPublishExplore(checked);
+    if (user?.id) {
+      const result = await updatePublicImage(user.id, checked);
+      if (!result.success) {
+        console.error(
+          "Failed to update publish explore setting:",
+          result.message
+        );
+      }
+    }
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -128,7 +155,7 @@ export function SettingsAlertDialog({
                     </div>
                     <Switch
                       checked={publishExplore}
-                      onCheckedChange={setPublishExplore}
+                      onCheckedChange={handlePublishExploreChange}
                     />
                   </div>
                   <hr className="" />
