@@ -32,6 +32,16 @@ interface SettingsAlertDialogProps {
   trigger?: React.ReactNode;
 }
 
+interface Subscription {
+  subscription_plan: string;
+  // Add other subscription-related fields if they exist
+}
+
+interface UserPublicMetadata {
+  subscription?: Subscription;
+  // Add other public metadata fields if they exist
+}
+
 export function SettingsAlertDialog({
   open,
   onOpenChange,
@@ -52,6 +62,10 @@ export function SettingsAlertDialog({
   const [publishExplore, setPublishExplore] = useState<boolean | undefined>();
   const [section, setSection] = useState<"general" | "plan">("general");
   const { user } = useUser();
+
+  const subscriptionPlan =
+    (user?.publicMetadata as UserPublicMetadata)?.subscription
+      ?.subscription_plan || "Basic";
 
   console.log(improveModel, "improveModel");
 
@@ -137,7 +151,7 @@ export function SettingsAlertDialog({
                   </span>
                   {key === "plan" && (
                     <Badge className="ml-4" variant="outline">
-                      Plus
+                      {subscriptionPlan}
                     </Badge>
                   )}
                 </button>
@@ -217,7 +231,7 @@ export function SettingsAlertDialog({
               </div>
             ) : (
               <div className="space-y-6 px-4">
-                <h3 className="text-xl font-semibold border-b pb-2">Plus</h3>
+                <h3 className="text-xl font-semibold border-b pb-2">{subscriptionPlan}</h3>
                 {/* Feature row */}
                 <div className="flex gap-10 items-start border-b pb-2">
                   <div className="flex flex-col gap-2 w-[60%]">
