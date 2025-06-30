@@ -44,6 +44,18 @@ interface UserPublicMetadata {
   // Add other public metadata fields if they exist
 }
 
+interface SubscriptionPlan {
+  features: string[];
+  frequency: "monthly" | "yearly" | "one-time";
+  high_quality_limit: number;
+  id: string;
+  low_quality_limit: number;
+  medium_quality_limit: number;
+  name: string;
+  plan_id: string;
+  price: number;
+}
+
 export function SettingsAlertDialog({
   open,
   onOpenChange,
@@ -63,9 +75,8 @@ export function SettingsAlertDialog({
   });
   const [publishExplore, setPublishExplore] = useState<boolean | undefined>();
   const [section, setSection] = useState<"general" | "plan">("general");
-  const [subscriptionPlan, setSubscriptionPlan] = useState<any>(null);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<SubscriptionPlan>();
 
-  console.log(subscriptionPlan, "subscriptionPlan");
   const { user } = useUser();
 
   const subscriptionPlanType =
@@ -74,8 +85,6 @@ export function SettingsAlertDialog({
 
   const subscriptionPlanId =
     (user?.publicMetadata as UserPublicMetadata)?.subscription?.plan_id || "";
-
-  console.log(improveModel, "improveModel");
 
   useEffect(() => {
     const fetchPublicImage = async () => {
@@ -90,7 +99,7 @@ export function SettingsAlertDialog({
       if (result) {
         setSubscriptionPlan(result);
       } else {
-        setSubscriptionPlan(null);
+        setSubscriptionPlan(undefined);
       }
     };
 
@@ -170,7 +179,7 @@ export function SettingsAlertDialog({
                   </span>
                   {key === "plan" && (
                     <Badge className="ml-4" variant="outline">
-                      {subscriptionPlanType}
+                      {subscriptionPlan?.name || "Free"}
                     </Badge>
                   )}
                 </button>
@@ -251,7 +260,7 @@ export function SettingsAlertDialog({
             ) : (
               <div className="space-y-6 px-4">
                 <h3 className="text-xl font-semibold border-b pb-2">
-                  {subscriptionPlanType}
+                  {subscriptionPlan?.name || "Free"}
                 </h3>
                 {/* Feature row */}
                 <div className="flex gap-10 items-start border-b pb-2">

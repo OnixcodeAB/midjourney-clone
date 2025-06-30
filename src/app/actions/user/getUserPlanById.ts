@@ -2,6 +2,17 @@
 import { query } from "@lib/db";
 import { currentUser } from "@clerk/nextjs/server";
 
+interface SubscriptionPlan {
+  features: string[];
+  frequency: "monthly" | "yearly" | "one-time";
+  high_quality_limit: number;
+  id: string;
+  low_quality_limit: number;
+  medium_quality_limit: number;
+  name: string;
+  plan_id: string;
+  price: number;
+}
 export const getUserPlanById = async (planId: string) => {
   try {
     const user = await currentUser();
@@ -18,9 +29,9 @@ export const getUserPlanById = async (planId: string) => {
       planId,
     ]);
     console.log("Planid", planId, "rows:", rows);
-    return rows;
+    return rows[0] as SubscriptionPlan;
   } catch (error) {
     console.error("Error fetching user plan by ID:", error);
-    return { success: false, message: "Failed to fetch user plan." };
+    return;
   }
 };
