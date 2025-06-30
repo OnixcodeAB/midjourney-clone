@@ -53,6 +53,8 @@ export function SettingsAlertDialog({
   const [section, setSection] = useState<"general" | "plan">("general");
   const { user } = useUser();
 
+  console.log(improveModel, "improveModel");
+
   useEffect(() => {
     const fetchPublicImage = async () => {
       if (user?.id) {
@@ -207,7 +209,7 @@ export function SettingsAlertDialog({
                     </div>
                     <Switch
                       disabled={true}
-                      checked={improveModel}
+                      checked={true}
                       onCheckedChange={handleImproveModelChange}
                     />
                   </div>
