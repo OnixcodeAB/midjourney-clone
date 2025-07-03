@@ -9,6 +9,7 @@ import { HeaderProvider } from "@/app/context/HeaderContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
 import { FolderProvider } from "./context/FolderContext";
+import { ThemeProvider } from "./context/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,22 +35,29 @@ export default async function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased `}
         >
-          <FolderProvider>
-            <PromptProvider>
-              <SidebarProvider>
-                <AppSidebar />
-                <HeaderProvider>
-                  <div className="relative flex-1 ">
-                    {children}
-                    <Header />
-                  </div>
-                  <Toaster position="bottom-right" richColors />
-                </HeaderProvider>
-              </SidebarProvider>
-            </PromptProvider>
-          </FolderProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <FolderProvider>
+              <PromptProvider>
+                <SidebarProvider>
+                  <AppSidebar />
+                  <HeaderProvider>
+                    <div className="relative flex-1 ">
+                      {children}
+                      <Header />
+                    </div>
+                    <Toaster position="bottom-right" richColors />
+                  </HeaderProvider>
+                </SidebarProvider>
+              </PromptProvider>
+            </FolderProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

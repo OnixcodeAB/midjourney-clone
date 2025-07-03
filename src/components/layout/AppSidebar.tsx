@@ -117,7 +117,7 @@ export default function AppSidebar() {
                         asChild
                         className={` rounded-2xl py-5 font-semibold cursor-pointer ${
                           isActive
-                            ? "text-[#f25b44] bg-[#f9e8e6]"
+                            ? "text-[#f25b44] dark:text-[#f2330d] bg-[#f9e8e6] dark:bg-[#300a03] dark:border dark:border-[#f2330d]"
                             : "hover:bg-[#abafba]/35"
                         }`}
                         onClick={() => handleNavigation(item.url)}

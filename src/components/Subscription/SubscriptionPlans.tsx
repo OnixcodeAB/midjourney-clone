@@ -80,13 +80,13 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
         <h1 className="text-2xl md:text-3xl font-bold">
           Purchase a subscription
         </h1>
-        <p className="text-gray-600 text-base">
+        <p className="text-gray-600  text-xl">
           Choose the plan that works for you
         </p>
       </div>
 
       {/* Toggle Billing */}
-      <div className="flex flex-col items-center  gap-4 ">
+      <div className="flex flex-col items-center   gap-4 ">
         <ToggleGroup
           type="single"
           value={billing}
@@ -95,14 +95,14 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
               setBilling(value);
             }
           }}
-          className="inline-flex rounded-full bg-[#e3e4e8] cursor-pointer"
+          className="inline-flex rounded-full p-1 bg-[#e3e4e8] dark:bg-[#2e3038] border-none  cursor-pointer"
         >
           <ToggleGroupItem
             value="yearly"
-            className={`px-5 md:px-8 py-2 text-md font-medium rounded-full cursor-pointer transition-all ${
+            className={`px-5 md:px-8 py-2 text-md font-medium rounded-full! cursor-pointer ${
               billing === "yearly"
-                ? "bg-[#303030]! text-white! "
-                : "text-gray-900 rounded-none"
+                ? "bg-[#2e3038] text-white dark:bg-[#e2e4e9] dark:text-gray-900  "
+                : "bg-[#e3e4e8] dark:bg-[#2e3038] dark:text-white text-gray-900 rounded-none"
             }`}
           >
             Yearly Billing
@@ -111,8 +111,8 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
             value="monthly"
             className={`px-5 md:px-8 py-2 text-md font-medium rounded-full cursor-pointer ${
               billing === "monthly"
-                ? "bg-[#303030]! text-white! "
-                : "bg-[#e3e4e8] text-gray-900 rounded-none"
+                ? "bg-[#2e3038] dark:bg-[#e2e4e9] dark:text-gray-900 text-white "
+                : "bg-[#e3e4e8] dark:bg-[#2e3038] dark:text-white text-gray-900 rounded-none"
             }`}
           >
             Monthly Billing
@@ -136,8 +136,12 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
           return (
             <Card
               key={plan.id}
-              className={`border w-[90vw] max-w-xs md:max-w-[400px] flex-shrink-0
-                ${isSelected ? "border-[#f25b44]" : "border-gray-200"}
+              className={`border dark:bg-black/30 w-[90vw] max-w-xs md:max-w-[400px] flex-shrink-0
+                ${
+                  isSelected
+                    ? "border-[#f25b44]"
+                    : "border-gray-200 dark:border-gray-700"
+                }
               `}
             >
               <CardHeader>
@@ -146,7 +150,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 </CardTitle>
                 <div className="flex items-baseline space-x-1">
                   <span className="text-3xl md:text-4xl font-bold">
-                    ${plan.price}
+                    {plan.frequency === "yearly" && ()} ${plan.price}
                   </span>
                   <span className="text-base md:text-xl text-gray-500 font-semibold">
                     / {plan.frequency}
@@ -155,7 +159,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 {plan.frequency === "yearly" && (
                   <Badge
                     variant="outline"
-                    className="mt-4 text-xs md:text-sm bg-green-200"
+                    className="mt-4 text-xs md:text-sm dark:text-white/60 bg-gray-200 dark:bg-gray-800"
                   >
                     20% off billed annually
                   </Badge>
@@ -163,7 +167,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 {plan.frequency === "monthly" && (
                   <Badge
                     variant="outline"
-                    className="mt-4 text-sm border-none text-black/60"
+                    className="mt-4 text-sm border-none text-black/60 dark:text-white/60 bg-gray-200 dark:bg-gray-800"
                   >
                     Billed Monthly
                   </Badge>
@@ -190,7 +194,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                       setBilling("yearly");
                     }}
                   >
-                    <span className="text-[15px] text-gray-500 flex items-center gap-1">
+                    <span className="text-[15px] text-gray-500 dark:text-white/60 flex items-center gap-1">
                       Save with annual billing (20% off)
                       <ArrowUpRight />
                     </span>
@@ -204,7 +208,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                       setBilling("monthly");
                     }}
                   >
-                    <span className="text-[15px] text-gray-500 flex items-center gap-1">
+                    <span className="text-[15px] text-gray-500 dark:text-white/60 flex items-center gap-1">
                       View monthly billing
                       <ArrowUpRight />
                     </span>
@@ -216,7 +220,9 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 {plan.features.map((feat) => (
                   <div key={feat} className="flex items-center gap-2">
                     <Check className="size-[16px] text-[#f25b44]" />
-                    <span className="text-sm text-gray-700">{feat}</span>
+                    <span className="text-sm text-gray-700 dark:text-white">
+                      {feat}
+                    </span>
                   </div>
                 ))}
               </CardFooter>

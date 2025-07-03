@@ -31,8 +31,8 @@ export default function PayPalButton({
 
   if (currentPlanId === newPlanId) {
     return (
-      <Button variant="outline" disabled>
-        Current Plan
+      <Button variant="default" className="h-11 dark:bg-gray-600 " disabled>
+        <span className="dark:text-white">Current Plan</span>
       </Button>
     );
   }
@@ -40,7 +40,10 @@ export default function PayPalButton({
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant={"default"} className="cursor-pointer">
+        <Button
+          variant={"default"}
+          className="cursor-pointer h-11 dark:bg-[#2e3038] dark:text-white"
+        >
           {isSubscription ? "Upgrade subscription" : "Subscribe"}
         </Button>
       </AlertDialogTrigger>
