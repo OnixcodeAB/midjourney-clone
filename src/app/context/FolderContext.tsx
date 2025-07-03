@@ -9,7 +9,7 @@ import React, {
 import { addFolder } from "@/app/actions/folders/addFolder";
 import { renameFolder } from "@/app/actions/folders/renameFolder";
 import { useUser } from "@clerk/nextjs";
-import { deleteFolder } from "@/app/actions/folders/deleteFolder";
+import { deleteFolder } from "../actions/folders/deleteFolder";
 
 // --- Types
 export type FolderType = {

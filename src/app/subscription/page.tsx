@@ -7,12 +7,14 @@ interface Plan {
   name: string;
   frequency: string;
   price: number;
-  features: string[];
+  features: DbFeaturesContainer;
+  description: string;
 }
 
 export default async function SubscriptionPage() {
   const { rows } = await query(`SELECT * FROM plans `);
 
   const Plans: Plan[] = rows;
-  return <SubscriptionPlans plans={Plans} />; // Pass the fetched
+  //console.log("Fetched Plans:", Plans);
+  return <SubscriptionPlans plans={Plans} />;
 }

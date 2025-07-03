@@ -18,6 +18,32 @@ declare global {
     limit?: number | null;
   };
 
+  export interface FeatureDetail {
+    description: string;
+    quantity?: number | string;
+    period?: string;
+    duration?: string;
+    enabled?: boolean;
+  }
+
+  export interface Feature {
+    name: string;
+    description: string;
+    enabled?: boolean;
+    quantity?: number | string;
+    type?: string;
+    duration?: string;
+    details?: {
+      [key: string]: FeatureDetail;
+    };
+  }
+
+  export interface DbFeaturesContainer {
+    description: string;
+    features: Feature[];
+    title: string;
+  }
+
   interface SubscriptionPlan {
     features: string[];
     frequency: "monthly" | "yearly" | "one-time";

@@ -1,8 +1,4 @@
-import React from 'react'
-
-export default function deleteFolder() {
-  return 
-}
+"use server";
 import { query } from "@/lib/db";
 
 export async function deleteFolder(id: string): Promise<void> {

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpRight, Check } from "lucide-react";
+import { ArrowUpRight, Check, X } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import PayPalButton from "./PayPalButton";
 
@@ -21,7 +21,8 @@ interface Plan {
   name: string;
   frequency: string;
   price: number;
-  features: string[];
+  features: DbFeaturesContainer;
+  description: string;
 }
 
 interface SubscriptionPlansProps {
@@ -41,7 +42,6 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
   const [userSubscription, setUserSubscription] =
     useState<UserSubscription | null>(null);
 
-  // Get the current user from Clerk
   const { user } = useUser();
 
   useEffect(() => {
@@ -59,20 +59,62 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
     }
   }, [user, plans]);
 
-  // Filter plans based on the current billing state
   const filteredPlans = plans.filter((plan) => plan.frequency === billing);
 
-  // Sort filterPlans to always show Free, Basic, Pro
   const sortedPlans = filteredPlans.sort((a, b) => {
     const order = ["Free", "Basic", "Pro"];
-
-    if (billing === "monthly") {
-      const indexA = order.indexOf(a.name);
-      const indexB = order.indexOf(b.name);
-      return indexA - indexB;
-    }
-    return 0;
+    const indexA = order.indexOf(a.name);
+    const indexB = order.indexOf(b.name);
+    return indexA - indexB;
   });
+
+  const renderFeature = (feature: Feature) => {
+    if (feature.enabled === false) return null;
+
+    return (
+      <div key={feature.name} className="flex flex-col gap-1 mb-2">
+        <div className="flex items-center gap-2">
+          <Check className="size-[16px] text-[#f25b44]" />
+
+          <span className="text-sm font-medium text-gray-700 dark:text-white">
+            {feature.name}
+          </span>
+        </div>
+
+        <p className="text-xs text-gray-500 dark:text-gray-400 ml-6">
+          {feature.description}
+        </p>
+
+        {feature.quantity && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 ml-6">
+            <strong>Limit:</strong> {feature.quantity}
+            {feature.details?.period && ` per ${feature.details.period}`}
+            {feature.duration && ` (${feature.duration})`}
+          </p>
+        )}
+
+        {feature.details && (
+          <div className="ml-6 mt-1 space-y-1">
+            {Object.entries(feature.details).map(([key, detail]) => (
+              <div
+                key={key}
+                className="text-xs text-gray-500 dark:text-gray-400"
+              >
+                <strong>
+                  {key
+                    .split("_")
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(" ")}
+                  :
+                </strong>{" "}
+                {detail.quantity} {detail.period && `per ${detail.period}`}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-8 mt-8 px-2 sm:px-4 md:px-6 z-0">
@@ -80,13 +122,13 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
         <h1 className="text-2xl md:text-3xl font-bold">
           Purchase a subscription
         </h1>
-        <p className="text-gray-600  text-xl">
+        <p className="text-gray-600 text-xl">
           Choose the plan that works for you
         </p>
       </div>
 
       {/* Toggle Billing */}
-      <div className="flex flex-col items-center   gap-4 ">
+      <div className="flex flex-col items-center gap-4">
         <ToggleGroup
           type="single"
           value={billing}
@@ -95,13 +137,13 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
               setBilling(value);
             }
           }}
-          className="inline-flex rounded-full p-1 bg-[#e3e4e8] dark:bg-[#2e3038] border-none  cursor-pointer"
+          className="inline-flex rounded-full p-1 bg-[#e3e4e8] dark:bg-[#2e3038] border-none cursor-pointer"
         >
           <ToggleGroupItem
             value="yearly"
             className={`px-5 md:px-8 py-2 text-md font-medium rounded-full! cursor-pointer ${
               billing === "yearly"
-                ? "bg-[#2e3038] text-white dark:bg-[#e2e4e9] dark:text-gray-900  "
+                ? "bg-[#2e3038] text-white dark:bg-[#e2e4e9] dark:text-gray-900"
                 : "bg-[#e3e4e8] dark:bg-[#2e3038] dark:text-white text-gray-900 rounded-none"
             }`}
           >
@@ -111,7 +153,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
             value="monthly"
             className={`px-5 md:px-8 py-2 text-md font-medium rounded-full cursor-pointer ${
               billing === "monthly"
-                ? "bg-[#2e3038] dark:bg-[#e2e4e9] dark:text-gray-900 text-white "
+                ? "bg-[#2e3038] dark:bg-[#e2e4e9] dark:text-gray-900 text-white"
                 : "bg-[#e3e4e8] dark:bg-[#2e3038] dark:text-white text-gray-900 rounded-none"
             }`}
           >
@@ -124,27 +166,17 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
       </div>
 
       {/* Plans */}
-      <div
-        className="
-          flex flex-col gap-6 items-center md:gap-8 md:justify-center
-          lg:flex-row lg:items-start lg:gap-24
-          overflow-x-auto
-          md:overflow-visible
-          pb-4
-          "
-      >
+      <div className="flex flex-col gap-4 items-center md:gap-8 md:justify-center lg:flex-row lg:items-start lg:gap-24 overflow-x-auto md:overflow-visible pb-4">
         {sortedPlans.map((plan) => {
           const isSelected = currentPlan?.id === plan.id;
           return (
             <Card
               key={plan.id}
-              className={`border dark:bg-black/30 w-[90vw] max-w-xs md:max-w-[400px] flex-shrink-0
-                ${
-                  isSelected
-                    ? "border-[#f25b44]"
-                    : "border-gray-200 dark:border-gray-700"
-                }
-              `}
+              className={`border dark:bg-black/30 w-[90vw] max-w-xs md:max-w-[400px] flex-shrink-0 ${
+                isSelected
+                  ? "border-[#f25b44]"
+                  : "border-gray-200 dark:border-gray-700"
+              }`}
             >
               <CardHeader>
                 <CardTitle className="py-2 text-lg md:text-xl">
@@ -184,7 +216,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 )}
               </CardHeader>
 
-              <CardContent className="flex flex-col justify-center space-y-2">
+              <CardContent className="flex flex-col justify-center space-y-1">
                 <PayPalButton
                   isSubscription={
                     userSubscription?.subscription_status ? true : false
@@ -227,14 +259,12 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
               </CardContent>
 
               <CardFooter className="flex flex-col gap-2 items-start">
-                {plan.features.map((feat) => (
-                  <div key={feat} className="flex items-center gap-2">
-                    <Check className="size-[16px] text-[#f25b44]" />
-                    <span className="text-sm text-gray-700 dark:text-white">
-                      {feat}
-                    </span>
-                  </div>
-                ))}
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                  {plan.description}
+                </p>
+                {plan.features.features.map((feature) =>
+                  renderFeature(feature)
+                )}
               </CardFooter>
             </Card>
           );
