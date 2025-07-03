@@ -18,7 +18,7 @@ export function FoldersSidebar() {
 
   const router = useRouter();
 
-  console.log(folders);
+  //console.log(folders);
 
   // Handle navigation to the selected folder url
   const handleFolderNavigation = (url: string) => {
@@ -30,7 +30,7 @@ export function FoldersSidebar() {
   };
 
   return (
-    <aside className="border-neutral-200  p-0 flex flex-col ">
+    <aside className="border-neutral-200 p-0 flex flex-col">
       <button
         type="button"
         onClick={handleAdd}
