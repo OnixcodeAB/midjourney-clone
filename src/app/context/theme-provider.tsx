@@ -9,10 +9,8 @@ export function ThemeProvider({
 }: React.ComponentProps<typeof NextThemesProvider>) {
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }
+import { useTheme as useNextTheme } from "next-themes";
+
 export function useTheme() {
-  const context = React.useContext(NextThemesProvider.Context);
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
+  return useNextTheme();
 }

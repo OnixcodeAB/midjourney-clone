@@ -26,9 +26,11 @@ export function UserProfileModal({ open, setOpen }: UserProfileModalProps) {
         <button
           type="button"
           className="
-            absolute top-4 right-12 
+            absolute bottom-3 right-12 
             py-2 px-4 rounded-md 
-            hover:bg-gray-200 
+            bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600  dark:text-white
+            hover:bg-gray-300 
+            text-sm font-medium text-gray-700 dark:text-gray 
             focus:outline-none 
             focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500
             z-50 
