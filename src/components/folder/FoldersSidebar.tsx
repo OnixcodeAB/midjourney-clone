@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Folder, FolderPlus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useFolders } from "@/app/context/FolderContext";
 
 export function FoldersSidebar() {
@@ -17,6 +17,7 @@ export function FoldersSidebar() {
   } = useFolders();
 
   const router = useRouter();
+  const pathname = usePathname();
 
   //console.log(folders);
 
@@ -44,7 +45,7 @@ export function FoldersSidebar() {
           <div
             key={f.id}
             className={`flex items-center gap-3 px-6 py-2 rounded-lg cursor-pointer group ${
-              f.id === selectedFolder
+              (f.id === selectedFolder || pathname.includes(f.id))
                 ? "bg-neutral-200 dark:bg-neutral-700"
                 : "hover:bg-neutral-100 dark:hover:bg-neutral-700"
             }`}
