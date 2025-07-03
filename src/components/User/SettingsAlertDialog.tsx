@@ -23,6 +23,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import { useTheme } from "@/app/context/theme-provider";
 import { updatePublicImage } from "@/app/actions/user/updatePublicImage";
 import { getPublicImage } from "./getPublicImage";
 import { getUserPlanById } from "@/app/actions/user/getUserPlanById";
@@ -49,12 +50,7 @@ export function SettingsAlertDialog({
   onOpenChange,
   trigger,
 }: SettingsAlertDialogProps) {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") || "light";
-    }
-    return "light"; // Default to light theme if localStorage is not available
-  });
+  const { theme, setTheme } = useTheme();
   const [improveModel, setImproveModel] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("improveModel") === "true";
@@ -91,12 +87,6 @@ export function SettingsAlertDialog({
     fetchPublicImage();
   }, [user]);
 
-  useEffect(() => {
-    // Save theme to localStorage whenever it changes
-    if (typeof window !== "undefined") {
-      localStorage.setItem("theme", theme);
-    }
-  }, [theme]);
 
   useEffect(() => {
     // Save improveModel to localStorage whenever it changes
