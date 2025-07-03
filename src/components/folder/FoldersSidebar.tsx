@@ -45,7 +45,7 @@ export function FoldersSidebar() {
           <div
             key={f.id}
             className={`flex items-center gap-3 px-6 py-2 rounded-lg cursor-pointer group ${
-              (f.id === selectedFolder || pathname.includes(f.id))
+              (f.id === selectedFolder && pathname.includes(f.id))
                 ? "bg-neutral-200 dark:bg-neutral-700"
                 : "hover:bg-neutral-100 dark:hover:bg-neutral-700"
             }`}
