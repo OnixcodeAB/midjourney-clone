@@ -87,7 +87,6 @@ export function SettingsAlertDialog({
     fetchPublicImage();
   }, [user]);
 
-
   useEffect(() => {
     // Save improveModel to localStorage whenever it changes
     if (typeof window !== "undefined") {
@@ -111,7 +110,6 @@ export function SettingsAlertDialog({
 
   const handleThemeChange = (value: string) => {
     setTheme(value);
-    // The useEffect above will handle saving to localStorage
   };
 
   const handleImproveModelChange = (checked: boolean) => {
