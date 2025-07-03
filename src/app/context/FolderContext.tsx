@@ -9,6 +9,7 @@ import React, {
 import { addFolder } from "@/app/actions/folders/addFolder";
 import { renameFolder } from "@/app/actions/folders/renameFolder";
 import { useUser } from "@clerk/nextjs";
+import { deleteFolder } from "@/app/actions/folders/deleteFolder";
 
 // --- Types
 export type FolderType = {
@@ -100,10 +101,17 @@ export function FolderProvider({ children }: { children: React.ReactNode }) {
 
   // Delete folder
   const handleDelete = (id: string) => {
-    setFolders((folders) => folders.filter((f) => f.id !== id));
-    if (selectedFolder === id && folders.length > 1) {
-      setSelectedFolder(folders[0].id);
-    }
+    startTransition(async () => {
+      try {
+        await deleteFolder(id);
+        setFolders((folders) => folders.filter((f) => f.id !== id));
+        if (selectedFolder === id && folders.length > 1) {
+          setSelectedFolder(folders[0].id);
+        }
+      } catch (error) {
+        console.error("Error deleting folder:", error);
+      }
+    });
   };
 
   // Edit mode for rename
