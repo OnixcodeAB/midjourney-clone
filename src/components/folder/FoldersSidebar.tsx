@@ -18,7 +18,7 @@ export function FoldersSidebar() {
 
   const router = useRouter();
 
-  console.log(folders)
+  console.log(folders);
 
   // Handle navigation to the selected folder url
   const handleFolderNavigation = (url: string) => {
@@ -30,11 +30,11 @@ export function FoldersSidebar() {
   };
 
   return (
-    <aside className="border-neutral-200 bg-neutral-50 dark:bg-neutral-800 p-0 flex flex-col">
+    <aside className="border-neutral-200  p-0 flex flex-col ">
       <button
         type="button"
         onClick={handleAdd}
-        className="flex items-center gap-2 px-3 py-3 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
+        className="flex items-center gap-2 px-3 py-3 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer transition"
       >
         <FolderPlus className="w-5 h-5" />
         <span className="font-medium">New folder</span>
