@@ -27,6 +27,7 @@ import { useTheme } from "@/app/context/theme-provider";
 import { updatePublicImage } from "@/app/actions/user/updatePublicImage";
 import { getPublicImage } from "./getPublicImage";
 import { getUserPlanById } from "@/app/actions/user/getUserPlanById";
+import { Check, X } from "lucide-react";
 
 interface SettingsAlertDialogProps {
   open: boolean;
@@ -73,7 +74,7 @@ export function SettingsAlertDialog({
         setPublishExplore(publicImage);
       }
     };
-    const subscriptionPlan = async () => {
+    const fetchSubscriptionPlan = async () => {
       const result = await getUserPlanById(subscriptionPlanId);
       // Check if result has the expected Subscription shape
       if (result) {
@@ -83,9 +84,9 @@ export function SettingsAlertDialog({
       }
     };
 
-    subscriptionPlan();
+    fetchSubscriptionPlan();
     fetchPublicImage();
-  }, [user]);
+  }, [user, subscriptionPlanId]);
 
   useEffect(() => {
     // Save improveModel to localStorage whenever it changes
@@ -117,6 +118,42 @@ export function SettingsAlertDialog({
     // The useEffect above will handle saving to localStorage
   };
 
+  const renderFeatureValue = (feature: Feature) => {
+    if (feature.quantity) {
+      return (
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          <strong>Limit:</strong> {feature.quantity}
+          {feature.duration && ` (${feature.duration})`}
+        </span>
+      );
+    }
+
+    if (feature.details) {
+      return (
+        <div className="ml-4 space-y-1">
+          {Object.entries(feature.details).map(([key, detail]) => {
+            const qualityName = key
+              .split("_")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ");
+
+            return (
+              <p key={key} className="text-[13px] text-gray-500 dark:text-gray-400">
+                <strong>{qualityName}:</strong> {detail.quantity}
+                {detail.period && ` per ${detail.period}`}
+              </p>
+            );
+          })}
+        </div>
+      );
+    }
+    return feature.enabled ? (
+      <Check className="size-[16px] text-[#f25b44]" />
+    ) : (
+      <X className="size-[16px] text-[#f25b44]" />
+    );
+  };
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
@@ -129,7 +166,7 @@ export function SettingsAlertDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="flex h-[500px] ">
+        <div className="flex h-fit ">
           {/* Left Sidebar Nav */}
           <aside className="w-48 border-r pr-4">
             <nav className="space-y-1">
@@ -247,65 +284,24 @@ export function SettingsAlertDialog({
                   <span className="col-span-2 text-end pr-18">1</span>
                 </div> */}
                 {/* Feature row */}
-                {subscriptionPlan?.features &&
-                  subscriptionPlan.features
-                    .slice(
-                      subscriptionPlan.features.findIndex((feature) =>
-                        feature.startsWith("Limited generations:")
-                      )
-                    )
-                    .map((feature, index) => {
-                      const parts = feature.split(":");
-                      let label = parts[0]?.trim() || feature.trim();
-                      let value = "";
-
-                      // Specific handling for "Limited generations:"
-                      if (label === "Limited generations") {
-                        if (parts.length > 1) {
-                          value = parts.slice(1).join(":").trim();
-                        }
-                      } else {
-                        // For other features, try to extract numerical values for the right column
-                        const match = feature.match(/(\d+GB|\d+|\d+)/);
-                        if (match) {
-                          value = match[0];
-                          label = feature.replace(value, "").trim();
-                          // Remove any leading hyphens or "~" from the label
-                          if (label.startsWith("-"))
-                            label = label.substring(1).trim();
-                          if (label.startsWith("~"))
-                            label = label.substring(1).trim();
-                          // Remove trailing slashes or other extraneous characters if they appear after trimming
-                          label = label.replace(/\/$/, "").trim();
-                        } else if (parts.length > 1) {
-                          label = parts[0].trim();
-                          value = parts.slice(1).join(":").trim(); // Fallback for things like "Image Output size: All sizes aspect ratios"
-                        }
-                      }
-
-                      return (
-                        <div
-                          key={index}
-                          className="flex justify-between items-start border-b pb-2"
-                        >
-                          <div className="flex flex-col gap-1 w-fit">
-                            <label className="text-md font-medium">
-                              {label}:
-                            </label>
-                            {feature.includes("Limited generations:") &&
-                              value && (
-                                <span className="text-sm text-gray-500">
-                                  {value}
-                                </span>
-                              )}
-                          </div>
-                          {value &&
-                            !feature.includes("Limited generations:") && (
-                              <span className="text-end pr-18">{value}</span>
-                            )}
-                        </div>
-                      );
-                    })}
+                {subscriptionPlan?.features?.features.map((feature, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-start border-b pb-2"
+                  >
+                    <div className="flex flex-col gap-1 w-fit">
+                      <label className="text-md font-medium">
+                        {feature.name}
+                      </label>
+                      <span className="text-sm text-gray-500">
+                        {feature.description}
+                      </span>
+                    </div>
+                    <span className="text-end pr-18">
+                      {renderFeatureValue(feature)}
+                    </span>
+                  </div>
+                ))}
               </div>
             )}
           </section>

@@ -55,10 +55,10 @@ declare global {
   }
 
   interface SubscriptionPlan {
-    features: string[];
+    id: string;
+    features: DbFeaturesContainer;
     frequency: "monthly" | "yearly" | "one-time";
     high_quality_limit: number;
-    id: string;
     low_quality_limit: number;
     medium_quality_limit: number;
     name: string;
