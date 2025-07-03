@@ -150,7 +150,14 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 </CardTitle>
                 <div className="flex items-baseline space-x-1">
                   <span className="text-3xl md:text-4xl font-bold">
-                    {plan.frequency === "yearly" && ()} ${plan.price}
+                    {plan.frequency === "yearly" && (
+                      <>
+                        <span className="line-through text-gray-500">
+                          ${Math.round(plan.price / 0.8)}
+                        </span>{" "}
+                        ${plan.price}
+                      </>
+                    )}
                   </span>
                   <span className="text-base md:text-xl text-gray-500 font-semibold">
                     / {plan.frequency}
