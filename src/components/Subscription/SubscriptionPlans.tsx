@@ -15,15 +15,6 @@ import { ArrowUpRight, Check, X } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import PayPalButton from "./PayPalButton";
 
-interface Plan {
-  id: string;
-  plan_id: string;
-  name: string;
-  frequency: string;
-  price: number;
-  features: DbFeaturesContainer;
-  description: string;
-}
 
 interface SubscriptionPlansProps {
   plans: Plan[];

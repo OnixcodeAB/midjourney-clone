@@ -44,6 +44,16 @@ declare global {
     title: string;
   }
 
+  interface Plan {
+    id: string;
+    plan_id: string;
+    name: string;
+    frequency: string;
+    price: number;
+    features: DbFeaturesContainer;
+    description: string;
+  }
+
   interface SubscriptionPlan {
     features: string[];
     frequency: "monthly" | "yearly" | "one-time";
