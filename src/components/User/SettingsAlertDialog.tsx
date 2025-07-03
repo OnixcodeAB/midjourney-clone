@@ -133,7 +133,7 @@ export function SettingsAlertDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
 
-      <AlertDialogContent className="max-w-4xl px-3 py-4">
+      <AlertDialogContent className="max-w-4xl px-3 py-4 dark:bg-[#2e3038]">
         <AlertDialogHeader>
           <AlertDialogTitle className="sr-only">Settings</AlertDialogTitle>
           <AlertDialogDescription className="sr-only">
@@ -151,10 +151,10 @@ export function SettingsAlertDialog({
                   type="button"
                   aria-label="btn-icon"
                   key={key}
-                  className={`flex w-full  items-center px-5 py-2 mb-4 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex w-full  items-center px-5 py-3 mb-3 rounded-md text-sm font-medium transition-colors ${
                     section === key
-                      ? "bg-gray-100 text-gray-900"
-                      : "hover:bg-gray-100 text-gray-700"
+                      ? "bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white"
+                      : "hover:bg-gray-100 text-gray-700 dark:hover:bg-gray-700 dark:text-gray-300"
                   }`}
                   onClick={() => setSection(key as "general" | "plan")}
                 >
@@ -184,7 +184,7 @@ export function SettingsAlertDialog({
                 {/* Email row */}
                 <div className="flex justify-between gap-4 items-center border-b pb-3">
                   <label className="text-md font-medium">Email</label>
-                  <span className=" text-sm text-end text-gray-700">
+                  <span className=" text-sm text-end text-gray-700 dark:text-white ">
                     {user?.emailAddresses[0]?.emailAddress || "Not set"}
                   </span>
                 </div>
@@ -278,9 +278,7 @@ export function SettingsAlertDialog({
                         }
                       } else {
                         // For other features, try to extract numerical values for the right column
-                        const match = feature.match(
-                          /(\d+GB|\d+|\d+)/
-                        );
+                        const match = feature.match(/(\d+GB|\d+|\d+)/);
                         if (match) {
                           value = match[0];
                           label = feature.replace(value, "").trim();
