@@ -118,7 +118,9 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
             Monthly Billing
           </ToggleGroupItem>
         </ToggleGroup>
-        <p className="text-sm">Switch to Yearly to save 20%.</p>
+        {billing === "monthly" && (
+          <p className="text-sm">Switch to Yearly to save 20%.</p>
+        )}
       </div>
 
       {/* Plans */}
@@ -150,6 +152,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 </CardTitle>
                 <div className="flex items-baseline space-x-1">
                   <span className="text-3xl md:text-4xl font-bold">
+                    {plan.frequency == "monthly" && `$${plan.price}`}
                     {plan.frequency === "yearly" && (
                       <>
                         <span className="line-through text-gray-500">
