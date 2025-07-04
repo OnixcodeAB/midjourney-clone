@@ -148,7 +148,7 @@ export default function Header() {
       }`}
       onDropCapture={handleDropCapture}
     >
-      <div className="flex flex-col items-center w-full h-fit max-w-3xl rounded-2xl bg-white border-2 border-gray-200 px-4 py-2 gap-3 shadow-lg">
+      <div className="flex flex-col items-center w-full h-fit max-w-3xl rounded-2xl border-2 border-gray-200 px-4 py-2 gap-3 shadow-lg dark:bg-gray-800 bg-white ">
         {/* Upload image button & preview */}
         <div {...getRootProps()} className="flex items-start gap-2">
           {/* Image previews */}
