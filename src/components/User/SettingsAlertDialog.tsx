@@ -131,19 +131,27 @@ export function SettingsAlertDialog({
     if (feature.details) {
       return (
         <div className="ml-4 space-y-1">
-          {Object.entries(feature.details).map(([key, detail]) => {
-            const qualityName = key
-              .split("_")
-              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(" ");
+          {Object.entries(feature.details)
+            .sort(([a], [b]) => {
+              const order = ["high_quality", "medium_quality", "low_quality"];
+              return order.indexOf(a) - order.indexOf(b);
+            })
+            .map(([key, detail]) => {
+              const qualityName = key
+                .split("_")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ");
 
-            return (
-              <p key={key} className="text-[13px] text-gray-500 dark:text-gray-400">
-                <strong>{qualityName}:</strong> {detail.quantity}
-                {detail.period && ` per ${detail.period}`}
-              </p>
-            );
-          })}
+              return (
+                <p
+                  key={key}
+                  className="text-[13px] text-gray-500 dark:text-gray-400"
+                >
+                  <strong>{qualityName}:</strong> {detail.quantity}
+                  {detail.period && ` per ${detail.period}`}
+                </p>
+              );
+            })}
         </div>
       );
     }
