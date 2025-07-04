@@ -297,7 +297,7 @@ export function SettingsAlertDialog({
                         {feature.description}
                       </span>
                     </div>
-                    <span className="text-end pr-18">
+                    <span className="text-end pr-8">
                       {renderFeatureValue(feature)}
                     </span>
                   </div>
