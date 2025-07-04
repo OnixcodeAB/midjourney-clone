@@ -129,6 +129,8 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     return groups;
   }, [images]);
 
+  
+  // If no images are available, show a placeholder
   if (!images || images.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[79vh]">
