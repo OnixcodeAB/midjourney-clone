@@ -31,6 +31,7 @@ import PresetPopover from "./PresetPopover";
 import HelpPopover from "./helpPopoever";
 import TooltipButton from "./button/TooltipButton";
 import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
@@ -148,7 +149,7 @@ export default function Header() {
       }`}
       onDropCapture={handleDropCapture}
     >
-      <div className="flex flex-col items-center w-full h-fit max-w-3xl rounded-2xl border-2 px-4 py-2 gap-3 shadow-lg dark:bg-[#252525cc] bg-white ">
+      <div className="flex flex-col items-center w-full h-fit max-w-3xl rounded-2xl border-2 px-4 py-2 gap-3 shadow-lg bg-white dark:bg-[#0a0a0a] ">
         {/* Upload image button & preview */}
         <div {...getRootProps()} className="flex items-start gap-2">
           {/* Image previews */}
@@ -161,7 +162,7 @@ export default function Header() {
                   className="w-20 h-auto object-cover rounded-lg border"
                 />
                 <button
-                  className="absolute top-1 right-1 rounded-full p-1"
+                  className="absolute top-1 right-1 rounded-full p-1 bg-white hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
                   type="button"
                   title="Remove"
                   onClick={(e) => {
@@ -181,14 +182,15 @@ export default function Header() {
 
         <div className="w-full flex items-center gap-2">
           {/* Upload button */}
-          <button
+          <Button
             type="button"
-            className="p-[3px] bg-gray-100 rounded-lg hover:bg-gray-200"
+            variant="outline"
+            className="p-[3px] rounded-lg cursor-pointer "
             onClick={open}
             title="Add images"
           >
-            <Plus className="w-5 h-5 text-black" />
-          </button>
+            <Plus className="w-5 h-5 " />
+          </Button>
           {/* Prompt input */}
           <Textarea
             className="border-none break-all pt-4 leading-4 outline-none bg-transparent text-base  placeholder:text-gray-400 placeholder:pt-1 resize-none "
@@ -215,13 +217,14 @@ export default function Header() {
             />
             <Popover>
               <PopoverTrigger asChild>
-                <button
+                <Button
+                  variant={"outline"}
                   type="button"
                   aria-label="btn-select"
                   className="px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200"
                 >
-                  <SlidersHorizontal className="w-5 h-5 text-gray-500" />
-                </button>
+                  <SlidersHorizontal className="w-5 h-5 text-black dark:text-white" />
+                </Button>
               </PopoverTrigger>
               <PopoverContent className="w-fit">
                 <ImageSizeSelector />
@@ -235,7 +238,7 @@ export default function Header() {
           <TooltipButton
             tooltipText="Generate"
             onClick={handleGenerate}
-            icon={<MoveUp size={20} />}
+            icon={<MoveUp className="text-black dark:text-white" size={20} />}
           >
             {/* "" */}
           </TooltipButton>

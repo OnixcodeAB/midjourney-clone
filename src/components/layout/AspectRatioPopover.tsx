@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { GalleryHorizontal, GalleryVertical, Square } from "lucide-react";
 import { useState } from "react";
+import { Button } from "../ui/button";
 
 const aspectRatios = [
   { value: "3:2", label: "3:2", icon: <GalleryVertical size={20} /> },
@@ -33,26 +34,30 @@ export default function AspectRatioPopover() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button
+        <Button
+          variant={"outline"}
           type="button"
           aria-label="aspect ratio"
-          className="flex gap-1 items-center px-2 py-1 rounded-lg bg-gray-200 hover:bg-gray-300 text-black text-sm"
+          className="flex gap-1 items-center px-2 py-1 cursor-pointer rounded-lg text-sm "
         >
           {/* Dynamic icon */}
           {selected.icon}
           {selected.label}
-        </button>
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-3xs p-2">
-        <div className="p-2 pb-0  text-gray-500 ">
-          Aspect ratio
-        </div>
+        <div className="p-2 pb-0  text-gray-500 ">Aspect ratio</div>
         <div className="flex flex-col gap-2 mt-2">
           {aspectRatios.map((opt) => (
-            <button
+            <Button
+              variant={"ghost"}
               key={opt.value}
-              className={`flex items-center justify-between px-3 py-2 text-base hover:bg-gray-200  rounded-lg
-                ${aspect === opt.value ? "bg-gray-100 font-semibold" : ""}`}
+              className={`flex items-center justify-between px-3 py-2 text-base   rounded-lg
+                ${
+                  aspect === opt.value
+                    ? "bg-[#f5f5f5] dark:bg-[#404040]/60"
+                    : ""
+                }`}
               onClick={() => {
                 setAspect(opt.value as AspectType);
                 setOpen(false);
@@ -75,7 +80,7 @@ export default function AspectRatioPopover() {
                   )}
                 </span>
               </span>
-            </button>
+            </Button>
           ))}
         </div>
       </PopoverContent>

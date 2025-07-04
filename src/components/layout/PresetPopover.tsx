@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import TooltipButton from "./button/TooltipButton";
+import { Button } from "../ui/button";
 
 // Example preset data, you can extend/replace these:
 const presets = [
@@ -60,11 +61,11 @@ export default function PresetPopover() {
         <TooltipButton
           tooltipText="Presets"
           onClick={() => setOpen(!open)}
-          icon={<BookText className="w-5 h-5" />}
+          icon={<BookText className="w-5! h-5! text-dark dark:text-white" />}
         />
       </PopoverTrigger>
       <PopoverContent className="w-72 p-2">
-        <div className="flex justify-between items-center px-4 pt-2 pb-1">
+        <div className="flex justify-between items-center px-4 pt-2 pb-2">
           <span className="text-xs text-gray-500 font-semibold">Presets</span>
           <button
             type="button"
@@ -77,12 +78,13 @@ export default function PresetPopover() {
         </div>
         <div className="flex flex-col gap-2">
           {presets.map((opt) => (
-            <button
+            <Button
+              variant="ghost"
               key={opt.value}
               className={`
                 flex items-center justify-between px-3 py-2 text-base rounded-lg 
-                hover:bg-gray-200 focus:bg-gray-100
-                ${preset === opt.value ? "bg-gray-100 font-semibold" : ""}
+                hover:bg-[#f5f5f5] focus:bg-gray-100
+                ${preset === opt.value ? "bg-[#f5f5f5] dark:bg-[#404040]/60 font-semibold" : ""}
               `}
               onClick={() => {
                 setPreset(opt.value);
@@ -104,7 +106,7 @@ export default function PresetPopover() {
                   )}
                 </span>
               </span>
-            </button>
+            </Button>
           ))}
         </div>
         {/* Add a down-chevron for more (optional) */}

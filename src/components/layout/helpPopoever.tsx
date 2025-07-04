@@ -6,6 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Button } from "../ui/button";
 
 // Example preset data, you can extend/replace these:
 const presets = [
@@ -56,13 +57,14 @@ export default function HelpPopover() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button
+        <Button
           type="button"
+          variant={"outline"}
           aria-label="Presets"
-          className="flex gap-1 items-center p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-sm"
+          className="  rounded-full "
         >
-          <CircleHelp size={20} />
-        </button>
+          <CircleHelp className="w-5! h-5! text-black dark:text-white" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-72 p-2">
         <div className="px-1 pt-2 pb-1">

@@ -5,6 +5,6 @@ export default async function SubscriptionPage() {
   const { rows } = await query(`SELECT * FROM plans `);
 
   const Plans: Plan[] = rows;
-  console.log("Fetched Plans:", Plans);
+  //console.log("Fetched Plans:", Plans);
   return <SubscriptionPlans plans={Plans} />;
 }

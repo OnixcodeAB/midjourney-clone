@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import React, { useState, useRef, useEffect, forwardRef } from "react";
 
 type TooltipButtonProps = {
@@ -15,13 +16,14 @@ const TooltipButton = forwardRef<HTMLButtonElement, TooltipButtonProps>(
     const handleMouseLeave = () => setIsTooltipVisible(false);
 
     return (
-      <button
+      <Button
         ref={ref}
         type="button"
+        variant={"outline"}
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="flex items-center gap-2 p-2 rounded-md bg-gray-200 hover:bg-gray-300 text-black text-sm relative"
+        className="flex items-center gap-2 p-4 rounded-md bg-gray-200 hover:bg-gray-300 text-black text-sm relative"
       >
         {icon && <span className="flex items-center">{icon}</span>}
         {children}
@@ -30,7 +32,7 @@ const TooltipButton = forwardRef<HTMLButtonElement, TooltipButtonProps>(
             {tooltipText}
           </span>
         )}
-      </button>
+      </Button>
     );
   }
 );
