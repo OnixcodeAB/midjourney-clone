@@ -86,21 +86,28 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
 
         {feature.details && (
           <div className="ml-6 mt-1 space-y-1">
-            {Object.entries(feature.details).map(([key, detail]) => (
-              <div
-                key={key}
-                className="text-xs text-gray-500 dark:text-gray-400"
-              >
-                <strong>
-                  {key
-                    .split("_")
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(" ")}
-                  :
-                </strong>{" "}
-                {detail.quantity} {detail.period && `per ${detail.period}`}
-              </div>
-            ))}
+            {Object.entries(feature.details)
+              .sort(([a], [b]) => {
+                const order = ["High", "Low", "Medium"];
+                return order.indexOf(a) - order.indexOf(b);
+              })
+              .map(([key, detail]) => (
+                <div
+                  key={key}
+                  className="text-xs text-gray-500 dark:text-gray-400"
+                >
+                  <strong>
+                    {key
+                      .split("_")
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(" ")}
+                    :
+                  </strong>{" "}
+                  {detail.quantity} {detail.period && `per ${detail.period}`}
+                </div>
+              ))}
           </div>
         )}
       </div>
