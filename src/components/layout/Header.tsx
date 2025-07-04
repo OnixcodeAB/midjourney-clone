@@ -148,7 +148,7 @@ export default function Header() {
       }`}
       onDropCapture={handleDropCapture}
     >
-      <div className="flex flex-col items-center w-full h-fit max-w-3xl rounded-2xl border-2 border-gray-200 px-4 py-2 gap-3 shadow-lg dark:bg-gray-800 bg-white ">
+      <div className="flex flex-col items-center w-full h-fit max-w-3xl rounded-2xl border-2 px-4 py-2 gap-3 shadow-lg dark:bg-[#252525cc] bg-white ">
         {/* Upload image button & preview */}
         <div {...getRootProps()} className="flex items-start gap-2">
           {/* Image previews */}
@@ -161,7 +161,7 @@ export default function Header() {
                   className="w-20 h-auto object-cover rounded-lg border"
                 />
                 <button
-                  className="absolute top-1 right-1 bg-white rounded-full p-1 hover:bg-gray-100"
+                  className="absolute top-1 right-1 rounded-full p-1"
                   type="button"
                   title="Remove"
                   onClick={(e) => {
