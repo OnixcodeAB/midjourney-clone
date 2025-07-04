@@ -15,7 +15,6 @@ import { ArrowUpRight, Check, X } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import PayPalButton from "./PayPalButton";
 
-
 interface SubscriptionPlansProps {
   plans: Plan[];
 }
@@ -88,7 +87,7 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
           <div className="ml-6 mt-1 space-y-1">
             {Object.entries(feature.details)
               .sort(([a], [b]) => {
-                const order = ["High", "Low", "Medium"];
+                const order = ["high_quality", "medium_quality", "low_quality"];
                 return order.indexOf(a) - order.indexOf(b);
               })
               .map(([key, detail]) => (
