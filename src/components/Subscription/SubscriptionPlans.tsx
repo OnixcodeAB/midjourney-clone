@@ -259,6 +259,23 @@ export const SubscriptionPlans = ({ plans }: SubscriptionPlansProps) => {
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                   {plan.description}
                 </p>
+
+                {plan.features && (
+                  <div
+                    key={plan.features.title}
+                    className="flex flex-col gap-1 mb-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Check className="size-[16px] text-[#f25b44]" />
+                      <span className="text-sm text-gray-700 dark:text-white">
+                        {plan.features.title}
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 ml-6">
+                      {plan.features.description}
+                    </span>
+                  </div>
+                )}
                 {plan.features.features.map((feature) =>
                   renderFeature(feature)
                 )}
