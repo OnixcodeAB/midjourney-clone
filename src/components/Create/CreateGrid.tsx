@@ -129,6 +129,21 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     return groups;
   }, [images]);
 
+  if (!images || images.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[79vh]">
+        <img
+          src="/empty-imagen.png"
+          alt="Empty folder"
+          className="w-75 h-auto object-cover rounded-lg mb-2"
+        />
+        <p className="text-neutral-400">
+          Create images using the prompt below or upload your own images.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="px-2 sm:px-2 w-full max-w-full space-y-6">
       {Object.entries(grouped).map(([section, imgs]) =>
