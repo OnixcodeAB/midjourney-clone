@@ -134,7 +134,7 @@ const CreateGrid = ({ images: initialImages }: Props) => {
       <div className="flex flex-col items-center justify-center h-[79vh]">
         <img
           src="/empty-imagen.png"
-          alt="Empty folder"
+          alt="Empty image"
           className="w-75 h-auto object-cover rounded-lg mb-2"
         />
         <p className="text-neutral-400">
