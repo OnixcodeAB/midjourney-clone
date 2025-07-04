@@ -133,7 +133,7 @@ export function SettingsAlertDialog({
         <div className="ml-4 space-y-1">
           {Object.entries(feature.details)
             .sort(([a], [b]) => {
-              const order = ["high_quality", "medium_quality", "low_quality"];
+              const order = ["high_quality", , "low_quality","medium_quality"];
               return order.indexOf(a) - order.indexOf(b);
             })
             .map(([key, detail]) => {
