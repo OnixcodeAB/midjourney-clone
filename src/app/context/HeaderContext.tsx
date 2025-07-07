@@ -15,6 +15,8 @@ export type AspectRatio =
 interface HeaderContextType {
   aspect: AspectType;
   setAspect: (aspect: AspectType) => void;
+  variation: ImageVariationType;
+  setVariation: (variation: ImageVariationType) => void;
   size: number;
   setSize: (size: number) => void;
   ratio: AspectRatio;
@@ -27,6 +29,7 @@ const HeaderContext = createContext<HeaderContextType | undefined>(undefined);
 
 export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [aspect, setAspect] = useState<AspectType>("1:1");
+  const [variation, setVariation] = useState<ImageVariationType>("1");
   const [size, setSize] = useState<number>(80);
   const [ratio, setRatio] = useState<AspectRatio>("1536x1024");
   const [quality, setQuality] = useState<QualityType>("low");
@@ -37,6 +40,8 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
         {
           aspect,
           setAspect,
+          variation,
+          setVariation,
           size,
           setSize,
           ratio,
