@@ -56,11 +56,13 @@ export default function VariationsPopover() {
               }}
               type="button"
             >
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-2 ">
                 <span className="rounded w-5 h-5 flex items-center justify-center">
                   {opt.icon}
                 </span>
-                {opt.label} {opt.value === "1" ? "image" : "images"}
+                <span className=" text-gray-400 dark:text-gray-200 text-[15px]">
+                  {opt.label} {opt.value === "1" ? "image" : "images"}
+                </span>
               </span>
               <span className="flex items-center">
                 <span

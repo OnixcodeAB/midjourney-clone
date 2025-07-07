@@ -14,12 +14,12 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 
 const aspectRatios = [
-  { value: "3:2", label: "3:2", icon: <GalleryVertical size={20} /> },
-  { value: "1:1", label: "1:1", icon: <Square size={20} /> },
+  { value: "3:2", label: "3:2", icon: <GalleryVertical className="size-6"/> },
+  { value: "1:1", label: "1:1", icon: <Square className="size-6" /> },
   {
     value: "2:3",
     label: "2:3",
-    icon: <GalleryHorizontal size={20} />,
+    icon: <GalleryHorizontal className="size-6" />,
   },
 ];
 
