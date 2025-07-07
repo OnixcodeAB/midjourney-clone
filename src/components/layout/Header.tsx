@@ -4,19 +4,8 @@ import { usePathname } from "next/navigation";
 import { usePrompt } from "@/app/context/PromptContext";
 import { useHeaderSettings } from "@/app/context/HeaderContext";
 import { useDropzone } from "react-dropzone";
-import {
-  MoveUp,
-  Plus,
-  SlidersHorizontal,
-  Trash2,
-  TrendingUpDown,
-} from "lucide-react";
-import ImageSizeSelector from "./ImageSizeSelector";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { MoveUp, Plus, Trash2 } from "lucide-react";
+
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { BannerModal } from "./BannerModal";
@@ -210,21 +199,7 @@ export default function Header() {
           <div className="flex gap-4">
             <AspectRatioPopover />
             <VariationsPopover />
-            {/*             <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  type="button"
-                  aria-label="btn-select"
-                  className="px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200"
-                >
-                  <SlidersHorizontal className="w-5 h-5 text-black dark:text-white" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-fit">
-                <ImageSizeSelector />
-              </PopoverContent>
-            </Popover> */}
+
             <PresetPopover />
             {/* Remix/Generate Button */}
             <HelpPopover />
