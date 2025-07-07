@@ -2,7 +2,9 @@
 
 import { createContext, useContext, useState } from "react";
 
-export type AspectType = "1:1" | "2:3" | "3:2" | "1" | "2" | "4";
+export type AspectType = "1:1" | "2:3" | "3:2";
+export type ImageVariationType = "1" | "2" | "4";
+
 export type AspectRatio =
   | "1024x1024"
   | "1024x1536"
