@@ -10,8 +10,6 @@ import {
   SlidersHorizontal,
   Trash2,
   TrendingUpDown,
-  Video,
-  VideoIcon,
 } from "lucide-react";
 import ImageSizeSelector from "./ImageSizeSelector";
 import {
@@ -25,7 +23,6 @@ import { BannerModal } from "./BannerModal";
 import { useUser } from "@clerk/nextjs";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
 import { generateImageAndSave } from "@/app/actions/openAI/generateImageAndSaveV3";
-import { Input } from "../ui/input";
 import AspectRatioPopover from "./AspectRatioPopover";
 import PresetPopover from "./PresetPopover";
 import HelpPopover from "./helpPopoever";
@@ -213,7 +210,7 @@ export default function Header() {
             <AspectRatioPopover />
             <TooltipButton
               tooltipText="Variations"
-              icon={<TrendingUpDown className="w-5 h-5 " />}
+              icon={<TrendingUpDown className="w-5 h-5 text-black dark:text-white" />}
             />
             <Popover>
               <PopoverTrigger asChild>
