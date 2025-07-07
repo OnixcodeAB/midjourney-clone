@@ -29,6 +29,7 @@ import HelpPopover from "./helpPopoever";
 import TooltipButton from "./button/TooltipButton";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import VariationsPopover from "./VariationsPopover";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
@@ -208,11 +209,8 @@ export default function Header() {
           {/* Example: 1:1, 1v, settings, etc. */}
           <div className="flex gap-4">
             <AspectRatioPopover />
-            <TooltipButton
-              tooltipText="Variations"
-              icon={<TrendingUpDown className="w-5 h-5 text-black dark:text-white" />}
-            />
-{/*             <Popover>
+            <VariationsPopover />
+            {/*             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant={"outline"}

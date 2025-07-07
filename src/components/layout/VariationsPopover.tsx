@@ -14,9 +14,9 @@ import { Button } from "../ui/button";
 import TooltipButton from "./button/TooltipButton";
 
 const variations = [
-  { value: "1", label: "1", icon: <SquareDot size={20} /> },
-  { value: "2", label: "2", icon: <Videotape size={20} /> },
-  { value: "4", label: "4", icon: <Grid2x2 size={20} /> },
+  { value: "4", label: "4", icon: <Grid2x2 className="size-6" /> },
+  { value: "2", label: "2", icon: <Videotape className="size-6" /> },
+  { value: "1", label: "1", icon: <SquareDot className="size-6" /> },
 ];
 
 export default function VariationsPopover() {
@@ -31,9 +31,10 @@ export default function VariationsPopover() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <TooltipButton
-          tooltipText={selected.label}
+          tooltipText="Variations"
           onClick={() => setOpen(!open)}
           icon={selected.icon}
+          iconLabel={selected.label}
         />
       </PopoverTrigger>
       <PopoverContent className="w-3xs p-2">
@@ -59,7 +60,7 @@ export default function VariationsPopover() {
                 <span className="rounded w-5 h-5 flex items-center justify-center">
                   {opt.icon}
                 </span>
-                {opt.label}
+                {opt.label} {opt.value === "1" ? "image" : "images"}
               </span>
               <span className="flex items-center">
                 <span
