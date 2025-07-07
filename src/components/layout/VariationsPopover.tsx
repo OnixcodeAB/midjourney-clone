@@ -31,9 +31,9 @@ export default function VariationsPopover() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <TooltipButton
-          tooltipText="Presets"
+          tooltipText={selected.label}
           onClick={() => setOpen(!open)}
-          icon={<BookText className="w-5! h-5! text-dark dark:text-white" />}
+          icon={selected.icon}
         />
       </PopoverTrigger>
       <PopoverContent className="w-3xs p-2">
