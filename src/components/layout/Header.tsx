@@ -212,7 +212,7 @@ export default function Header() {
               tooltipText="Variations"
               icon={<TrendingUpDown className="w-5 h-5 text-black dark:text-white" />}
             />
-            <Popover>
+{/*             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant={"outline"}
@@ -226,7 +226,7 @@ export default function Header() {
               <PopoverContent className="w-fit">
                 <ImageSizeSelector />
               </PopoverContent>
-            </Popover>
+            </Popover> */}
             <PresetPopover />
             {/* Remix/Generate Button */}
             <HelpPopover />
