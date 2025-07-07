@@ -5,9 +5,13 @@ import { Slider } from "@/components/ui/slider";
 import {
   AspectRatio,
   AspectType,
-  QualityType,
   useHeaderSettings,
 } from "@/app/context/HeaderContext";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 // Quality options
 const QUALITY_OPTIONS = [
@@ -52,13 +56,18 @@ export default function ImageSizeSelector() {
     }
   }, [selected]);
 
-  const selectedAspect = aspectOptions.find((a) => a.value === selected);
+  const selectedAspect =
+    aspectOptions.find((a) => a.value === selected) || aspectOptions[2];
+
+  console.log("ratio", ratio, "selectedAspect", selectedAspect.ratio);
 
   return (
     <div className="p-4 space-y-4">
       {/* Quality Selector */}
       <div>
-        <h4 className="text-md font-semibold text-gray-700 mb-2">Quality</h4>
+        <h4 className="text-md font-semibold text-gray-700 dark:text-white mb-2">
+          Select Quality
+        </h4>
         <div className="flex justify-center gap-10 mb-4">
           {QUALITY_OPTIONS.map((opt) => (
             <button
@@ -81,13 +90,13 @@ export default function ImageSizeSelector() {
 
       {/* Existing Image Size Controls */}
       <div className="flex justify-between gap-4 mb-0 items-center">
-        <h4 className="text-md mr-35 font-semibold text-gray-700">
-          Image Size
+        <h4 className="text-md mr-35 font-semibold text-gray-700 dark:text-white">
+          Select Image Size
         </h4>
         <button
           type="button"
           onClick={() => {
-            setAspect("landscape");
+            setAspect("3:2");
             setSize(80);
             setRatio("1024x1536");
           }}
@@ -103,14 +112,18 @@ export default function ImageSizeSelector() {
           <div
             className={`absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
                   border border-dashed w-17 h-25 rounded-md z-0 ${
-                    selected === "portrait" ? "border-black" : "border-gray-400"
+                    ratio === (`1024x1024` as AspectRatio)
+                      ? "border-black dark:border-white"
+                      : ratio === (`1024x1536` as AspectRatio)
+                      ? "border-gray-400 dark:border-white"
+                      : "border-gray-400 dark:border-black"
                   }`}
           />
           <div
             className={`relative z-10 w-30 h-16 rounded-md flex items-center justify-center text-xs font-medium 
                 ${
-                  selected === "portrait"
-                    ? "border border-gray-400 text-gray-500"
+                  ratio === (`1536x1024` as AspectRatio)
+                    ? "border border-gray-400 dark:border-white text-gray-500 dark:text-white"
                     : "border border-black"
                 }`}
           >
