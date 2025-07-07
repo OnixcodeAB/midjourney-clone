@@ -11,6 +11,7 @@ import {
 import { Grid2x2, SquareDot, Videotape } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import TooltipButton from "./button/TooltipButton";
 
 const variations = [
   { value: "1", label: "1", icon: <SquareDot size={20} /> },
@@ -24,24 +25,19 @@ export default function VariationsPopover() {
 
   const selected =
     variations.find((r) => r.value === variation) ||
-    variations.find((r) => r.value === "1:1")!;
+    variations.find((r) => r.value === "1")!;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant={"outline"}
-          type="button"
-          aria-label="aspect ratio"
-          className="flex gap-1 items-center px-2 py-1 cursor-pointer rounded-lg text-sm "
-        >
-          {/* Dynamic icon */}
-          {selected.icon}
-          {selected.label}
-        </Button>
+        <TooltipButton
+          tooltipText="Presets"
+          onClick={() => setOpen(!open)}
+          icon={<BookText className="w-5! h-5! text-dark dark:text-white" />}
+        />
       </PopoverTrigger>
       <PopoverContent className="w-3xs p-2">
-        <div className="p-2 pb-0  text-gray-500 ">Aspect ratio</div>
+        <div className="p-2 pb-0  text-gray-500 ">Variations</div>
         <div className="flex flex-col gap-2 mt-2">
           {variations.map((opt) => (
             <Button
