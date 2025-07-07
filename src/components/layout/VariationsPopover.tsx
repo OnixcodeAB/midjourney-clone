@@ -1,7 +1,6 @@
 "use client";
 import {
-  AspectRatio,
-  AspectType,
+  ImageVariationType,
   useHeaderSettings,
 } from "@/app/context/HeaderContext";
 import {
@@ -20,11 +19,11 @@ const variations = [
 ];
 
 export default function VariationsPopover() {
-  const { aspect, setAspect } = useHeaderSettings();
+  const { variation, setVariation } = useHeaderSettings();
   const [open, setOpen] = useState(false);
 
   const selected =
-    variations.find((r) => r.value === aspect) ||
+    variations.find((r) => r.value === variation) ||
     variations.find((r) => r.value === "1:1")!;
 
   return (
@@ -50,12 +49,12 @@ export default function VariationsPopover() {
               key={opt.value}
               className={`flex items-center justify-between px-3 py-2 text-base   rounded-lg
                 ${
-                  aspect === opt.value
+                  variation === opt.value
                     ? "bg-[#f5f5f5] dark:bg-[#404040]/60"
                     : ""
                 }`}
               onClick={() => {
-                setAspect(opt.value as AspectType);
+                setVariation(opt.value as ImageVariationType);
                 setOpen(false);
               }}
               type="button"
@@ -69,9 +68,9 @@ export default function VariationsPopover() {
               <span className="flex items-center">
                 <span
                   className={`w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center 
-                  ${aspect === opt.value ? "border-black" : ""}`}
+                  ${variation === opt.value ? "border-black" : ""}`}
                 >
-                  {aspect === opt.value && (
+                  {variation === opt.value && (
                     <span className="block w-2 h-2 bg-black rounded-full" />
                   )}
                 </span>
