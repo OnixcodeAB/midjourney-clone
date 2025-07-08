@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/popover";
 import TooltipButton from "./button/TooltipButton";
 import { SlidersHorizontal } from "lucide-react";
+import { RatioBox } from "./Ratiobox";
 
 // Quality options
 const QUALITY_OPTIONS = [
@@ -122,28 +123,10 @@ export default function ImageSizeSelector() {
 
           <div className="flex items-center justify-between gap-6">
             {/* Ratio Box */}
-            <div className="relative flex flex-col justify-center w-30 h-30">
-              <div
-                className={`absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                  border border-dashed w-17 h-25 rounded-md z-0 ${
-                    ratio === (`1024x1024` as AspectRatio)
-                      ? "border-black dark:border-white"
-                      : ratio === (`1024x1536` as AspectRatio)
-                      ? "border-gray-400 dark:border-white"
-                      : "border-gray-400 dark:border-black"
-                  }`}
-              />
-              <div
-                className={`relative z-10 w-30 h-16 rounded-md flex items-center justify-center text-xs font-medium 
-                ${
-                  ratio === (`1536x1024` as AspectRatio)
-                    ? "border border-gray-400 dark:border-white text-gray-500 dark:text-white"
-                    : "border border-black"
-                }`}
-              >
-                {selectedAspect?.ratio}
-              </div>
-            </div>
+            <RatioBox
+              ratio={selectedAspect.ratio}
+              isActive={ratio === selectedAspect.ratio}
+            />
 
             {/* Options + Slider */}
             <div className="w-full flex flex-col gap-8">
