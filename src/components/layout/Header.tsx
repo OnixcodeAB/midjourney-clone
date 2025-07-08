@@ -202,21 +202,8 @@ export default function Header() {
         <div className="w-full flex justify-between gap-4 mx-2">
           {/* Example: 1:1, 1v, settings, etc. */}
           <div className="flex gap-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  type="button"
-                  aria-label="btn-select"
-                  className="px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200"
-                >
-                  <SlidersHorizontal className="w-5 h-5 text-black dark:text-white" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-fit">
-                <ImageSizeSelector />
-              </PopoverContent>
-            </Popover>
+            <ImageSizeSelector />
+
             <VariationsPopover />
 
             <PresetPopover />
