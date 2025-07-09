@@ -54,10 +54,7 @@ export default function ImageSizeSelector() {
     setRatio(opt.ratio as AspectRatio);
   };
 
-  const selectedAspect =
-    aspectOptions.find((a) => a.value === selected) || aspectOptions[2];
-
-  console.log("ratio", ratio, "selectedAspect", selectedAspect.ratio);
+  //console.log("ratio", ratio, "selectedAspect", selectedAspect.ratio);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
