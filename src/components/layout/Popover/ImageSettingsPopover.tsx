@@ -11,9 +11,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import TooltipButton from "./button/TooltipButton";
+import TooltipButton from "../Button/TooltipButton";
 import { SlidersHorizontal } from "lucide-react";
-import { AspectSelector } from "./AspectSelector";
+import { AspectSelector } from "../Selectors/AspectSelector";
 
 // Quality options
 const QUALITY_OPTIONS = [
@@ -32,7 +32,7 @@ const aspectOptions: {
   { label: "Landscape", value: "3:2", ratio: "1536x1024" },
 ];
 
-export default function ImageSizeSelector() {
+export default function ImageSettingsPopover() {
   const [open, setOpen] = useState(false);
   const {
     aspect: selected,

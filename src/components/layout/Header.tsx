@@ -5,25 +5,19 @@ import { usePrompt } from "@/app/context/PromptContext";
 import { useHeaderSettings } from "@/app/context/HeaderContext";
 import { useDropzone } from "react-dropzone";
 import { MoveUp, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
-import ImageSizeSelector from "./ImageSizeSelector";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import ImageSettingsPopover from "./Popover/ImageSettingsPopover";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { BannerModal } from "./BannerModal";
+import { BannerModal } from "./Modals/BannerModal";
 import { useUser } from "@clerk/nextjs";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
 import { generateImageAndSave } from "@/app/actions/openAI/generateImageAndSaveV3";
-import AspectRatioPopover from "./AspectRatioPopover";
-import PresetPopover from "./PresetPopover";
-import HelpPopover from "./helpPopoever";
-import TooltipButton from "./button/TooltipButton";
+import PresetPopover from "./Popover/PresetPopover";
+import HelpPopover from "./Popover/helpPopoever";
+import TooltipButton from "./Button/TooltipButton";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import VariationsPopover from "./VariationsPopover";
+import VariationsPopover from "./Popover/VariationsPopover";
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
@@ -202,7 +196,7 @@ export default function Header() {
         <div className="w-full flex justify-between gap-4 mx-2">
           {/* Example: 1:1, 1v, settings, etc. */}
           <div className="flex gap-4">
-            <ImageSizeSelector />
+            <ImageSettingsPopover />
 
             <VariationsPopover />
 

@@ -11,7 +11,7 @@ import {
 import { Grid2x2, SquareDot, Videotape } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import TooltipButton from "./button/TooltipButton";
+import TooltipButton from "./Button/TooltipButton";
 
 const variations = [
   { value: "4", label: "4", icon: <Grid2x2 className="size-6" /> },
