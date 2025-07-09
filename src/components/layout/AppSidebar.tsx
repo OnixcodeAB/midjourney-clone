@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { BannerModal } from "./BannerModal";
+import { BannerModal } from "./Modals/BannerModal";
 import { UserSettingsMenu } from "../User/UserSettingsMenu";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
 import { FoldersSidebar } from "../folder/FoldersSidebar";

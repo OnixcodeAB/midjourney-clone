@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/popover";
 import { Grid2x2, SquareDot, Videotape } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../ui/button";
-import TooltipButton from "./Button/TooltipButton";
+import { Button } from "@/components/ui/button";
+import TooltipButton from "@/components/layout/Button/TooltipButton";
 
 const variations = [
   { value: "4", label: "4", icon: <Grid2x2 className="size-6" /> },

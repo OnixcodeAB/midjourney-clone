@@ -1,7 +1,7 @@
 import { query } from "@/lib/db";
 import { cacheResult, getCached, redis } from "@/lib/redis"; // Make sure this path matches your project structure
 
-const CACHE_TTL = 60 * 60; // 1 hour
+const CACHE_TTL = 60 * 2; // 2 minutes
 
 export async function checkUsageLimit(
   userId: string,
@@ -21,6 +21,9 @@ export async function checkUsageLimit(
 
   try {
     const [{ rows: planRows }, { rows: usageRows }] = await Promise.all([
+      // Fetch the user's plan limits
+      //This query gets the maximum number of images a user can upload at different quality levels based on their subscription plan.
+      //Returns three numbers: how many low, medium, and high quality images they're allowed to upload
       query(
         `
         SELECT 
@@ -34,6 +37,9 @@ export async function checkUsageLimit(
       `,
         [userId]
       ),
+      // Fetch the user's usage for the current month
+      //This query counts how many images the user has uploaded in the current month, grouped by quality type.
+      //Returns a list of objects with quality type and count, e.g. { quality: 'low', count: 5 }
       query(
         `
         SELECT quality, COUNT(*) AS count
@@ -52,6 +58,9 @@ export async function checkUsageLimit(
     }
 
     const plan = planRows[0];
+    // Transform usage rows into a more usable format
+    // This creates an object where each quality type (low, medium, high) maps to the count of images uploaded
+    // e.g. { low: 5, medium: 3, high: 2 }
     const usage = usageRows.reduce((acc: Record<string, number>, row: any) => {
       acc[row.quality] = parseInt(row.count, 10);
       return acc;
@@ -69,7 +78,7 @@ export async function checkUsageLimit(
     const current = usage[quality] || 0;
     const limit = limits[quality];
 
-    console.log({ current: current, limit: limit, quality: quality });
+    //console.log({ current: current, limit: limit, quality: quality });
 
     // Check if the user has reached their monthly limit for the requested quality
     if (current >= limit) {

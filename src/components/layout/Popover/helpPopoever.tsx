@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 // Example preset data, you can extend/replace these:
 const presets = [

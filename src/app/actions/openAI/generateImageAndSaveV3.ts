@@ -41,6 +41,8 @@ export async function generateImageAndSave({
     api_secret: process.env.CLOUDINARY_API_SECRET!,
   });
 
+  //console.log({ prompt, aspect, quality });
+
   // 1. Auth
   const user = await currentUser();
   if (!user?.id) {
