@@ -74,6 +74,7 @@ export const functionSpec = [
 ];
 
 // Helper Function to generate image metadata
+//--TODO: Add error to DB
 export async function generateImageMetadata(
   prompt: string
 ): Promise<{ search_text: string; tags: string[] }> {
