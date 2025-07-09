@@ -2,19 +2,19 @@
 import React from "react";
 
 type RatioBoxProps = {
-  ratio: string; // e.g. "1536x1024"
+  ratio: string | null | undefined; // e.g. "1536x1024"
   isActive: boolean;
 };
 
 export function RatioBox({ ratio, isActive }: RatioBoxProps) {
   // Extraemos ancho y alto numéricos
-  const [width, height] = ratio.split("x").map(Number);
+  const [width, height] = (ratio ?? "").split("x").map(Number);
 
   return (
     <div
       className="relative"
       // Fijamos un ancho (6rem en este ejemplo) y la altura se ajusta vía aspect-ratio
-      style={{ width: "6rem", aspectRatio: `${width} / ${height}` }}
+      style={{ width: "5rem", aspectRatio: `${width} / ${height}` }}
     >
       {/* Contorno punteado */}
       <div
