@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Slider } from "@/components/ui/slider";
+import { useState } from "react";
 import {
   AspectRatio,
   AspectType,
@@ -14,7 +13,6 @@ import {
 } from "@/components/ui/popover";
 import TooltipButton from "./button/TooltipButton";
 import { SlidersHorizontal } from "lucide-react";
-import { RatioBox } from "./Ratiobox";
 import { AspectSelector } from "./AspectSelector";
 
 // Quality options
@@ -99,7 +97,7 @@ export default function ImageSizeSelector() {
             </div>
           </div>
 
-          {/* Existing Image Size Controls */}
+          {/* Image Size Controls Header */}
           <div className="flex justify-between gap-4 py-3 mb-1 items-center">
             <h4 className="text-md mr-35 font-semibold text-gray-700 dark:text-white">
               Select Image Size
@@ -118,7 +116,7 @@ export default function ImageSizeSelector() {
           </div>
 
           <div className="flex items-center gap-6">
-            {/* 1) Aspect Options */}
+            {/* Aspect Options */}
             <AspectSelector
               options={aspectOptions}
               currentValue={selected}
