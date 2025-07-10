@@ -7,6 +7,7 @@ interface DonutLoaderProps {
   size?: number; // Diameter of the donut in pixels (default: 50)
   strokeWidth?: number; // Thickness of the donut stroke (default: 4)
   color?: string; // Color for the progress stroke (default: "blue")
+  spin?: boolean; // New prop to control spinning
 }
 
 export const DonutLoader: React.FC<DonutLoaderProps> = ({
@@ -14,6 +15,7 @@ export const DonutLoader: React.FC<DonutLoaderProps> = ({
   size = 50,
   strokeWidth = 4,
   color = "blue",
+  spin = false, // Default to not spinning
 }) => {
   // Calculate the circle radius (so the stroke is fully visible)
   const radius = (size - strokeWidth) / 2;
@@ -44,6 +46,7 @@ export const DonutLoader: React.FC<DonutLoaderProps> = ({
         strokeDashoffset={offset}
         strokeLinecap="round"
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        className={spin ? "animate-spin" : ""}
       />
       {/* Percentage Text */}
       <text

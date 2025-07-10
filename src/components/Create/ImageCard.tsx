@@ -79,8 +79,6 @@ const ImageCard = ({
     }
   };
 
-  // ... your component JSX
-  // Move the return statement inside the function
   return (
     <div
       className="relative sm:w-fit lg:w-50 border border-gray-300 overflow-hidden cursor-pointer group"
@@ -171,6 +169,7 @@ const ImageCard = ({
             size={60}
             strokeWidth={5}
             color="blue"
+            spin={true}
           />
           <p className="mt-2 text-xs text-gray-600">Generating...</p>
         </div>

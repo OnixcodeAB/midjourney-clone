@@ -31,9 +31,9 @@ const CreateGrid = ({ images: initialImages }: Props) => {
           // Ensure all required fields for the 'Image' interface are present
           // Provide defaults if necessary, or ensure the backend sends complete objects
           const newImage: Image = {
-            id: data.id, // Must be provided by the backend notification
-            url: data.data.url || "", // Provide default or ensure it's sent
-            prompt: data.data.prompt || "", // Provide default or ensure it's sent
+            id: data.id, 
+            url: data.data.url || "", 
+            prompt: data.data.prompt || "", 
             status: data.data.status || "pending", // Default status
             progress_pct: data.data.progress_pct || 0, // Default progress
             createdAt: data.data.createdAt || new Date().toISOString(), // Need a creation date! Ensure backend sends it.

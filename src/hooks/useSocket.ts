@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import io, { Socket } from 'socket.io-client';
+import { useEffect, useRef, useState } from "react";
+import io, { Socket } from "socket.io-client";
 
 export function useSocket<T = any>(
   url: string,
@@ -11,19 +11,19 @@ export function useSocket<T = any>(
 
   useEffect(() => {
     const socket = io(url, {
-      reconnectionAttempts: Infinity,
+      reconnectionAttempts: 5,
       reconnectionDelay: 1000,
-      transports: ['websocket'], // Force WebSocket (optional)
+      transports: ["websocket"], // Force WebSocket (optional)
     });
     socketRef.current = socket;
 
-    socket.on('connect', () => {
-      console.log('Socket.IO connected');
+    socket.on("connect", () => {
+      console.log("Socket.IO connected");
       setIsConnected(true);
     });
 
-    socket.on('disconnect', () => {
-      console.log('Socket.IO disconnected');
+    socket.on("disconnect", () => {
+      console.log("Socket.IO disconnected");
       setIsConnected(false);
     });
 
@@ -43,7 +43,7 @@ export function useSocket<T = any>(
     if (socketRef.current?.connected) {
       socketRef.current.emit(eventName, message);
     } else {
-      console.warn('Socket.IO is not connected');
+      console.warn("Socket.IO is not connected");
     }
   };
 
