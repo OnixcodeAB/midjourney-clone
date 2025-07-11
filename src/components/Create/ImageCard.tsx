@@ -172,7 +172,9 @@ const ImageCard = ({
             darkColor="var(--sidebar-primary)"
             spin={true}
           />
-          <p className="mt-2 text-xs text-[var(--muted-foreground)] dark:text-[var(--muted-foreground)]">Generating...</p>
+          <p className="mt-2 text-xs text-[var(--muted-foreground)] dark:text-[var(--muted-foreground)]">
+            Generating...
+          </p>
         </div>
       ) : (
         <>

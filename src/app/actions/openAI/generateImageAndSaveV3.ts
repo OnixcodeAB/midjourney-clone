@@ -75,7 +75,7 @@ export async function generateImageAndSave({
     ]
   );
 
-  await invalidateCache(`api:create:all`);
+  await invalidateCache(`api:create:${user.id}`);
 
   const imageId: string = insertRes.rows[0].id;
 
