@@ -147,7 +147,7 @@ const CreateGrid = ({ images: initialImages }: Props) => {
   }
 
   return (
-    <div className="px-2 sm:px-2 w-full max-w-full space-y-6">
+    <div className="px-2 sm:px-2 w-full max-w-full space-y-6 h-[79vh]">
       {Object.entries(grouped).map(([section, imgs]) =>
         imgs && Object.keys(imgs).length > 0 ? (
           section !== "Older" ? (

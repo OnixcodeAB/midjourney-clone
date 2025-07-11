@@ -3,11 +3,12 @@
 import React from "react";
 
 interface DonutLoaderProps {
-  progress: number; // Expected as a fraction from 0 to 1 (e.g., 0.644)
-  size?: number; // Diameter of the donut in pixels (default: 50)
-  strokeWidth?: number; // Thickness of the donut stroke (default: 4)
-  color?: string; // Color for the progress stroke (default: "blue")
-  spin?: boolean; // New prop to control spinning
+  progress: number;
+  size?: number;
+  strokeWidth?: number;
+  color?: string;
+  darkColor?: string;
+  spin?: boolean;
 }
 
 export const DonutLoader: React.FC<DonutLoaderProps> = ({
@@ -15,49 +16,56 @@ export const DonutLoader: React.FC<DonutLoaderProps> = ({
   size = 50,
   strokeWidth = 4,
   color = "blue",
-  spin = false, // Default to not spinning
+  darkColor = "var(--primary)",
+  spin = false,
 }) => {
-  // Calculate the circle radius (so the stroke is fully visible)
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  // Calculate the offset based on progress
   const offset = circumference * (1 - progress);
 
   return (
-    <svg width={size} height={size} className="relative">
-      {/* Background Circle */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke="#e5e7eb"
-        fill="none"
-        strokeWidth={strokeWidth}
-      />
-      {/* Progress Circle */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke={color}
-        fill="none"
-        strokeWidth={strokeWidth}
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+    <div
+      className="relative inline-block"
+      style={{ width: size, height: size }}
+    >
+      <svg
+        width={size}
+        height={size}
         className={spin ? "animate-spin" : ""}
-      />
-      {/* Percentage Text */}
-      <text
-        x="50%"
-        y="50%"
-        dy=".3em"
-        textAnchor="middle"
-        className="text-xs font-medium fill-current text-gray-700"
+        style={{ display: "block" }} // Prevent layout shifts
       >
-        {Math.round(progress * 100)}%
-      </text>
-    </svg>
+        {/* Background Circle */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="#e5e7eb"
+          fill="none"
+          strokeWidth={strokeWidth}
+          className="dark:stroke-[var(--secondary)]"
+        />
+
+        {/* Progress Circle - No transform here */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={color}
+          fill="none"
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className={`dark:stroke-[${darkColor}]`}
+        />
+      </svg>
+
+      {/* Percentage Text - Now absolutely positioned */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-xs font-medium text-[var(--foreground)] dark:text-[var(--dark-foreground)]">
+          {Math.round(progress * 100)}%
+        </span>
+      </div>
+    </div>
   );
 };

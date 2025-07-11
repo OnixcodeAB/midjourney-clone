@@ -81,7 +81,7 @@ const ImageCard = ({
 
   return (
     <div
-      className="relative sm:w-fit lg:w-50 border border-gray-300 overflow-hidden cursor-pointer group"
+      className="relative sm:w-fit lg:w-50 border border-[var(--border)] dark:border-[var(--border)] overflow-hidden cursor-pointer group"
       onClick={handleClick}
     >
       {/* Menu contextual arriba a la derecha */}
@@ -163,21 +163,22 @@ const ImageCard = ({
       </div>
       {/* ... el resto del código igual ... */}
       {status === "pending" || status === "running" ? (
-        <div className="absolute inset-0 bg-gray-200 flex flex-col items-center justify-center z-10">
+        <div className="absolute inset-0 bg-[var(--card)] dark:bg-[var(--card)] flex flex-col items-center justify-center z-10">
           <DonutLoader
             progress={progress_pct ?? 10}
             size={60}
             strokeWidth={5}
-            color="blue"
+            color="var(--chart-3)"
+            darkColor="var(--sidebar-primary)"
             spin={true}
           />
-          <p className="mt-2 text-xs text-gray-600">Generating...</p>
+          <p className="mt-2 text-xs text-[var(--muted-foreground)] dark:text-[var(--muted-foreground)]">Generating...</p>
         </div>
       ) : (
         <>
-          {!loaded && (
+          {/* {!loaded && (
             <div className="absolute inset-0 z-10 bg-[linear-gradient(110deg,#e5e7eb_25%,#f3f4f6_50%,#e5e7eb_75%)] bg-[length:200%_100%] animate-shimmer" />
-          )}
+          )} */}
           <img
             ref={imgRef}
             src={url}
