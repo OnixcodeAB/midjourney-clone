@@ -6,16 +6,6 @@ import Masonry from "react-masonry-css";
 import ImageCard from "@/components/Home/ImageCard";
 import { LayoutPanelTop, X } from "lucide-react";
 
-interface ImageExplorePage {
-  id: number;
-  url: string;
-  alt: string;
-  author: string;
-  description: string;
-  search_text: string;
-  tags: string[];
-}
-
 interface Props {
   images: ImageExplorePage[];
 }

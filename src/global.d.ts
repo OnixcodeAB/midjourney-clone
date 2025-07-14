@@ -96,4 +96,14 @@ declare global {
     createdat: string;
     tags: string[];
   }
+
+  interface ImageExplorePage {
+  id: number;
+  url: string;
+  alt: string;
+  author: string;
+  description: string;
+  search_text: string;
+  tags: string[];
+}
 }

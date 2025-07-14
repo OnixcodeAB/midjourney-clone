@@ -32,7 +32,7 @@ export async function GET() {
             WHERE it.image_id = i.id
           ),
           '{}'
-        )               AS tags
+        )  AS tags
       FROM "Image" i
       WHERE i.public = true
       ORDER BY i."createdat" DESC;
