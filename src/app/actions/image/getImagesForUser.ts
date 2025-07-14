@@ -32,8 +32,9 @@ export async function getImagesForUser(): Promise<GetImagesResponse> {
     const CACHE_TTL = 60 * 1; // 1 minute in seconds
 
     // Try to get from cache first
-    const cachedImages = await getCached<Image[]>(IMAGES_CACHE_KEY);
-    if (cachedImages) {
+    const cachedImagesString = await getCached<string>(IMAGES_CACHE_KEY);
+    if (cachedImagesString) {
+      const cachedImages = JSON.parse(cachedImagesString) as Image[];
       return { images: cachedImages };
     }
 
@@ -64,12 +65,12 @@ export async function getImagesForUser(): Promise<GetImagesResponse> {
       [userId]
     );
 
-    console.log(
+    /* console.log(
       `Images fetched from database for user: ${userId}. Count: ${images.length}`
-    );
+    ); */
 
     // Cache the images for future requests
-    await cacheResult(IMAGES_CACHE_KEY, CACHE_TTL, images);
+    await cacheResult(IMAGES_CACHE_KEY, CACHE_TTL, JSON.stringify(images));
     console.log(`Images cached for user: ${userId}`);
 
     return { images };
