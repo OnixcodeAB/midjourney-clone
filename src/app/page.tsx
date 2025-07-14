@@ -2,16 +2,6 @@ import { ExploreHomePage } from "@/components/Home/ExploreHomePage";
 import { getAllData } from "./actions/data/getAllData";
 import { getImageData } from "./actions/image/getImageData";
 
-interface ImageExplorePage {
-  id: number;
-  url: string;
-  alt: string;
-  author: string;
-  description: string;
-  search_text: string;
-  tags: string[];
-}
-
 export default async function Home() {
   //const images = await getAllData();
   const response = await getImageData();
