@@ -5,6 +5,7 @@ import ImageCard from "../Home/ImageCard";
 import { PanelControl } from "./PanelControl";
 import EditModal from "../Edit/Editmodal";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface Image {
   id: number;
@@ -22,6 +23,17 @@ export default function JobsDetailPanel({ image }: Props) {
   const [isEditing, setIsEditing] = useState(false);
 
   const { setPrompt } = usePrompt();
+
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(image.prompt)
+      .then(() => {
+        toast.success("Texto copiado al portapapeles!");
+      })
+      .catch(() => {
+        toast.error("Error al copiar el texto.");
+      });
+  };
 
   return (
     <div className="absolute top-0 inset-0 flex h-full bg-background overflow-hidden">
@@ -69,7 +81,10 @@ export default function JobsDetailPanel({ image }: Props) {
 
         {/* Image details */}
         <div
-          onClick={() => setPrompt(image.prompt ?? "")}
+          onClick={() => {
+            setPrompt(image.prompt ?? "");
+            handleCopy();
+          }}
           className="group relative p-4 transition-colors duration-300 rounded-lg hover:bg-accent cursor-pointer"
         >
           <p className="text-md  flex-wrap mb-4 font-extralight leading-snug">
