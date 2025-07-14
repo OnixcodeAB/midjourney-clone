@@ -67,6 +67,7 @@ export default function JobsDetailPanel({ image }: Props) {
         </div>
         <div className="mb-1 text-sm text-muted-foreground">{image.author}</div>
 
+        {/* Image details */}
         <div
           onClick={() => setPrompt(image.prompt ?? "")}
           className="group relative p-4 transition-colors duration-300 rounded-lg hover:bg-accent cursor-pointer"
@@ -79,6 +80,7 @@ export default function JobsDetailPanel({ image }: Props) {
             + Use the text
           </p>
         </div>
+        {/* End image details */}
       </div>
       {/* Modal */}
       <EditModal
