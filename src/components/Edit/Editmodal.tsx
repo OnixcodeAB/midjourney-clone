@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useRef, useState } from "react";
 import CanvasDraw, { CanvasDrawRef } from "./CanvasDraw";
 import {
@@ -50,8 +50,6 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
     }
   }, [editing]);
 
-  if (!isOpen) return null;
-
   const handleSubmit = () => {
     canvasRef.current?.getDataURLFromMask();
     console.log("🖼️ Original image:", imgSrc);
@@ -60,13 +58,27 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
     onClose();
   };
 
+  // Base styles for all buttons
+  const buttonBaseStyles = "p-2 rounded-sm hover:bg-accent transition-colors";
+  const iconBaseStyles = "size-6 text-muted-foreground hover:text-foreground";
+  const activeIconStyles = "text-primary";
+  const textButtonStyles =
+    "text-md py-2 px-3 bg-card hover:bg-accent border rounded-md cursor-pointer text-foreground";
+
+  // Special button styles
+  const submitButtonStyles =
+    "text-background bg-primary rounded-full w-8 h-8 flex justify-center items-center hover:bg-primary/90";
+  const closeButtonStyles = "text-foreground hover:bg-accent rounded-sm p-1";
+
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 z-50 bg-background/90 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
       <button
         type="button"
         title="btn-close"
         onClick={onClose}
-        className="absolute top-4 left-4 text-foreground hover:bg-accent/25 rounded-sm p-1"
+        className={`absolute top-4 left-4 ${closeButtonStyles}`}
       >
         <X className="size-6" />
       </button>
@@ -78,17 +90,17 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="Undo"
               onClick={() => canvasRef.current?.undo()}
-              className="hover:bg-accent/45 p-2 rounded-sm"
+              className={`${buttonBaseStyles} `}
             >
-              <Undo2 className="size-6 text-muted-foreground" />
+              <Undo2 className={`${iconBaseStyles}`} />
             </button>
             <button
               type="button"
               title="Redo"
               onClick={() => canvasRef.current?.redo()}
-              className="hover:bg-accent/45 p-2 rounded-sm"
+              className={`${buttonBaseStyles} `}
             >
-              <Redo2 className="size-6 text-muted-foreground" />
+              <Redo2 className={`${iconBaseStyles}`} />
             </button>
 
             <div className="h-6 border border-border" />
@@ -98,19 +110,19 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
             <button
               type="button"
               title="Like"
-              className="hover:bg-accent/45 p-2 rounded-sm"
+              className={`${buttonBaseStyles} `}
             >
-              <ThumbsUp className="size-6 text-muted-foreground" />
+              <ThumbsUp className={`${iconBaseStyles}`} />
             </button>
             <button
               type="button"
               title="Edit (draw)"
               onClick={() => setEditing(!editing)}
-              className="hover:bg-accent/45 p-2 rounded-sm"
+              className={`${buttonBaseStyles} `}
             >
               <Brush
                 className={`size-6 ${
-                  editing ? "text-primary" : "text-muted-foreground"
+                  editing ? activeIconStyles : iconBaseStyles
                 }`}
               />
             </button>
@@ -123,7 +135,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="cancel"
               onClick={() => setEditing(!editing)}
-              className="text-md py-2 px-3 hover:bg-accent/45 rounded-md cursor-pointer"
+              className={textButtonStyles}
             >
               Cancel
             </button>
@@ -139,9 +151,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
                 link.download = `${alt || "image"}.jpg`;
                 link.click();
               }}
-              className="hover:bg-accent/45 hover:text-primary p-2 rounded-sm"
+              className={`${buttonBaseStyles}`}
             >
-              <Download className="size-6" />
+              <Download className={`${iconBaseStyles}`} />
             </button>
           </>
         )}
@@ -200,7 +212,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
           type="button"
           title="."
           onClick={handleSubmit}
-          className="text-background bg-primary rounded-full w-8 h-8 flex justify-center items-center"
+          className={`${submitButtonStyles}`}
         >
           <ArrowUp />
         </button>
