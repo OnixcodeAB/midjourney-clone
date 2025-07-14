@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useRef, useState } from "react";
 import CanvasDraw, { CanvasDrawRef } from "./CanvasDraw";
 import {
@@ -25,7 +26,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
 
   const [editing, setEditing] = useState(false);
   const [prompt, setPrompt] = useState("");
-  const [imageLoaded, setImageLoaded] = useState(false); // Initialize to false
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -55,64 +56,61 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
     canvasRef.current?.getDataURLFromMask();
     console.log("🖼️ Original image:", imgSrc);
     console.log("📝 Prompt:", prompt);
-
-    // TODO: Send to backend API
     setEditing(false);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#212121] flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-background/90 flex items-center justify-center">
       <button
         type="button"
         title="btn-close"
         onClick={onClose}
-        className="absolute top-4 left-4 text-white hover:bg-gray-400/25 rounded-sm p-1"
+        className="absolute top-4 left-4 text-foreground hover:bg-accent/25 rounded-sm p-1"
       >
         <X className="size-6" />
       </button>
 
-      <div className="absolute top-6 right-4 flex items-center gap-3 text-white">
+      <div className="absolute top-6 right-4 flex items-center gap-3 text-foreground">
         {editing ? (
           <>
             <button
               type="button"
               title="Undo"
               onClick={() => canvasRef.current?.undo()}
-              className="hover:bg-gray-400/45 p-2 rounded-sm"
+              className="hover:bg-accent/45 p-2 rounded-sm"
             >
-              <Undo2 className="size-6 text-[#e3e3e3]" />
+              <Undo2 className="size-6 text-muted-foreground" />
             </button>
             <button
               type="button"
               title="Redo"
               onClick={() => canvasRef.current?.redo()}
-              className="hover:bg-gray-400/45 p-2 rounded-sm"
+              className="hover:bg-accent/45 p-2 rounded-sm"
             >
-              <Redo2 className="size-6 text-[#e3e3e3]" />
+              <Redo2 className="size-6 text-muted-foreground" />
             </button>
 
-            <div className="h-6 border border-r-gray-300" />
+            <div className="h-6 border border-border" />
           </>
         ) : (
           <>
-            {" "}
             <button
               type="button"
               title="Like"
-              className="hover:bg-gray-400/45 p-2 rounded-sm"
+              className="hover:bg-accent/45 p-2 rounded-sm"
             >
-              <ThumbsUp className="size-6 text-[#e3e3e3] " />
+              <ThumbsUp className="size-6 text-muted-foreground" />
             </button>
             <button
               type="button"
               title="Edit (draw)"
               onClick={() => setEditing(!editing)}
-              className="hover:bg-gray-400/45 p-2 rounded-sm"
+              className="hover:bg-accent/45 p-2 rounded-sm"
             >
               <Brush
                 className={`size-6 ${
-                  editing ? "text-yellow-400" : "text-[#e3e3e3]"
+                  editing ? "text-primary" : "text-muted-foreground"
                 }`}
               />
             </button>
@@ -125,7 +123,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="cancel"
               onClick={() => setEditing(!editing)}
-              className=" text-md py-2 px-3 hover:bg-gray-400/45 rounded-md cursor-pointer"
+              className="text-md py-2 px-3 hover:bg-accent/45 rounded-md cursor-pointer"
             >
               Cancel
             </button>
@@ -141,21 +139,21 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
                 link.download = `${alt || "image"}.jpg`;
                 link.click();
               }}
-              className="hover:bg-gray-400/45 hover:text-blue-400 p-2 rounded-sm"
+              className="hover:bg-accent/45 hover:text-primary p-2 rounded-sm"
             >
-              <Download className="size-6 " />
+              <Download className="size-6" />
             </button>
           </>
         )}
       </div>
       {editing && (
-        <p className=" absolute top-6 text-[#e3e3e3] text-xl">
+        <p className="absolute top-6 text-foreground text-xl">
           Editar Seleccion
         </p>
       )}
       <div className="relative">
         {!imageLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center text-white z-10">
+          <div className="absolute inset-0 flex items-center justify-center text-foreground z-10">
             <Loader className="animate-spin size-6" />
           </div>
         )}
@@ -165,7 +163,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
           alt={alt}
           ref={imgRef}
           onLoad={() => setImageLoaded(true)}
-          className="min-w-[34rem] max-w-[90vw] max-h-[75vh] object-contain "
+          className="min-w-[34rem] max-w-[90vw] max-h-[75vh] object-contain"
         />
 
         {editing && imageLoaded && (
@@ -182,12 +180,12 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         )}
       </div>
 
-      <div className="absolute bottom-6 min-w-4xl flex items-center bg-[#303030] rounded-full px-4 py-2 shadow-md border border-white/10">
+      <div className="absolute bottom-6 min-w-4xl flex items-center bg-accent rounded-full px-4 py-2 shadow-md border border-border">
         <button
           type="button"
           title="."
           onClick={handleSubmit}
-          className="text-2xl text-center flex items-center justify-center mr-2  text-white border border-[#9b9b9b]  rounded-full w-8 h-8 "
+          className="text-2xl text-center flex items-center justify-center mr-2 text-foreground border border-muted-foreground rounded-full w-8 h-8"
         >
           <Plus />
         </button>
@@ -196,13 +194,13 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
           placeholder="Describe lo que quieres añadir, quitar o sustituir…"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          className="bg-transparent outline-none text-white flex-1 placeholder:text-gray-400 text-md"
+          className="bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground text-md"
         />
         <button
           type="button"
           title="."
           onClick={handleSubmit}
-          className="text-[[#303030]] bg-[#9b9b9b]  rounded-full w-8 h-8 flex justify-center items-center"
+          className="text-background bg-primary rounded-full w-8 h-8 flex justify-center items-center"
         >
           <ArrowUp />
         </button>

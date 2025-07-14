@@ -1,6 +1,5 @@
 import { Download, Heart, PenLine } from "lucide-react";
 import React, { useState } from "react";
-import EditModal from "../Edit/Editmodal";
 
 interface Props {
   ImgSrc: string;
@@ -16,15 +15,10 @@ export const PanelControl = ({
   onEdit,
 }: Props) => {
   const [liked, setLiked] = useState(false);
-  const baseColor =
-    theme === "light"
-      ? "text-gray-600 hover:text-black"
-      : "text-white hover:text-gray-200";
-  const heartColor = liked
-    ? "text-red-500"
-    : theme === "light"
-    ? "text-gray-600 hover:text-red-500"
-    : "text-white hover:text-red-400";
+  const baseColor = "text-muted-foreground hover:text-foreground";
+  const heartColor = liked 
+    ? "text-destructive" 
+    : "text-muted-foreground hover:text-destructive";
 
   return (
     <div className="flex gap-4">
