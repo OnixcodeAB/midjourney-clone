@@ -105,5 +105,7 @@ declare global {
   description: string;
   search_text: string;
   tags: string[];
+  initialLikeCount?: number;
+  initialIsLiked?: boolean;
 }
 }

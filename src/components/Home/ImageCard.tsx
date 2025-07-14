@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 
 interface Props {
+  imageId: string;
   src: string;
   alt: string;
   author?: string;
@@ -17,11 +18,14 @@ interface Props {
   showAuthor?: boolean;
   showLike?: boolean;
   showSearch?: boolean;
+  initialLikeCount?: number;
+  initialIsLiked?: boolean;
   handleOnClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => void;
   handleOnSearch?: () => void;
 }
 
 export default function ImageCard({
+  imageId,
   src,
   alt,
   author,
@@ -33,8 +37,45 @@ export default function ImageCard({
   showAuthor = true,
   showLike = true,
   showSearch = true,
+  initialLikeCount = 0,
+  initialIsLiked = false,
 }: Props) {
-  const [liked, setLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLike = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const action = isLiked ? "unlike" : "like";
+      const response = await fetch("/api/images/like", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          imageId,
+          action,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update like");
+      }
+
+      const data = await response.json();
+      setIsLiked(data.isLiked);
+      setLikeCount(data.likeCount);
+    } catch (error) {
+      console.error("Error updating like:", error);
+      // Revert UI state if API call fails
+      setIsLiked((prev) => !prev);
+      setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="relative w-fit overflow-hidden break-inside-avoid shadow-md group rounded-lg border border-border">
@@ -93,18 +134,22 @@ export default function ImageCard({
                         hover:bg-accent hover:text-accent-foreground
                         transition-colors duration-200
                         flex items-center justify-center
-                        ${liked ? "text-destructive" : "text-muted-foreground"}
+                        ${
+                          isLiked ? "text-destructive" : "text-muted-foreground"
+                        }
+                        ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
                       `}
-                    onClick={() => setLiked((l) => !l)}
-                    aria-label={liked ? "Unlike" : "Like"}
+                    onClick={() => handleLike}
+                    aria-label={isLiked ? "Unlike" : "Like"}
                   >
                     <Heart
                       size={18}
                       strokeWidth={3}
-                      fill={liked ? "currentColor" : "none"}
+                      fill={isLiked ? "currentColor" : "none"}
+                      className={isLoading ? "animate-pulse" : ""}
                     />
                     <span className="ml-1 min-w-[1.5em] text-center text-sm">
-                      {+(liked ? 1 : 100)}
+                      {likeCount}
                     </span>
                   </button>
                 </TooltipTrigger>
@@ -113,7 +158,7 @@ export default function ImageCard({
                   align="center"
                   className="bg-foreground text-background"
                 >
-                   <p className="font-medium">Like</p>
+                  <p className="font-medium">Like</p>
                 </TooltipContent>
               </Tooltip>
             )}

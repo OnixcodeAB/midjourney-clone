@@ -67,10 +67,13 @@ export const ExploreHomePage = ({ images }: Props) => {
         {displayed.map((img) => (
           <div key={img.id} className="cursor-pointer p-[0.1rem]">
             <ImageCard
+              imageId={img.id.toString()}
               src={img.url}
               alt={img.alt}
               author={img.author}
               prompt={img.description}
+              initialLikeCount={img.initialLikeCount}
+              initialIsLiked={img.initialIsLiked}
               handleOnClick={() => handleClick(img.id)}
               handleOnSearch={() =>
                 handleSearch(img.search_text ?? "", img.tags)
