@@ -23,6 +23,7 @@ export async function GET() {
         i.alt AS search_text,
         i.prompt      AS description,
         i.user_name   AS author,
+        i.like_count AS likes,
         COALESCE(
           (
             SELECT array_agg(t.name)
@@ -33,6 +34,7 @@ export async function GET() {
           '{}'
         )               AS tags
       FROM "Image" i
+      WHERE i.public = true
       ORDER BY i."createdat" DESC;
     `);
     // Cache the result

@@ -37,7 +37,7 @@ export default function ImageCard({
   const [liked, setLiked] = useState(false);
 
   return (
-    <div className="relative w-fit overflow-hidden break-inside-avoid shadow-md group">
+    <div className="relative w-fit overflow-hidden break-inside-avoid shadow-md group rounded-lg border border-border">
       <img
         src={src}
         alt={alt}
@@ -46,9 +46,11 @@ export default function ImageCard({
       />
 
       {/* Bottom overlay */}
-      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between text-white font-semibold text-lg px-4 py-2">
+      <div className="flex items-center justify-between absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 to-transparent px-4 py-3">
         {showAuthor && (
-          <span className="block truncate">{author ? `by ${author}` : ""}</span>
+          <span className="block truncate text-sm font-medium">
+            {author ? `${author}` : ""}
+          </span>
         )}
         <div className="flex items-center gap-2">
           <TooltipProvider>
@@ -60,10 +62,11 @@ export default function ImageCard({
                     type="button"
                     aria-label="btn-search"
                     className="
-                      relative p-2 rounded-full cursor-pointer 
-                      hover:bg-white/10 hover:backdrop-blur-sm
-                      transition
-                      flex items-center justify-center
+                      p-2 rounded-full cursor-pointer 
+                        hover:bg-accent hover:text-accent-foreground
+                        transition-colors duration-200
+                        flex items-center justify-center
+                        text-muted-foreground
                     "
                     onClick={handleOnSearch}
                   >
@@ -73,9 +76,9 @@ export default function ImageCard({
                 <TooltipContent
                   side="top"
                   align="center"
-                  className="font-bold bg-gray-700"
+                  className="bg-foreground text-background"
                 >
-                  Search for similar images
+                  <p className="font-medium">Search for similar images</p>
                 </TooltipContent>
               </Tooltip>
             )}
@@ -84,22 +87,23 @@ export default function ImageCard({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
+                    type="button"
                     className={`
-                      relative py-1 px-4 rounded-full cursor-pointer 
-                      hover:bg-white/10 hover:backdrop-blur-sm
-                      transition
-                      flex items-center justify-center
-                      ${liked ? "text-red-400" : ""}
-                    `}
+                        p-2 rounded-full cursor-pointer 
+                        hover:bg-accent hover:text-accent-foreground
+                        transition-colors duration-200
+                        flex items-center justify-center
+                        ${liked ? "text-destructive" : "text-muted-foreground"}
+                      `}
                     onClick={() => setLiked((l) => !l)}
-                    title="Like"
+                    aria-label={liked ? "Unlike" : "Like"}
                   >
                     <Heart
                       size={18}
                       strokeWidth={3}
-                      fill={liked ? "#f87171" : "none"}
+                      fill={liked ? "currentColor" : "none"}
                     />
-                    <span className="ml-1 min-w-[1.5em] text-center">
+                    <span className="ml-1 min-w-[1.5em] text-center text-sm">
                       {+(liked ? 1 : 100)}
                     </span>
                   </button>
@@ -107,9 +111,9 @@ export default function ImageCard({
                 <TooltipContent
                   side="top"
                   align="center"
-                  className="bg-gray-700"
+                  className="bg-foreground text-background"
                 >
-                  <span className="font-bold">Like</span>
+                   <p className="font-medium">Like</p>
                 </TooltipContent>
               </Tooltip>
             )}
