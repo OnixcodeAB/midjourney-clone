@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { Heart, Search } from "lucide-react";
 import {
