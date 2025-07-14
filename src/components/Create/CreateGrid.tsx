@@ -31,14 +31,16 @@ const CreateGrid = ({ images: initialImages }: Props) => {
           // Ensure all required fields for the 'Image' interface are present
           // Provide defaults if necessary, or ensure the backend sends complete objects
           const newImage: Image = {
-            id: data.id, 
-            url: data.data.url || "", 
-            prompt: data.data.prompt || "", 
-            status: data.data.status || "pending", // Default status
-            progress_pct: data.data.progress_pct || 0, // Default progress
-            createdAt: data.data.createdAt || new Date().toISOString(), // Need a creation date! Ensure backend sends it.
+            id: data.id,
+            url: data.data.url || "",
+            prompt: data.data.prompt || "",
+            provider: data.data.provider || "openai",
+            status: data.data.status || "pending",
+            progress_pct: data.data.progress_pct || 0.3,
+            createdAt: data.data.createdAt || new Date().toISOString(),
             ...data.data, // Spread the rest of the data, potentially overwriting defaults
           };
+
           // Filter out potentially invalid new images if essential data is missing
           if (!newImage.id || !newImage.createdat) {
             console.warn(
@@ -129,7 +131,6 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     return groups;
   }, [images]);
 
-  
   // If no images are available, show a placeholder
   if (!images || images.length === 0) {
     return (

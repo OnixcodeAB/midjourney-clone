@@ -1,8 +1,6 @@
 import CreateGrid from "@/components/Create/CreateGrid";
 import { getImagesForUser } from "../actions/image/getImagesForUser";
 
-
-
 export default async function CreatePage() {
   // Fetch from DB or external API
   const response = await getImagesForUser();
@@ -12,6 +10,7 @@ export default async function CreatePage() {
     console.error("Error fetching images:", response.error);
   } else {
     images = response.images || [];
+    console.log(images);
   }
 
   return (

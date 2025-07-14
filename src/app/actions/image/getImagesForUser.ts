@@ -46,6 +46,7 @@ export async function getImagesForUser(): Promise<GetImagesResponse> {
         i.url,
         i.alt AS search_text,
         i.prompt,
+        i.progress_pct,
         i.status,
         i.user_name AS author,
         i.createdat,
