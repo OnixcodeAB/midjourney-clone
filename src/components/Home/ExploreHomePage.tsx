@@ -65,7 +65,7 @@ export const ExploreHomePage = ({ images }: Props) => {
         columnClassName="my-masonry-grid_column "
       >
         {displayed.map((img) => (
-          <div key={img.id} className="cursor-pointer p-[0.1rem]">
+          <div key={img.id} className="cursor-pointer p-[0.001rem]">
             <ImageCard
               imageId={img.id.toString()}
               src={img.url}
