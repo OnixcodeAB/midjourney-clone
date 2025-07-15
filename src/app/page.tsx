@@ -16,7 +16,7 @@ export default async function Home() {
 
   return (
     <div className="justify-center ">
-      <main className="p-6 w-full flex items-center justify-center ">
+      <main className="py-6 w-full flex items-center justify-center ">
         <ExploreHomePage images={images} />
       </main>
       <footer className="row-start-3 flex gap-[24px] my-8 flex-wrap items-center justify-center">

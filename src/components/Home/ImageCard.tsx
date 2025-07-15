@@ -79,18 +79,18 @@ export default function ImageCard({
   };
 
   return (
-    <div className="relative w-fit overflow-hidden break-inside-avoid shadow-md group rounded-lg border border-border">
+    <div className="relative w-fit overflow-hidden break-inside-avoid shadow-md group border border-border">
       <img
         src={src}
         alt={alt}
         onClick={handleOnClick}
-        className={`max-w-full transition-transform duration-300 group-hover:scale-105 ${imgClassName}`}
+        className={`max-w-full ${imgClassName}`}
       />
 
       {/* Bottom overlay */}
-      <div className="flex items-center justify-between absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/80 to-transparent px-4 py-3">
+      <div className="flex items-center justify-between absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/30 to-transparent px-4 py-3">
         {showAuthor && (
-          <span className="block truncate text-sm font-medium">
+          <span className="block truncate text-sm font-medium text-white">
             {author ? `${author}` : ""}
           </span>
         )}
@@ -105,10 +105,10 @@ export default function ImageCard({
                     aria-label="btn-search"
                     className="
                       p-2 rounded-full cursor-pointer 
-                        hover:bg-accent hover:text-accent-foreground
+                        hover:bg-white/20 hover:text-accent-foreground
                         transition-colors duration-200
                         flex items-center justify-center
-                        text-muted-foreground
+                        text-white
                     "
                     onClick={handleOnSearch}
                   >
@@ -135,9 +135,7 @@ export default function ImageCard({
                         hover:bg-accent hover:text-accent-foreground
                         transition-colors duration-200
                         flex items-center justify-center
-                        ${
-                          isLiked ? "text-destructive" : "text-muted-foreground"
-                        }
+                        ${isLiked ? "text-red-500" : "text-white"}
                         ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
                       `}
                     onClick={() => {
@@ -161,7 +159,7 @@ export default function ImageCard({
                   align="center"
                   className="bg-foreground text-background"
                 >
-                  <p className="font-medium">Like</p>
+                  <p className="font-medium">{isLiked ? "Unlike" : "Like"}</p>
                 </TooltipContent>
               </Tooltip>
             )}

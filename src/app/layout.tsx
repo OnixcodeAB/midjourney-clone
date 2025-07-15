@@ -35,11 +35,11 @@ export default async function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+          className={` ${geistSans.variable} ${geistMono.variable} antialiased `}
         >
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
@@ -48,7 +48,7 @@ export default async function RootLayout({
                 <SidebarProvider>
                   <AppSidebar />
                   <HeaderProvider>
-                    <div className="relative flex-1">
+                    <div className="relative flex-1 bg-background">
                       {children}
                       <Header />
                     </div>
