@@ -66,7 +66,7 @@ export default function ImageCard({
       }
 
       const data = await response.json();
-      setIsLiked(data.isLiked);
+      setIsLiked(data.isLike);
       setLikeCount(data.likeCount);
     } catch (error) {
       console.error("Error updating like:", error);
@@ -140,7 +140,9 @@ export default function ImageCard({
                         }
                         ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
                       `}
-                    onClick={() => handleLike}
+                    onClick={() => {
+                      handleLike();
+                    }}
                     aria-label={isLiked ? "Unlike" : "Like"}
                   >
                     <Heart
