@@ -132,7 +132,7 @@ export default function ImageCard({
                     type="button"
                     className={`
                         p-2 rounded-full cursor-pointer 
-                        hover:bg-accent hover:text-accent-foreground
+                        hover:bg-white/20 hover:text-accent-foreground
                         transition-colors duration-200
                         flex items-center justify-center
                         ${isLiked ? "text-red-500" : "text-white"}
