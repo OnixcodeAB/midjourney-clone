@@ -130,88 +130,102 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky inset-0 bottom-4 z-0 w-full flex flex-col items-center pb-2 ${
-        isDraggingFile ? "border-blue-500" : "border-transparent"
+      className={`sticky inset-0 bottom-4 z-0 w-3xl left-[35%] flex flex-col items-center bg-transparent ${
+        isDraggingFile ? "" : "border-transparent"
       }`}
       onDropCapture={handleDropCapture}
     >
-      <div className="flex flex-col items-center w-full h-fit max-w-3xl rounded-2xl border-2 px-4 py-2 gap-3 shadow-lg bg-white dark:bg-[#0a0a0a] ">
-        {/* Upload image button & preview */}
-        <div {...getRootProps()} className="flex items-start gap-2">
-          {/* Image previews */}
-          {previews.length > 0 &&
-            previews.map((url, idx) => (
-              <div key={url} className="relative">
-                <img
-                  src={url}
-                  alt={`preview-${idx}`}
-                  className="w-20 h-auto object-cover rounded-lg border"
-                />
-                <button
-                  className="absolute top-1 right-1 rounded-full p-1 bg-white hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
-                  type="button"
-                  title="Remove"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setPreviews((pre) => pre.filter((_, i) => i !== idx));
-                    setFileNames((names) => names.filter((_, i) => i !== idx));
-                  }}
-                >
-                  <Trash2 className="w-4 h-4 text-gray-500" />
-                </button>
+      {/* Parent */}
+      <div
+        className={`w-full rounded-lg  bg-card shadow-md flex flex-col items-center p-1 gap-4 ${
+          isDraggingFile
+            ? "animate-rotate-border card-wrapper"
+            : "border-border border-solid border-2"
+        }`}
+      >
+        {/* Content */}
+        <div className={`w-full p-4 rounded-lg bg-card text-center`}>
+          <div className="w-full flex flex-col gap-2 ">
+            {/* Upload image button & preview */}
+            <div {...getRootProps()} className="flex ml-12 gap-2">
+              {/* Image previews */}
+              {previews.length > 0 &&
+                previews.map((url, idx) => (
+                  <div key={url} className="relative">
+                    <img
+                      src={url}
+                      alt={`preview-${idx}`}
+                      className="w-20 h-auto object-cover rounded-lg border border-border"
+                    />
+                    <button
+                      className="absolute top-1 right-1 rounded-full p-1 bg-background hover:bg-accent"
+                      type="button"
+                      title="Remove"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPreviews((pre) => pre.filter((_, i) => i !== idx));
+                        setFileNames((names) =>
+                          names.filter((_, i) => i !== idx)
+                        );
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4 text-muted-foreground" />
+                    </button>
+                  </div>
+                ))}
+              {/* Upload button if no previews */}
+
+              <input {...getInputProps()} className="hidden" />
+            </div>
+
+            <div className="w-full flex items-center gap-2 pb-1">
+              {/* Upload button */}
+              <Button
+                type="button"
+                variant="outline"
+                className="p-[3px] rounded-lg cursor-pointer border-border hover:bg-accent"
+                onClick={open}
+                title="Add images"
+              >
+                <Plus className="w-5 h-5 text-foreground" />
+              </Button>
+              {/* Prompt input */}
+              <Textarea
+                className="border-none break-all pt-4 leading-4 outline-none bg-transparent text-base  placeholder:text-muted-foreground placeholder:pt-1 resize-none text-foreground"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                onClick={handleOnboarding}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleGenerate();
+                  }
+                }}
+                placeholder="Describe your image..."
+              />
+              {/* Buttons for aspect ratio / format / settings */}
+            </div>
+            <div className="w-full flex justify-between gap-4 px-1">
+              {/* Example: 1:1, 1v, settings, etc. */}
+              <div className="flex gap-4">
+                <ImageSettingsPopover />
+
+                <VariationsPopover />
+
+                <PresetPopover />
+                {/* Remix/Generate Button */}
+                <HelpPopover />
               </div>
-            ))}
-          {/* Upload button if no previews */}
 
-          <input {...getInputProps()} className="hidden" />
-        </div>
-
-        <div className="w-full flex items-center gap-2">
-          {/* Upload button */}
-          <Button
-            type="button"
-            variant="outline"
-            className="p-[3px] rounded-lg cursor-pointer "
-            onClick={open}
-            title="Add images"
-          >
-            <Plus className="w-5 h-5 " />
-          </Button>
-          {/* Prompt input */}
-          <Textarea
-            className="border-none break-all pt-4 leading-4 outline-none bg-transparent text-base  placeholder:text-gray-400 placeholder:pt-1 resize-none "
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            onClick={handleOnboarding}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleGenerate();
-              }
-            }}
-            placeholder="Describe your image..."
-          />
-          {/* Buttons for aspect ratio / format / settings */}
-        </div>
-        <div className="w-full flex justify-between gap-4 mx-2">
-          {/* Example: 1:1, 1v, settings, etc. */}
-          <div className="flex gap-4">
-            <ImageSettingsPopover />
-
-            <VariationsPopover />
-
-            <PresetPopover />
-            {/* Remix/Generate Button */}
-            <HelpPopover />
+              <TooltipButton
+                tooltipText="Generate"
+                onClick={handleGenerate}
+                icon={<MoveUp className="text-primary" size={20} />}
+              >
+                {/* "" */}
+              </TooltipButton>
+            </div>
           </div>
-
-          <TooltipButton
-            tooltipText="Generate"
-            onClick={handleGenerate}
-            icon={<MoveUp className="text-black dark:text-white" size={20} />}
-          >
-            {/* "" */}
-          </TooltipButton>
         </div>
       </div>
 
