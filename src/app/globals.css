@@ -179,9 +179,24 @@
   }
 }
 
-@layer utilities{
+@layer utilities {
   .card-wrapper {
-    @apply  bg-conic/[from_var(--border-angle)] from-black via-pink-500 to-black p-1;
+    @apply p-[5px] rounded-2xl;
+    background: conic-gradient(
+      from var(--border-angle),
+      #f9e8e6,
+      #f25b44,
+      #f9e8e6
+    );
+  }
+
+  .dark .card-wrapper {
+    background: conic-gradient(
+      from var(--border-angle),
+      #300a03,
+      #f2330d,
+      #300a03
+    );
   }
 }
 
