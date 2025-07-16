@@ -99,8 +99,8 @@ export default function AppSidebar() {
 
   return (
     <>
-      <Sidebar variant="inset" collapsible="icon" className="dark:bg-background">
-        <SidebarContent className="dark:bg-background">
+      <Sidebar variant="inset" collapsible="icon" className="bg-background">
+        <SidebarContent className="bg-background">
           <SidebarGroup>
             <SidebarGroupLabel className="text-lg px-4 mt-5 mb-6">
               Midjourney
@@ -135,7 +135,7 @@ export default function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent >
-        <SidebarFooter className="dark:bg-background">
+        <SidebarFooter className="bg-background">
           <SidebarContent className="mb-5">
             <SidebarGroup className="p-0">
               <SidebarGroupContent
