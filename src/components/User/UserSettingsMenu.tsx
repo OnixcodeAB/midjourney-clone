@@ -31,28 +31,28 @@ export function UserSettingsMenu() {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="p-2 rounded cursor-pointer"
+            className="p-2 rounded cursor-pointer border-none outline-none"
             aria-label="Open user settings"
           >
-            <Ellipsis className="size-[22px]" />
+            <Ellipsis className="size-[22px] text-muted-foreground" />
           </button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" sideOffset={4} className="w-48">
+        <DropdownMenuContent align="end" sideOffset={4} className="w-48 bg-popover border border-border rounded-md shadow-lg">
           {/* 1) PROFILE item */}
           <DropdownMenuItem asChild>
             <button
               type="button"
               aria-label="Open user profile"
-              className="flex items-center gap-2 py-2 w-full text-left hover:bg-gray-100 rounded"
+              className="flex items-center gap-2 py-2 w-full text-left hover:bg-accent-foreground/10 rounded px-2 text-sm transition-colors"
               onClick={() => {
                 // close dropdown first, then open dialog
                 setDropdownOpen(false);
                 setProfileOpen(true);
               }}
             >
-              <UserIcon className="size-[18px]" />
-              Profile
+              <UserIcon className="size-[18px] text-muted-foreground" />
+              <span className="text-foreground">Profile</span>
             </button>
           </DropdownMenuItem>
 
@@ -61,14 +61,14 @@ export function UserSettingsMenu() {
             <button
               type="button"
               aria-label="Open user settings"
-              className="flex items-center gap-2 py-2 w-full hover:bg-gray-100 rounded"
+              className="flex items-center gap-2 py-2 w-full hover:bg-accent-foreground/10 rounded px-2 text-sm transition-colors"
               onClick={() => {
                 setDropdownOpen(false);
                 setSettingsAlertOpen(true);
               }}
             >
-              <Settings className="size-[18px]" />
-              Settings
+              <Settings className="size-[18px] text-muted-foreground" />
+              <span className="text-foreground">Settings</span>
             </button>
           </DropdownMenuItem>
 
@@ -77,14 +77,14 @@ export function UserSettingsMenu() {
             <button
               type="button"
               aria-label="Sign out"
-              className="w-full text-left flex items-center gap-2 py-2 hover:bg-gray-100 rounded"
+              className="w-full text-left flex items-center gap-2 py-2 hover:bg-accent-foreground/10 rounded px-2 text-sm transition-colors"
               onClick={() => {
                 setDropdownOpen(false);
                 signOut({ redirectUrl: "/" });
               }}
             >
-              <LogOut className="size-[18px]" />
-              Sign Out
+              <LogOut className="size-[18px] text-muted-foreground" />
+              <span className="text-foreground">Sign Out</span>
             </button>
           </DropdownMenuItem>
         </DropdownMenuContent>

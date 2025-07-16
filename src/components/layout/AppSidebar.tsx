@@ -99,8 +99,8 @@ export default function AppSidebar() {
 
   return (
     <>
-      <Sidebar variant="inset" collapsible="icon">
-        <SidebarContent>
+      <Sidebar variant="inset" collapsible="icon" className="dark:bg-background">
+        <SidebarContent className="dark:bg-background">
           <SidebarGroup>
             <SidebarGroupLabel className="text-lg px-4 mt-5 mb-6">
               Midjourney
@@ -134,8 +134,8 @@ export default function AppSidebar() {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter className="">
+        </SidebarContent >
+        <SidebarFooter className="dark:bg-background">
           <SidebarContent className="mb-5">
             <SidebarGroup className="p-0">
               <SidebarGroupContent
@@ -158,7 +158,7 @@ export default function AppSidebar() {
                   ))}
                   <SidebarMenuItem className="flex flex-col gap-3">
                     {user ? (
-                      <div className="flex items-center justify-between rounded-2xl  hover:bg-accent-foreground/10">
+                      <div className="flex items-center justify-between rounded-2xl  hover:bg-accent-foreground/10 p-2 transition-colors">
                         <CircleUserRound className="size-[22px] ml-2" />
                         <span className="text-[16px] flex-1 ml-2">
                           {user.fullName}
@@ -172,7 +172,7 @@ export default function AppSidebar() {
                           className={
                             state === "collapsed"
                               ? "bg-none"
-                              : "rounded-2xl bg-[#abafba]/20 hover:bg-[#abafba]/35 py-5"
+                              : "rounded-2xl bg-accent/20 hover:bg-accent-foreground/10 py-5"
                           }
                           onClick={() => handleNavigation("/auth/sign-in")}
                         >
@@ -183,7 +183,7 @@ export default function AppSidebar() {
                         </SidebarMenuButton>
                         <SidebarMenuButton
                           asChild
-                          className={` cursor-pointer
+                          className={` cursor-pointer transition-colors
                             ${
                               state === "collapsed"
                                 ? "bg-none"
