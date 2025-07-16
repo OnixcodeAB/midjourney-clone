@@ -184,7 +184,7 @@
     @apply p-[5px] rounded-2xl;
     background: conic-gradient(
       from var(--border-angle),
-      #f9e8e6,
+      #f25b44,
       #f25b44,
       #f9e8e6
     );
