@@ -37,7 +37,7 @@ const items = [
   { title: "Explore", url: "/", icon: Compass },
   { title: "Create", url: "/create", icon: PaintbrushVertical },
   /* { title: "Edit", url: "/edit", icon: SquarePen }, */
- /*  { title: "organize", url: "/organize", icon: SwatchBook }, */
+  /*  { title: "organize", url: "/organize", icon: SwatchBook }, */
   { title: "Surveys", url: "/surveys", icon: ThumbsUp },
   { title: "Subscribe", url: "/subscription", icon: CircleUserRound },
 ];
@@ -118,7 +118,7 @@ export default function AppSidebar() {
                         className={` rounded-2xl py-5 font-semibold cursor-pointer ${
                           isActive
                             ? "text-[#f25b44] dark:text-[#f2330d] bg-[#f9e8e6] dark:bg-[#300a03] dark:border dark:border-[#f2330d]"
-                            : "hover:bg-[#abafba]/35"
+                            : "hover:bg-accent-foreground/10"
                         }`}
                         onClick={() => handleNavigation(item.url)}
                       >
@@ -146,7 +146,7 @@ export default function AppSidebar() {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
-                        className="rounded-2xl hover:bg-[#abafba]/25 py-5 cursor-pointer"
+                        className="rounded-2xl hover:bg-accent-foreground/10 py-5 cursor-pointer transition-colors"
                         onClick={() => handleNavigation(item.url)}
                       >
                         <a>
@@ -158,7 +158,7 @@ export default function AppSidebar() {
                   ))}
                   <SidebarMenuItem className="flex flex-col gap-3">
                     {user ? (
-                      <div className="flex items-center justify-between rounded-2xl  hover:bg-[#abafba]/25">
+                      <div className="flex items-center justify-between rounded-2xl  hover:bg-accent-foreground/10">
                         <CircleUserRound className="size-[22px] ml-2" />
                         <span className="text-[16px] flex-1 ml-2">
                           {user.fullName}
