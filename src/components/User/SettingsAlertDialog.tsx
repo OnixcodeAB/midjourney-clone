@@ -121,7 +121,7 @@ export function SettingsAlertDialog({
   const renderFeatureValue = (feature: Feature) => {
     if (feature.quantity) {
       return (
-        <span className="text-xs text-gray-500 dark:text-gray-400">
+        <span className="text-xs text-muted-foreground">
           <strong>Limit:</strong> {feature.quantity}
           {feature.duration && ` (${feature.duration})`}
         </span>
@@ -145,7 +145,7 @@ export function SettingsAlertDialog({
               return (
                 <p
                   key={key}
-                  className="text-[13px] text-gray-500 dark:text-gray-400"
+                  className="text-[13px] text-muted-foreground"
                 >
                   <strong>{qualityName}:</strong> {detail.quantity}
                   {detail.period && ` per ${detail.period}`}
@@ -166,7 +166,7 @@ export function SettingsAlertDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
 
-      <AlertDialogContent className="max-w-4xl px-3 py-4 dark:bg-[#2e3038]">
+      <AlertDialogContent className="max-w-4xl px-3 py-4 bg-background">
         <AlertDialogHeader>
           <AlertDialogTitle className="sr-only">Settings</AlertDialogTitle>
           <AlertDialogDescription className="sr-only">
@@ -176,9 +176,9 @@ export function SettingsAlertDialog({
 
         <div className="flex h-fit ">
           {/* Left Sidebar Nav */}
-          <aside className="w-48 border-r pr-4">
+          <aside className="w-48 border-r border-border pr-4">
             <nav className="space-y-1">
-              <h1 className="mb-6 border-b pb-2 text-xl">Settings</h1>
+              <h1 className="mb-6 border-b pb-2 text-xl text-foreground">Settings</h1>
               {["general", "plan"].map((key) => (
                 <button
                   type="button"
@@ -186,8 +186,8 @@ export function SettingsAlertDialog({
                   key={key}
                   className={`flex w-full  items-center px-5 py-3 mb-3 rounded-md text-sm font-medium transition-colors ${
                     section === key
-                      ? "bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white"
-                      : "hover:bg-gray-100 text-gray-700 dark:hover:bg-gray-700 dark:text-gray-300"
+                      ? "bg-accent text-accent-foreground"
+                      : "hover:bg-accent/50 text-muted-foreground"
                   }`}
                   onClick={() => setSection(key as "general" | "plan")}
                 >
@@ -208,15 +208,15 @@ export function SettingsAlertDialog({
           <section className="w-[78%] ">
             {section === "general" ? (
               <div className=" space-y-6 px-4">
-                <h3 className="text-xl font-semibold border-b pb-2">General</h3>
+                <h3 className="text-xl font-semibold border-b border-border pb-2 text-foreground">General</h3>
                 {/* Username row */}
-                <div className="flex justify-between pr-7 items-center border-b pb-3">
-                  <label className="text-md font-medium">Username</label>
-                  <span className=" text-end pr-18">{user?.username}</span>
+                <div className="flex justify-between pr-7 items-center border-b border-border pb-3">
+                  <label className="text-md font-medium text-foreground">Username</label>
+                  <span className=" text-end pr-18 text-foreground">{user?.username}</span>
                 </div>
                 {/* Email row */}
-                <div className="flex justify-between gap-4 items-center border-b pb-3">
-                  <label className="text-md font-medium">Email</label>
+                <div className="flex justify-between gap-4 items-center border-b border-border pb-3">
+                  <label className="text-md font-medium text-foreground">Email</label>
                   <span className=" text-sm text-end text-gray-700 dark:text-white ">
                     {user?.emailAddresses[0]?.emailAddress || "Not set"}
                   </span>
@@ -275,8 +275,8 @@ export function SettingsAlertDialog({
                 </div>
               </div>
             ) : (
-              <div className="space-y-5 px-4">
-                <h3 className="text-xl font-semibold border-b pb-2">
+              <div className="space-y-5  pr-4">
+                <h3 className="text-xl font-semibold border-b pl-1 pb-2">
                   {subscriptionPlan?.name || "Free"}
                 </h3>
                 {/* Feature row */}
@@ -295,7 +295,7 @@ export function SettingsAlertDialog({
                 {subscriptionPlan?.features?.features.map((feature, index) => (
                   <div
                     key={index}
-                    className="flex justify-between items-start border-b pb-2"
+                    className="flex justify-between items-start border-b pl-2 pb-2"
                   >
                     <div className="flex flex-col gap-1 w-fit">
                       <label className="text-md font-medium">
