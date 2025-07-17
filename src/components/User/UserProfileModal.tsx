@@ -1,8 +1,9 @@
-// UserProfileModal.tsx
 "use client";
 
 import React from "react";
 import { UserProfile } from "@clerk/nextjs";
+import { useTheme } from "@/app/context/theme-provider";
+import { dark } from '@clerk/themes'
 
 interface UserProfileModalProps {
   open: boolean;
@@ -10,6 +11,10 @@ interface UserProfileModalProps {
 }
 
 export function UserProfileModal({ open, setOpen }: UserProfileModalProps) {
+    // Set the theme based on the user's preference
+    const { theme, setTheme } = useTheme();
+
+
   if (!open) return null;
 
   return (
@@ -43,7 +48,9 @@ export function UserProfileModal({ open, setOpen }: UserProfileModalProps) {
         {/* This div will contain Clerk's UI and manage its own scrolling if Clerk's content overflows */}
         <div className="flex-grow w-full overflow-y-auto ">
           <UserProfile routing="hash"
-          
+          appearance={{
+            baseTheme: theme === "dark" ? dark : undefined
+          }}
           />
         </div>
       </div>

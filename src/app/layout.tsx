@@ -9,7 +9,8 @@ import { HeaderProvider } from "@/app/context/HeaderContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
 import { FolderProvider } from "./context/FolderContext";
-import { ThemeProvider } from "./context/theme-provider";
+import { ThemeProvider, useTheme } from "./context/theme-provider";
+import { dark } from "@clerk/themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
