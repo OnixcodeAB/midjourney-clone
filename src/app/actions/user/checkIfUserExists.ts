@@ -1,6 +1,7 @@
+"use server"
 import { query } from "@/lib/db";
 
-export async function getUserById(userId: string) {
+export async function checkIfUserExists(userId: string) {
   try {
     // Query the database to get user details by userId
     const { rows } = await query(`SELECT * FROM users WHERE id = $1`, [userId]);
@@ -9,12 +10,7 @@ export async function getUserById(userId: string) {
     const existingUser = rows[0];
 
     // Initialize authentication status
-    let isUserAuthenticated = false;
-
-    // If user exists, set authentication status to true
-    if (isUserAuthenticated) {
-      isUserAuthenticated = existingUser ? true : false;
-    }
+    let isUserAuthenticated = existingUser ? true : false;
 
     // Return the authentication status
     return isUserAuthenticated;

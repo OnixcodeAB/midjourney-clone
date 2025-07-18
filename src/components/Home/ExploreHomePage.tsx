@@ -1,22 +1,39 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Masonry from "react-masonry-css";
 import ImageCard from "@/components/Home/ImageCard";
 import { LayoutPanelTop, X } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { checkIfUserExists } from "@/app/actions/user/checkIfUserExists";
 
 interface Props {
   images: ImageExplorePage[];
 }
 
 export const ExploreHomePage = ({ images }: Props) => {
+  const { user } = useUser();
+  const [userExists, setUserExists] = useState(false);
+
   const [filter, setFilter] = useState<{
     searchText: string;
     tags: string[];
   } | null>(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    const checkUser = async () => {
+      if (user && user.id) {
+        const exists = await checkIfUserExists(user.id);
+        setUserExists(exists);
+        // Optionally, you can handle the case where the user exists or not
+      }
+    };
+    checkUser();
+  }, [user]);
 
   // Memoize the displayed images based on the filter
   // If no filter is applied, show all images
@@ -80,6 +97,7 @@ export const ExploreHomePage = ({ images }: Props) => {
               prompt={img.description}
               initialLikeCount={img.initialLikeCount}
               initialIsLiked={img.initialIsLiked}
+              isAuthenticated={userExists}
               handleOnClick={() => handleClick(img.id)}
               handleOnSearch={() =>
                 handleSearch(img.search_text ?? "", img.tags)

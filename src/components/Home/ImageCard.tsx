@@ -51,7 +51,7 @@ export default function ImageCard({
 
   const handleLike = async () => {
     if (!isAuthenticated) {
-      setIsBannerOpen(true);
+      return setIsBannerOpen(true);
     }
 
     if (isLoading) return;
