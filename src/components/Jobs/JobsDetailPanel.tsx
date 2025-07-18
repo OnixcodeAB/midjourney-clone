@@ -3,10 +3,14 @@ import Link from "next/link";
 import { usePrompt } from "@/app/context/PromptContext";
 import { PanelControl } from "./PanelControl";
 import EditModal from "../Edit/Editmodal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import JobImagePreview from "./JobImagePreview";
 import { X } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { checkIfUserExists } from "@/app/actions/user/checkIfUserExists";
+import { useRouter } from "next/router";
+import { BannerModal } from "../layout/Modals/BannerModal";
 
 interface Image {
   id: number;
@@ -22,8 +26,22 @@ interface Props {
 
 export default function JobsDetailPanel({ image }: Props) {
   const [isEditing, setIsEditing] = useState(false);
-
+  const { user } = useUser();
+  const [userExists, setUserExists] = useState(false);
   const { setPrompt } = usePrompt();
+  const [isBannerOpen, setIsBannerOpen] = useState(false);
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    const checkUser = async () => {
+      if (user && user.id) {
+        const exists = await checkIfUserExists(user.id);
+        setUserExists(exists);
+        // Optionally, you can handle the case where the user exists or not
+      }
+    };
+    checkUser();
+  }, [user]);
 
   const handleCopy = () => {
     navigator.clipboard
@@ -34,6 +52,16 @@ export default function JobsDetailPanel({ image }: Props) {
       .catch(() => {
         toast.error("Error al copiar el texto.");
       });
+  };
+
+  const handleDownload = () => {
+    if (!userExists) {
+      return setIsBannerOpen(true);
+    }
+    const link = document.createElement("a");
+    link.href = image.url;
+    link.download = `${image.alt || "image"}.jpg`;
+    link.click();
   };
 
   return (
@@ -73,6 +101,7 @@ export default function JobsDetailPanel({ image }: Props) {
             alt={image.alt}
             theme="light"
             onEdit={() => setIsEditing(true)} // trigger modal
+            onDownload={handleDownload} // handle download
           />
         </div>
         <div className="mb-1 text-sm text-muted-foreground">{image.author}</div>
@@ -101,6 +130,10 @@ export default function JobsDetailPanel({ image }: Props) {
         onClose={() => setIsEditing(false)}
         imgSrc={image.url}
         alt={image.alt}
+      />
+      <BannerModal
+        isOpen={isBannerOpen}
+        onClose={() => setIsBannerOpen(false)}
       />
     </div>
   );

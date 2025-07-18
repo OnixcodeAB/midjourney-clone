@@ -1,3 +1,4 @@
+import { on } from "events";
 import { Download, Heart, PenLine } from "lucide-react";
 import React, { useState } from "react";
 
@@ -6,9 +7,10 @@ interface Props {
   alt: string;
   theme?: "light" | "dark";
   onEdit?: () => void;
+  onDownload: () => void;
 }
 
-export const PanelControl = ({ ImgSrc, alt, onEdit }: Props) => {
+export const PanelControl = ({ ImgSrc, alt, onEdit, onDownload }: Props) => {
   const [liked, setLiked] = useState(false);
 
   // Base styles for all buttons
@@ -27,12 +29,7 @@ export const PanelControl = ({ ImgSrc, alt, onEdit }: Props) => {
       <button
         type="button"
         aria-label="Download"
-        onClick={() => {
-          const link = document.createElement("a");
-          link.href = ImgSrc;
-          link.download = `${alt || "image"}.jpg`;
-          link.click();
-        }}
+        onClick={() => onDownload()}
         className={buttonBaseStyles}
       >
         <Download className={`${iconColor} size-5`} />

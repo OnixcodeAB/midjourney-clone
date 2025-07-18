@@ -38,22 +38,29 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
            max-w-5xl w-full
            grid grid-cols-1 md:grid-cols-2
            overflow-hidden rounded-lg
+           bg-background border-border
          "
       >
         {/* Left: image */}
-        <Image
-          src="/banner.png"
-          alt="Colorful abstract artfrontiers of imagination"
-          width={1024}
-          height={1536}
-          className="object-cover w-full h-full rounded-l-lg"
-        />
+        <div className="relative h-full">
+          <Image
+            src="/banner.png"
+            alt="Colorful abstract frontiers of imagination"
+            width={1024}
+            height={1536}
+            className="object-cover w-full h-full rounded-l-lg"
+            priority
+          />
+        </div>
 
         {/* Right: content */}
         <div className="p-8 flex flex-col justify-around">
           {/* Close button */}
           <div className="flex justify-end">
-            <AlertDialogCancel asChild className=" border-none shadow-none">
+            <AlertDialogCancel
+              asChild
+              className=" text-muted-foreground hover:text-foreground"
+            >
               <button aria-label="Close" type="button" onClick={handleClose}>
                 <X className="size-6" />
               </button>
@@ -62,7 +69,7 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
           {/* Title / Copy */}
           <div>
-            <AlertDialogTitle className="text-3xl font-bold mb-4">
+            <AlertDialogTitle className="text-3xl font-bold mb-4 text-foreground">
               Explore the Frontiers of Imagination
             </AlertDialogTitle>
             <AlertDialogDescription
@@ -73,17 +80,17 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
               This dialog promotes joining a creative community and offers
               subscription tiers.
             </AlertDialogDescription>
-            <p className="text-lg text-gray-700 mb-6">
+            <p className="text-lg text-muted-foreground mb-6">
               With the world's most advanced image models and regular updates
               with community-steered roadmaps
             </p>
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-semibold mb-1">
+                <h3 className="text-xl font-semibol text-foreground mb-1">
                   Join our creative community
                 </h3>
-                <p className="text-gray-600 text-sm">
+                <p className="text-muted-foreground text-sm">
                   Hop in our group creation rooms or enjoy open access to
                   billions of images and prompts with daily trends and real-time
                   search
@@ -91,10 +98,10 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold mb-1">
+                <h3 className="text-xl font-semibold mb-1 text-foreground">
                   Multiple tiers for everyone
                 </h3>
-                <p className="text-gray-600 text-sm">
+                <p className="text-muted-foreground text-sm">
                   Memberships start at $10/mo with a 20% discount on yearly
                   plans
                 </p>
@@ -107,9 +114,7 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
             <Button
               asChild
               className="
-                 w-full rounded-lg font-medium
-                 bg-black text-white
-                 hover:opacity-90
+                 w-full rounded-lg font-medium h-12
                "
             >
               <Link href="/subscription" className="h-12" onClick={handleClose}>
@@ -120,26 +125,34 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
               asChild
               variant={"outline"}
               className="
-                 w-full  rounded-lg font-medium 
-                 bg-white text-black
-                 hover:bg-gray-100
+                 w-full rounded-lg font-medium h-12 border-border hover:bg-accent
                "
             >
-              <Link href="/" className="h-12 border-black " onClick={handleClose}>
+              <Link href="/" className=" " onClick={handleClose}>
                 Look around a bit
               </Link>
             </Button>
           </div>
 
           {/* Footer link */}
-          <div className=" text-center text-md text-gray-500">
+          <div className=" text-center text-md text-muted-foreground">
             Already have a subscription?{" "}
             <Link
               href="/auth/sign-in"
-              className="underline text-[#f25b44]"
+              className="underline text-[#f25b44] hover:text-[#f25b44]/80"
               onClick={handleClose}
             >
               Link your accounts
+            </Link>
+          </div>
+          <div className=" text-center text-md text-muted-foreground">
+            New to our platform?{" "}
+            <Link
+              href="/auth/sign-in"
+              className="underline text-primary hover:text-primary/80"
+              onClick={handleClose}
+            >
+              Register for free
             </Link>
           </div>
         </div>
