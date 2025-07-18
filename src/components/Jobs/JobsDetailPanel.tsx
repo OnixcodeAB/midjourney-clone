@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
 import { usePrompt } from "@/app/context/PromptContext";
-import ImageCard from "../Home/ImageCard";
 import { PanelControl } from "./PanelControl";
 import EditModal from "../Edit/Editmodal";
 import { useState } from "react";
 import { toast } from "sonner";
+import ImagePreview from "./ImagePreview";
+import { X } from "lucide-react";
 
 interface Image {
   id: number;
@@ -39,31 +40,28 @@ export default function JobsDetailPanel({ image }: Props) {
     <div className="absolute top-0 inset-0 flex h-full bg-background overflow-hidden">
       {/* Image side */}
       <div className="relative mt-18 flex-1 flex flex-col items-center justify-center bg-background py-8">
-        <div className="min-w-lg">
-          <ImageCard
+        <div className="min-w-lg ">
+          <ImagePreview
             src={image.url}
             alt={image.alt}
             author={image.author}
             imgClassName="h-[80vh]"
-          >
-            {/* Hoverable Top Action Menu */}
-            <div className="absolute top-4 right-4 flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              <PanelControl
-                ImgSrc={image.url}
-                alt={image.alt}
-                onEdit={() => setIsEditing(true)} // trigger modal
-              />
-            </div>
-          </ImageCard>
+          />
         </div>
 
         {/* Close button */}
-        <Link
-          href="/"
-          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground text-xl"
+        <button
+          type="button"
+          aria-label="Close panel"
+          className="absolute top-4 right-4 cursor-pointer py-1 px-3 rounded-md hover:bg-accent  transition-colors"
         >
-          ✕
-        </Link>
+          <Link
+            href="/"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <X className="size-6" />
+          </Link>
+        </button>
       </div>
 
       {/* Info panel (right) */}
