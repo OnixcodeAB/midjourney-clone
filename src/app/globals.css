@@ -212,10 +212,15 @@
   }
 }
 
+.my-masonry-grid {
+  
+  gap: 1.7rem; /* gutter */
+  padding-left: 1rem;
+}
+
 .my-masonry-grid_column {
-  padding-left: 0.3rem; /* gutter */
   background-clip: padding-box;
-  grid-gap: 0.3rem; /* gutter */
+  /* width: 22% !important;; /* Adjust based on the number of columns */ 
 }
 
 .my-masonry-grid_column > div {

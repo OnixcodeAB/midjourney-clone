@@ -67,45 +67,49 @@ export const ExploreHomePage = ({ images }: Props) => {
   };
 
   return (
-    <div className="w-full flex flex-column items-center justify-center bg-background">
-      {filter && (
-        <div className="sticky top-4 m-0 ml-1.5 left-0 z-50 flex items-center w-fit bg-card/50 text-card-foreground px-3 py-2 rounded-r-full shadow-md gap-2 mb-4 backdrop-blur-sm border border-border">
-          <LayoutPanelTop className="w-5 h-5 opacity-90" />
-          <span className="font-medium">{filter.searchText}</span>
-          <button
-            type="button"
-            className="ml-1 p-1 rounded-full hover:bg-accent transition-colors"
-            onClick={() => setFilter(null)}
-            aria-label="Clear search"
-          >
-            <X className="w-4 h-4 text-muted-foreground" />
-          </button>
-        </div>
-      )}
-      <Masonry
-        breakpointCols={breakpointCols}
-        className="flex w-fit"
-        columnClassName="my-masonry-grid_column "
-      >
-        {displayed.map((img) => (
-          <div key={img.id} className="cursor-pointer p-[0.001rem]">
-            <ImageCard
-              imageId={img.id.toString()}
-              src={img.url}
-              alt={img.alt}
-              author={img.author}
-              prompt={img.description}
-              initialLikeCount={img.initialLikeCount}
-              initialIsLiked={img.initialIsLiked}
-              isAuthenticated={userExists}
-              handleOnClick={() => handleClick(img.id)}
-              handleOnSearch={() =>
-                handleSearch(img.search_text ?? "", img.tags)
-              }
-            />
+    <div className="w-full bg-background flex flex-column items-center justify-center">
+      <div className="w-full  ">
+        {filter && (
+          <div className="sticky top-4 m-0 ml-1.5 left-0 z-50 flex items-center w-fit bg-card/50 text-card-foreground px-3 py-2 rounded-r-full shadow-md gap-2 mb-4 backdrop-blur-sm border border-border">
+            <LayoutPanelTop className="w-5 h-5 opacity-90" />
+            <span className="font-medium">{filter.searchText}</span>
+            <button
+              type="button"
+              className="ml-1 p-1 rounded-full hover:bg-accent transition-colors"
+              onClick={() => setFilter(null)}
+              aria-label="Clear search"
+            >
+              <X className="w-4 h-4 text-muted-foreground" />
+            </button>
           </div>
-        ))}
-      </Masonry>
+        )}
+        <div className="w-[89%] pl-12">
+          <Masonry
+            breakpointCols={breakpointCols}
+            className={`flex my-masonry-grid`}
+            columnClassName="my-masonry-grid_column"
+          >
+            {displayed.map((img) => (
+              <div key={img.id} className="cursor-pointer p-[0.001rem]">
+                <ImageCard
+                  imageId={img.id.toString()}
+                  src={img.url}
+                  alt={img.alt}
+                  author={img.author}
+                  prompt={img.description}
+                  initialLikeCount={img.initialLikeCount}
+                  initialIsLiked={img.initialIsLiked}
+                  isAuthenticated={userExists}
+                  handleOnClick={() => handleClick(img.id)}
+                  handleOnSearch={() =>
+                    handleSearch(img.search_text ?? "", img.tags)
+                  }
+                />
+              </div>
+            ))}
+          </Masonry>
+        </div>
+      </div>
     </div>
   );
 };
