@@ -18,6 +18,8 @@ export const ExploreHomePage = ({ images }: Props) => {
 
   const router = useRouter();
 
+  // Memoize the displayed images based on the filter
+  // If no filter is applied, show all images
   const displayed = useMemo(() => {
     if (!filter) return images;
     const searchLower = filter.searchText?.toLowerCase() || "";
@@ -29,14 +31,18 @@ export const ExploreHomePage = ({ images }: Props) => {
     });
   }, [images, filter]);
 
+  // Handle search and tag filtering
   const handleSearch = useCallback((searchText: string, tags: string[]) => {
     setFilter({ searchText, tags });
   }, []);
 
+  // Handle image click to navigate to the image detail page
   const handleClick = (id: number) => {
     router.push(`/jobs/img_${id}`);
   };
 
+  // Define breakpoint columns for Masonry layout
+  // Adjust the number of columns based on screen width
   const breakpointCols = {
     default: 3,
     768: 2,

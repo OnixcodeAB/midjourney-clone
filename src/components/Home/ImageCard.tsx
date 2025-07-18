@@ -7,6 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { BannerModal } from "@/components/layout/Modals/BannerModal";
 
 interface Props {
   imageId: string;
@@ -21,6 +22,7 @@ interface Props {
   showSearch?: boolean;
   initialLikeCount?: number;
   initialIsLiked?: boolean;
+  isAuthenticated?: boolean;
   handleOnClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => void;
   handleOnSearch?: () => void;
 }
@@ -40,12 +42,18 @@ export default function ImageCard({
   showSearch = true,
   initialLikeCount = 0,
   initialIsLiked = false,
+  isAuthenticated = false,
 }: Props) {
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isLoading, setIsLoading] = useState(false);
+  const [isBannerOpen, setIsBannerOpen] = useState(false);
 
   const handleLike = async () => {
+    if (!isAuthenticated) {
+      setIsBannerOpen(true);
+    }
+
     if (isLoading) return;
     setIsLoading(true);
     try {
@@ -169,6 +177,10 @@ export default function ImageCard({
 
       {/* Extra overlays passed by parent */}
       {children}
+      <BannerModal
+        isOpen={isBannerOpen}
+        onClose={() => setIsBannerOpen(false)}
+      />
     </div>
   );
 }

@@ -6,11 +6,6 @@ export async function getImageData() {
   try {
     const { userId } = await auth();
 
-    if (!userId) {
-      console.log("No user signed in.");
-      return { error: "User not authenticated." };
-    }
-
     const { rows: images } = await query(`
         SELECT
         i.id,
