@@ -61,13 +61,13 @@ export const ExploreHomePage = ({ images }: Props) => {
   // Define breakpoint columns for Masonry layout
   // Adjust the number of columns based on screen width
   const breakpointCols = {
-    default: 3,
-    768: 2,
-    640: 1,
+    default: 4,
+    768: 3,
+    640: 2,
   };
 
   return (
-    <div className="bg-background">
+    <div className="w-full flex flex-column items-center justify-center bg-background">
       {filter && (
         <div className="sticky top-4 m-0 ml-1.5 left-0 z-50 flex items-center w-fit bg-card/50 text-card-foreground px-3 py-2 rounded-r-full shadow-md gap-2 mb-4 backdrop-blur-sm border border-border">
           <LayoutPanelTop className="w-5 h-5 opacity-90" />
@@ -84,7 +84,7 @@ export const ExploreHomePage = ({ images }: Props) => {
       )}
       <Masonry
         breakpointCols={breakpointCols}
-        className="flex w-auto"
+        className="flex w-fit"
         columnClassName="my-masonry-grid_column "
       >
         {displayed.map((img) => (

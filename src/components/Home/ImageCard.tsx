@@ -92,7 +92,7 @@ export default function ImageCard({
         src={src}
         alt={alt}
         onClick={handleOnClick}
-        className={`max-w-full ${imgClassName}`}
+        className={`max-w-sm ${imgClassName}`}
       />
 
       {/* Bottom overlay */}
