@@ -102,7 +102,7 @@ export const BannerModal: React.FC<Props> = ({ isOpen, onClose }) => {
                   Multiple tiers for everyone
                 </h3>
                 <p className="text-muted-foreground text-sm">
-                  Memberships start at $10/mo with a 20% discount on yearly
+                  Memberships start at $25/month with a 20% discount on yearly
                   plans
                 </p>
               </div>
