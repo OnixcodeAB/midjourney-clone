@@ -44,6 +44,9 @@ export default function JobsDetailPanel({ image }: Props) {
   }, [user]);
 
   const handleCopy = () => {
+    if (!userExists) {
+      return setIsBannerOpen(true);
+    }
     navigator.clipboard
       .writeText(image.prompt)
       .then(() => {
@@ -62,6 +65,14 @@ export default function JobsDetailPanel({ image }: Props) {
     link.href = image.url;
     link.download = `${image.alt || "image"}.jpg`;
     link.click();
+  };
+
+  const handleEdit = () => {
+    if (!userExists) {
+      return setIsBannerOpen(true);
+    } else {
+      return setIsEditing(true);
+    }
   };
 
   return (
@@ -100,7 +111,7 @@ export default function JobsDetailPanel({ image }: Props) {
             ImgSrc={image.url}
             alt={image.alt}
             theme="light"
-            onEdit={() => setIsEditing(true)} // trigger modal
+            onEdit={handleEdit} // trigger modal
             onDownload={handleDownload} // handle download
           />
         </div>
