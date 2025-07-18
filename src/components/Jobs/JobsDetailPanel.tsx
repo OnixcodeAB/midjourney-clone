@@ -5,7 +5,7 @@ import { PanelControl } from "./PanelControl";
 import EditModal from "../Edit/Editmodal";
 import { useState } from "react";
 import { toast } from "sonner";
-import ImagePreview from "./ImagePreview";
+import JobImagePreview from "./JobImagePreview";
 import { X } from "lucide-react";
 
 interface Image {
@@ -41,7 +41,7 @@ export default function JobsDetailPanel({ image }: Props) {
       {/* Image side */}
       <div className="relative mt-18 flex-1 flex flex-col items-center justify-center bg-background py-8">
         <div className="min-w-lg ">
-          <ImagePreview
+          <JobImagePreview
             src={image.url}
             alt={image.alt}
             author={image.author}
