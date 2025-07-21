@@ -2,7 +2,7 @@
 
 import { query } from "@/lib/db";
 
-export async function getImageById(id: string, userId: string) {
+export async function getImageById(id: string, userId: string | null) {
   try {
     const { rows: image } = await query(
       `SELECT 

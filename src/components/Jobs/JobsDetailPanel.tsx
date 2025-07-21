@@ -79,7 +79,7 @@ export default function JobsDetailPanel({ image }: Props) {
     }
   };
 
-  const handleLike = async (userId = user?.id) => {
+  const handleLike = async () => {
     if (!userExists) {
       return setIsBannerOpen(true);
     }
@@ -95,7 +95,6 @@ export default function JobsDetailPanel({ image }: Props) {
         },
         body: JSON.stringify({
           imageId: image.id,
-          userId,
           action,
         }),
       });

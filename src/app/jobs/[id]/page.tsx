@@ -1,4 +1,6 @@
+import { getImageById } from "@/app/actions/image/getImageBYId";
 import JobsDetailPanel from "@/components/Jobs/JobsDetailPanel";
+import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -7,6 +9,7 @@ interface Props {
 
 export default async function JobDetailPage({ params }: Props) {
   const { id } = await params;
+  const { userId } = await auth();
 
   const [type, actualId] = id.split("_");
 
@@ -19,15 +22,19 @@ export default async function JobDetailPage({ params }: Props) {
 
   if (!endpoint) notFound();
 
-  console.log(endpoint)
+  //console.log(endpoint)
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${process.env.PORT}${endpoint}`, {
+  /*   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${process.env.PORT}${endpoint}`, {
     cache: "default",
-  });
+  }); */
 
-  if (!res.ok) notFound();
+  const imageData = await getImageById(actualId, userId);
 
-  const image = await res.json();
+  console.log(imageData.data);
 
-  return <JobsDetailPanel image={image} />;
+  /* if (!res.ok) notFound();
+
+  const image = await res.json(); */
+
+  return <JobsDetailPanel image={imageData.data} />;
 }
