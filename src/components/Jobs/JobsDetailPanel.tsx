@@ -9,7 +9,6 @@ import JobImagePreview from "./JobImagePreview";
 import { X } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { checkIfUserExists } from "@/app/actions/user/checkIfUserExists";
-import { useRouter } from "next/router";
 import { BannerModal } from "../layout/Modals/BannerModal";
 
 interface Image {
@@ -18,6 +17,9 @@ interface Image {
   alt: string;
   author: string;
   prompt: string;
+  initialLikeCount?: number;
+  initialIsLiked?: boolean;
+  isAuthenticated?: boolean;
 }
 
 interface Props {
@@ -30,6 +32,8 @@ export default function JobsDetailPanel({ image }: Props) {
   const [userExists, setUserExists] = useState(false);
   const { setPrompt } = usePrompt();
   const [isBannerOpen, setIsBannerOpen] = useState(false);
+  const [isLiked, setIsLiked] = useState(image.initialIsLiked);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Check if the user is authenticated
@@ -75,6 +79,42 @@ export default function JobsDetailPanel({ image }: Props) {
     }
   };
 
+  const handleLike = async (userId = user?.id) => {
+    if (!userExists) {
+      return setIsBannerOpen(true);
+    }
+
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const action = isLiked ? "unlike" : "like";
+      const response = await fetch("/api/images/like", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          imageId: image.id,
+          userId,
+          action,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update like");
+      }
+
+      const data = await response.json();
+      setIsLiked(data.isLike);
+    } catch (error) {
+      console.error("Error updating like:", error);
+      // Revert UI state if API call fails
+      setIsLiked((prev) => !prev);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="absolute top-0 inset-0 flex h-full bg-background overflow-hidden">
       {/* Image side */}
@@ -113,6 +153,9 @@ export default function JobsDetailPanel({ image }: Props) {
             theme="light"
             onEdit={handleEdit} // trigger modal
             onDownload={handleDownload} // handle download
+            onLike={handleLike} // handle like
+            initialLiked={isLiked} // initial like state
+            initialLikeCount={image.initialLikeCount}
           />
         </div>
         <div className="mb-1 text-sm text-muted-foreground">{image.author}</div>

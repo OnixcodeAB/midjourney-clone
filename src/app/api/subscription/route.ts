@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
     // 1. Get PayPal access token
     const token = await getAccessToken();
-    console.log("PayPal access token:", token);
+    //console.log("PayPal access token:", token);
 
     // 2. Create PayPal subscription
     const subRes = await fetch(`${PAYPAL_API}/v1/billing/subscriptions`, {

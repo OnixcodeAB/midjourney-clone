@@ -1,19 +1,15 @@
-// src/app/api/images/[id]/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 
-/// This route fetches a single image by its ID
-/// and returns the image data in JSON format.
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: { id: string; userId: string } }
 ) {
-  const { id } = await params;
+  const { id, userId } = params; // Removed 'await' since params is not a promise
+
 
   try {
-    const {
-      rows: [image],
-    } = await query(
+    const { rows: image } = await query(
       `SELECT 
          id, 
          url, 
@@ -24,11 +20,25 @@ export async function GET(
       [id]
     );
 
-    if (!image) {
+    if (!image || image.length === 0) {
       return NextResponse.json({ message: "Not Found" }, { status: 404 });
     }
 
-    return NextResponse.json(image);
+    // Get like stats for the image
+    const {
+      rows: [likeData],
+    } = await query(`SELECT * FROM get_image_like_status($1, $2)`, [
+      id,
+      userId,
+    ]);
+
+    const responseData = {
+      ...image[0],
+      initialLikeCount: likeData?.like_count || 0,
+      initialIsLiked: likeData?.is_liked || false,
+    };
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error("[GET_IMAGE_BY_ID_ERROR]", error);
     return NextResponse.json(

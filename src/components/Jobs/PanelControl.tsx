@@ -8,9 +8,20 @@ interface Props {
   theme?: "light" | "dark";
   onEdit?: () => void;
   onDownload: () => void;
+  onLike: () => void;
+  initialLiked?: boolean;
+  initialLikeCount?: number;
 }
 
-export const PanelControl = ({ ImgSrc, alt, onEdit, onDownload }: Props) => {
+export const PanelControl = ({
+  ImgSrc,
+  alt,
+  initialLiked,
+  initialLikeCount,
+  onEdit,
+  onDownload,
+  onLike,
+}: Props) => {
   const [liked, setLiked] = useState(false);
 
   // Base styles for all buttons
@@ -19,7 +30,7 @@ export const PanelControl = ({ ImgSrc, alt, onEdit, onDownload }: Props) => {
 
   // Icon color based on theme and state
   const iconColor = "text-muted-foreground hover:text-foreground";
-  const heartIconColor = liked
+  const heartIconColor = initialLiked
     ? "text-destructive"
     : "text-muted-foreground hover:text-destructive";
 
@@ -49,13 +60,13 @@ export const PanelControl = ({ ImgSrc, alt, onEdit, onDownload }: Props) => {
       <button
         type="button"
         aria-label="Favorite"
-        title={liked ? "Remove from Favorites" : "Add to Favorites"}
-        onClick={() => setLiked(!liked)}
-        className={buttonBaseStyles}
+        title={initialLiked ? "Unlike" : "Like"}
+        onClick={onLike}
+        className={`${buttonBaseStyles} ${heartIconColor}`}
       >
         <Heart
-          className={`${heartIconColor} size-5 transition-colors`}
-          fill={liked ? "currentColor" : "none"}
+          className={`size-5 transition-colors`}
+          fill={initialLiked ? "currentColor" : "none"}
         />
       </button>
     </div>

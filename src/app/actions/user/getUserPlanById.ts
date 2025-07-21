@@ -17,7 +17,7 @@ export const getUserPlanById = async (planId: string) => {
     const { rows } = await query(`SELECT * FROM "plans" WHERE plan_id = $1`, [
       planId,
     ]);
-    console.log("Planid", planId, "rows:", rows);
+    //console.log("Planid", planId, "rows:", rows);
     return rows[0] as SubscriptionPlan;
   } catch (error) {
     console.error("Error fetching user plan by ID:", error);
