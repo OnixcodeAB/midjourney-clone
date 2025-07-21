@@ -16,7 +16,7 @@ export async function getImageById(id: string, userId: string | null) {
     );
 
     if (!image || image.length === 0) {
-      return { message: "Not Found", status: 404 };
+      return { message: "Not Found" };
     }
 
     // Get like stats for the image
@@ -33,10 +33,9 @@ export async function getImageById(id: string, userId: string | null) {
         initialLikeCount: likeData?.like_count || 0,
         initialIsLiked: likeData?.is_liked || false,
       },
-      status: 200,
     };
   } catch (error) {
     console.error("[GET_IMAGE_BY_ID_ERROR]", error);
-    return { error: "Failed to fetch image", status: 500 };
+    return { error: "Failed to fetch image" };
   }
 }
