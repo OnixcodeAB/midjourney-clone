@@ -35,6 +35,7 @@ export default function JobsDetailPanel({ image }: Props) {
   const [isLiked, setIsLiked] = useState(image.initialIsLiked);
   const [isLoading, setIsLoading] = useState(false);
 
+
   useEffect(() => {
     // Check if the user is authenticated
     const checkUser = async () => {
@@ -132,13 +133,9 @@ export default function JobsDetailPanel({ image }: Props) {
           type="button"
           aria-label="Close panel"
           className="absolute top-4 right-4 cursor-pointer py-1 px-3 rounded-md hover:bg-accent  transition-colors"
+          onClick={() => window.history.back()}
         >
-          <Link
-            href="/"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <X className="size-6" />
-          </Link>
+          <X className="text-muted-foreground size-6" />
         </button>
       </div>
 
