@@ -29,7 +29,7 @@ interface ImageCardProps {
   url: string;
   search_text?: string;
   prompt?: string;
-  status?: "pending" | "complete" | "running";
+  status?: "pending" | "completed" | "running";
   progress_pct?: number;
   blurUrl?: string;
 }

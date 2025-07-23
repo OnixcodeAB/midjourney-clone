@@ -91,7 +91,7 @@ declare global {
     prompt: string;
     provider: string;
     task_id: string;
-    status?: "pending" | "complete" | "running";
+    status?: "pending" | "completed" | "running";
     progress_pct?: number;
     createdat: string;
     tags: string[];

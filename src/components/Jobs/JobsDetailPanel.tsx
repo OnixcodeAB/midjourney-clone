@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { usePrompt } from "@/app/context/PromptContext";
 import { PanelControl } from "./PanelControl";
 import EditModal from "../Edit/Editmodal";

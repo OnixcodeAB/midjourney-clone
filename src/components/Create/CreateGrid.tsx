@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ImageCard from "./ImageCard";
 import { useSocket } from "@/hooks/useSocket"; // Updated to useSocket
 
@@ -10,11 +10,16 @@ interface Props {
 }
 
 const CreateGrid = ({ images: initialImages }: Props) => {
-  const [images, setImages] = useState<Image[]>(initialImages);
+  const [images, setImages] = useState<Image[]>([]);
+
+  useEffect(() => {
+    // Initialize images state with the initialImages prop
+    setImages(initialImages);
+  }, [initialImages]);
 
   // --- Define the message handler using useCallback ---
   const handleDbUpdate = useCallback((data: any) => {
-    console.log("Socket.IO received:", data);
+    //console.log("Socket.IO received:", data);
 
     // Ensure the data structure matches expectations
     if (data) {
@@ -66,8 +71,6 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     "db_update",
     handleDbUpdate // Pass the memoized callback function
   );
-
-  //console.log("Socket.IO connected:", isConnected);
 
   const now = new Date();
 
