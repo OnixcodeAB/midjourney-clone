@@ -101,7 +101,10 @@ export function SettingsAlertDialog({
   const handlePublishExploreChange = async (checked: boolean) => {
     //console.log("handlePublishExploreChange", checked);
 
-    if (subscriptionPlan?.name === "Basic") {
+    if (
+      subscriptionPlan?.name === "Basic" ||
+      subscriptionPlan?.name === "Free"
+    ) {
       setIsBannerOpen(true); // Abre el BannerModal si el plan es "Free"
       return;
     }
