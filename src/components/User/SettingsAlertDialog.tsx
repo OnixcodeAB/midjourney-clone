@@ -20,13 +20,15 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useTheme } from "@/app/context/theme-provider";
 import { updatePublicImage } from "@/app/actions/user/updatePublicImage";
 import { getPublicImage } from "./getPublicImage";
 import { getUserPlanById } from "@/app/actions/user/getUserPlanById";
+import { BannerModal } from "@/components/layout/Modals/BannerModal";
+import { Badge } from "@/components/ui/badge";
 import { Check, X } from "lucide-react";
 
 interface SettingsAlertDialogProps {
@@ -52,6 +54,7 @@ export function SettingsAlertDialog({
   trigger,
 }: SettingsAlertDialogProps) {
   const { theme, setTheme } = useTheme();
+  const [isBannerOpen, setIsBannerOpen] = useState(false);
   const [improveModel, setImproveModel] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("improveModel") === "true";
@@ -97,6 +100,12 @@ export function SettingsAlertDialog({
 
   const handlePublishExploreChange = async (checked: boolean) => {
     //console.log("handlePublishExploreChange", checked);
+
+    if (subscriptionPlan?.name === "Basic") {
+      setIsBannerOpen(true); // Abre el BannerModal si el plan es "Free"
+      return;
+    }
+
     setPublishExplore(checked);
     if (user?.id) {
       const result = await updatePublicImage(user.id, checked);
@@ -162,7 +171,7 @@ export function SettingsAlertDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center transition-all">
+    <div className="fixed inset-0 z-50 bg-background/40 backdrop-blur-sm flex items-center justify-center transition-all">
       <AlertDialog open={open} onOpenChange={onOpenChange}>
         <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
 
@@ -292,18 +301,7 @@ export function SettingsAlertDialog({
                   <h3 className="text-xl font-semibold border-b pl-1 pb-2">
                     {subscriptionPlan?.name || "Free"}
                   </h3>
-                  {/* Feature row */}
-                  {/* <div className="flex gap-10 items-start border-b pb-2">
-                  <div className="flex flex-col gap-2 w-[60%]">
-                    <label className="text-md font-medium">
-                      Max concurrent generations
-                    </label>
-                    <span>
-                      Number of generations you can have queued at the same time
-                    </span>
-                  </div>
-                  <span className="col-span-2 text-end pr-18">1</span>
-                </div> */}
+
                   {/* Feature row */}
                   {subscriptionPlan?.features?.features.map(
                     (feature, index) => (
@@ -351,6 +349,10 @@ export function SettingsAlertDialog({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <BannerModal
+        isOpen={isBannerOpen}
+        onClose={() => setIsBannerOpen(false)}
+      />
     </div>
   );
 }
