@@ -19,6 +19,7 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
   const [images, setImages] = useState(initialImages);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const [filter, setFilter] = useState<{
     searchText: string;
@@ -39,22 +40,46 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
     checkUser();
   }, [user]);
 
+  // Infinite scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+          document.documentElement.offsetHeight - 500 &&
+        !loading &&
+        hasMore
+      ) {
+        loadMoreImages();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loading, page, hasMore]);
+
   // Handle loading more images when the user scrolls to the bottom
   const loadMoreImages = async () => {
+    if (!hasMore || loading) return;
+
     setLoading(true);
     const limit = 10;
     const offset = page * limit;
     const result = await getImagesPaginated(user?.id || null, limit, offset);
+
     if (result.data) {
       const newImages = result.data.filter(
         (newImg) => !images.some((img) => img.id === newImg.id)
       );
+
       setImages((prevImages) => [...prevImages, ...newImages]);
       setPage((prevPage) => prevPage + 1);
+
+      if (result.data.length < limit) {
+        setHasMore(false);
+      }
     }
     setLoading(false);
   };
-
   // Memoize the displayed images based on the filter
   // If no filter is applied, show all images
   const displayed = useMemo(() => {
@@ -128,14 +153,11 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
               </div>
             ))}
           </Masonry>
-          {loading && <p>Cargando más imágenes...</p>}
-          <button
-            onClick={loadMoreImages}
-            disabled={loading}
-            className="mt-4 p-2 bg-card cursor-pointer border border-border text-foreground rounded"
-          >
-            Cargar más
-          </button>
+          {!hasMore && (
+            <div className="w-full text-center py-6 text-sm  border-t border-border mt-6 bg-background">
+              <p className="text-muted-foreground/50 text-lg font-medium">No hay más imágenes para mostrar</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

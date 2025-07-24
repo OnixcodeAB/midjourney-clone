@@ -62,6 +62,9 @@ function Providers({ children }: { children: React.ReactNode }) {
               <div className="relative flex-1 bg-background">
                 {children}
                 <Header />
+                {/* <footer className="row-start-3 flex gap-[24px] my-8 flex-wrap items-center justify-center">
+                  Hola
+                </footer> */}
               </div>
               <Toaster position="bottom-right" richColors />
             </HeaderProvider>

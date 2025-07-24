@@ -19,9 +19,6 @@ export default async function Home() {
       <main className="py-6 w-full flex items-center justify-center ">
         <ExploreHomePage initialImages={images} />
       </main>
-      <footer className="row-start-3 flex gap-[24px] my-8 flex-wrap items-center justify-center">
-        Hola
-      </footer>
     </div>
   );
 }
