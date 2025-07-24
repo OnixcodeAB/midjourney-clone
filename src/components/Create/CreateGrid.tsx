@@ -65,6 +65,27 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     // which doesn't need `images` in the closure.
   }, []); // <--- Empty dependency array for useCallback
 
+   // Render memoizado de tarjetas
+  const renderImageCard = useCallback(
+    (img: Image) => (
+      <ImageCard
+        key={img.id}
+        id={img.id}
+        url={img.url}
+        search_text={img.search_text}
+        status={img.status}
+        progress_pct={img.progress_pct}
+        prompt={
+          img.status === "pending" || img.status === "running"
+            ? "Generating..."
+            : img.prompt
+        }
+      />
+    ),
+    []
+  );
+
+
   // Handle real-time updates from Socket.IO
   const { isConnected } = useSocket(
     "http://localhost:5000",
@@ -150,93 +171,55 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     );
   }
 
+ 
   return (
-    <div className="px-2 sm:px-2 w-full max-w-full space-y-6 h-[79vh]">
-      {Object.entries(grouped).map(([section, imgs]) =>
-        imgs && Object.keys(imgs).length > 0 ? (
-          section !== "Older" ? (
-            <div key={section} className="w-full">
-              <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-700 text-left">
-                {section}
-              </h2>
-              <div
-                className=" w-full
-            grid 
-            grid-cols-1 
-            sm:grid-cols-2 
-            md:grid-cols-3 
-            lg:grid-cols-4 
-            xl:grid-cols-6 
-            2xl:grid-cols-8 
-            gap-y-4 
-            gap-x-3
-            "
-              >
-                {(imgs as Image[]).map((img) => (
-                  <ImageCard
-                    key={img.id}
-                    id={img.id}
-                    url={img.url}
-                    search_text={img.search_text}
-                    status={img.status}
-                    progress_pct={img.progress_pct}
-                    prompt={
-                      img.status === "pending" || img.status === "running"
-                        ? "Generating..."
-                        : img.prompt
-                    }
-                  />
-                ))}
-              </div>
-            </div>
-          ) : (
-            // "Older" section: Group by date
-            <div key={section}>
-              <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-700 text-left">
-                Older
-              </h2>
-              {Object.entries(imgs as { [date: string]: Image[] }).map(
-                ([date, dateImgs]) => (
-                  <div key={date} className="mb-8">
-                    <div className="font-medium text-gray-500 mb-2 pl-1">
-                      {date}
-                    </div>
-                    <div
-                      className="
-                  grid 
-                  grid-cols-1 
-                  sm:grid-cols-2 
-                  md:grid-cols-3 
-                  lg:grid-cols-4 
-                  xl:grid-cols-6 
-                  2xl:grid-cols-8 
-                  gap-y-4 
-                  gap-x-3
-                  "
-                    >
-                      {dateImgs.map((img) => (
-                        <ImageCard
-                          key={img.id}
-                          id={img.id}
-                          url={img.url}
-                          search_text={img.search_text}
-                          status={img.status}
-                          progress_pct={img.progress_pct}
-                          prompt={
-                            img.status === "pending" || img.status === "running"
-                              ? "Generating..."
-                              : img.prompt
-                          }
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-          )
-        ) : null
+    <div className="px-2 sm:px-2 w-full max-w-full space-y-6 h-full ">
+      {!isConnected && (
+        <div className="bg-yellow-100 text-yellow-800 p-2 rounded mb-4">
+          Disconnected from real-time updates. Attempting to reconnect...
+        </div>
       )}
+
+      {Object.entries(grouped).map(([section, imgs]) => {
+        if (!imgs || (section === "Older" && Object.keys(imgs).length === 0)) {
+          return null;
+        }
+
+        return section !== "Older" ? (
+          <div key={section} className="w-full">
+            <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-700 text-left">
+              {section}
+            </h2>
+            <div
+              className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 
+              lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-y-4 gap-x-3"
+            >
+              {(imgs as Image[]).map(renderImageCard)}
+            </div>
+          </div>
+        ) : (
+          <div key={section}>
+            <h2 className="text-base sm:text-lg font-semibold mb-2 text-gray-700 text-left">
+              Older
+            </h2>
+            {Object.entries(imgs as { [date: string]: Image[] }).map(
+              ([date, dateImgs]) => (
+                <div key={date} className="mb-8">
+                  <div className="font-medium text-gray-500 mb-2 pl-1">
+                    {date}
+                  </div>
+                  <div
+                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 
+                    lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-y-4 gap-x-3"
+                  >
+                    {dateImgs.map(renderImageCard)}
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };
