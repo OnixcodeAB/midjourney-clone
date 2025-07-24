@@ -2,7 +2,10 @@
 import { query } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 
-export async function getImageData() {
+export async function getImageData(): Promise<{
+  imagesWithLikes?: ImageExplorePage[];
+  error?: string;
+}> {
   try {
     const { userId } = await auth();
 
@@ -26,6 +29,7 @@ export async function getImageData() {
       FROM "Image" i
       WHERE i.public = true
       ORDER BY i."createdat" DESC
+      LIMIT 15
       `);
 
     // Get like stats for each image

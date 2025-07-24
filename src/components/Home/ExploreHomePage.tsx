@@ -7,14 +7,18 @@ import ImageCard from "@/components/Home/ImageCard";
 import { LayoutPanelTop, X } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { checkIfUserExists } from "@/app/actions/user/checkIfUserExists";
+import { getImagesPaginated } from "@/app/actions/image/getImagesPaginated";
 
 interface Props {
-  images: ImageExplorePage[];
+  initialImages: ImageExplorePage[];
 }
 
-export const ExploreHomePage = ({ images }: Props) => {
+export const ExploreHomePage = ({ initialImages }: Props) => {
   const { user } = useUser();
   const [userExists, setUserExists] = useState(false);
+  const [images, setImages] = useState(initialImages);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const [filter, setFilter] = useState<{
     searchText: string;
@@ -34,6 +38,22 @@ export const ExploreHomePage = ({ images }: Props) => {
     };
     checkUser();
   }, [user]);
+
+  // Handle loading more images when the user scrolls to the bottom
+  const loadMoreImages = async () => {
+    setLoading(true);
+    const limit = 10;
+    const offset = page * limit;
+    const result = await getImagesPaginated(user?.id || null, limit, offset);
+    if (result.data) {
+      const newImages = result.data.filter(
+        (newImg) => !images.some((img) => img.id === newImg.id)
+      );
+      setImages((prevImages) => [...prevImages, ...newImages]);
+      setPage((prevPage) => prevPage + 1);
+    }
+    setLoading(false);
+  };
 
   // Memoize the displayed images based on the filter
   // If no filter is applied, show all images
@@ -108,6 +128,14 @@ export const ExploreHomePage = ({ images }: Props) => {
               </div>
             ))}
           </Masonry>
+          {loading && <p>Cargando más imágenes...</p>}
+          <button
+            onClick={loadMoreImages}
+            disabled={loading}
+            className="mt-4 p-2 bg-card cursor-pointer border border-border text-foreground rounded"
+          >
+            Cargar más
+          </button>
         </div>
       </div>
     </div>
