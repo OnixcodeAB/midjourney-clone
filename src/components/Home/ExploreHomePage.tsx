@@ -128,10 +128,10 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
             </button>
           </div>
         )}
-        <div className="w-[89%] pl-12">
+        <div className="w-full ">
           <Masonry
             breakpointCols={breakpointCols}
-            className={`flex my-masonry-grid`}
+            className={`flex w-[90%] my-masonry-grid`}
             columnClassName="my-masonry-grid_column"
           >
             {displayed.map((img) => (
@@ -155,7 +155,9 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
           </Masonry>
           {!hasMore && (
             <div className="w-full text-center py-6 text-sm  border-t border-border mt-6 bg-background">
-              <p className="text-muted-foreground/50 text-lg font-medium">No hay más imágenes para mostrar</p>
+              <p className="text-muted-foreground/50 text-lg font-medium">
+                No hay más imágenes para mostrar
+              </p>
             </div>
           )}
         </div>
