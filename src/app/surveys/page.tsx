@@ -1,5 +1,7 @@
-import { DynamicAspectImage } from "@/components/surveys/DynamicAspectImage";
+import { DynamicAspectImage } from "@/components/Masonry/DynamicAspectImage";
 import { getImageData } from "../actions/image/getImageData";
+import { addImageDimensions, splitIntoMasonryColumns } from "@/lib/constant";
+import { MasonryImageGallery } from "@/components/Masonry/MasonryImageGallery";
 
 const response = await getImageData();
 
@@ -8,48 +10,15 @@ if (response.error) {
   console.error("Error fetching images:", response.error);
 } else {
   images = response.imagesWithLikes || [];
-  //console.log(images);
-}
 
-function splitIntoColumns<T>(data: T[], columns: number): T[][] {
-  const result: T[][] = Array.from({ length: columns }, () => []);
-  data.forEach((item, index) => {
-    result[index % columns].push(item);
-  });
-  return result;
+  //console.log(images);
 }
 
 export default async function SurveysPage() {
   //console.log("Fetched Plans:", Plans);
-  const columns = splitIntoColumns(images, 5);
-  return (
-    <div className="flex justify-center gap-1 p-4">
-      {columns.map((col, colIndex) => {
-        return (
-          <div key={colIndex} className="flex flex-col gap-1">
-            {col.map((img, imgIndex) => {
-              let cornerClass = "";
-
-              if (colIndex === 0 && imgIndex === 0) {
-                cornerClass = "rounded-tl-lg";
-              }
-
-              if (colIndex === columns.length - 1 && imgIndex === 0) {
-                cornerClass = "rounded-tr-lg";
-              }
-
-              return (
-                <DynamicAspectImage
-                  key={img.id}
-                  src={img.url}
-                  alt={img.alt}
-                  className={cornerClass}
-                />
-              );
-            })}
-          </div>
-        );
-      })}
-    </div>
-  );
+  const columns = splitIntoMasonryColumns(images, 5);
+  {
+    /* <MasonryImageGallery images={images} columnsCount={5} />  */
+  }
+  return <div>Hello World</div>;
 }

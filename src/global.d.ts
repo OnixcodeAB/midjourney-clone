@@ -101,6 +101,8 @@ declare global {
   id: number;
   url: string;
   alt: string;
+  width?: number;
+  height?: number;
   author: string;
   description: string;
   search_text: string;

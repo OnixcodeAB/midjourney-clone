@@ -9,6 +9,9 @@ import { useUser } from "@clerk/nextjs";
 import { checkIfUserExists } from "@/app/actions/user/checkIfUserExists";
 import { getImagesPaginated } from "@/app/actions/image/getImagesPaginated";
 
+import { DynamicAspectImage } from "../Masonry/DynamicAspectImage";
+import { MasonryImageGallery } from "../Masonry/MasonryImageGallery";
+
 interface Props {
   initialImages: ImageExplorePage[];
 }
@@ -93,6 +96,16 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
     });
   }, [images, filter]);
 
+  const columns = splitIntoColumns(displayed, 5);
+
+  function splitIntoColumns<T>(data: T[], columns: number): T[][] {
+    const result: T[][] = Array.from({ length: columns }, () => []);
+    data.forEach((item, index) => {
+      result[index % columns].push(item);
+    });
+    return result;
+  }
+
   // Handle search and tag filtering
   const handleSearch = useCallback((searchText: string, tags: string[]) => {
     setFilter({ searchText, tags });
@@ -112,7 +125,7 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
   };
 
   return (
-    <div className="w-full bg-background flex flex-column items-center justify-center">
+    <div className="w-full m-auto bg-background flex flex-column items-center justify-center">
       <div className="w-full  ">
         {filter && (
           <div className="sticky top-4 m-0 ml-1.5 left-0 z-50 flex items-center w-fit bg-card/50 text-card-foreground px-3 py-2 rounded-r-full shadow-md gap-2 mb-4 backdrop-blur-sm border border-border">
@@ -128,39 +141,54 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
             </button>
           </div>
         )}
-        <div className="w-full ">
-          <Masonry
-            breakpointCols={breakpointCols}
-            className={`flex w-[90%] my-masonry-grid`}
-            columnClassName="my-masonry-grid_column"
-          >
-            {displayed.map((img) => (
-              <div key={img.id} className="cursor-pointer p-[0.001rem]">
-                <ImageCard
-                  imageId={img.id.toString()}
-                  src={img.url}
-                  alt={img.alt}
-                  author={img.author}
-                  prompt={img.description}
-                  initialLikeCount={img.initialLikeCount}
-                  initialIsLiked={img.initialIsLiked}
-                  isAuthenticated={userExists}
-                  handleOnClick={() => handleClick(img.id)}
-                  handleOnSearch={() =>
-                    handleSearch(img.search_text ?? "", img.tags)
+        <MasonryImageGallery
+          images={displayed}
+          columnsCount={5}
+          handleOnSearch={handleSearch}
+          handleOnClick={handleClick}
+        />
+        {/* <div className="flex justify-center gap-1 p-4">
+          {columns.map((col, colIndex) => {
+            return (
+              <div key={colIndex} className="flex flex-col gap-1">
+                {col.map((img, imgIndex) => {
+                  let cornerClass = "";
+
+                  if (colIndex === 0 && imgIndex === 0) {
+                    cornerClass = "rounded-tl-lg";
                   }
-                />
+
+                  if (colIndex === columns.length - 1 && imgIndex === 0) {
+                    cornerClass = "rounded-tr-lg";
+                  }
+
+                  return (
+                    <DynamicAspectImage
+                      key={img.id}
+                      src={img.url}
+                      alt={img.alt}
+                      className={cornerClass}
+                      imageId={img.id.toString()}
+                      author={img.author}
+                      initialLikeCount={img.initialLikeCount}
+                      initialIsLiked={img.initialIsLiked}
+                      handleOnSearch={() =>
+                        handleSearch(img.search_text ?? "", img.tags)
+                      }
+                    />
+                  );
+                })}
               </div>
-            ))}
-          </Masonry>
-          {!hasMore && (
-            <div className="w-full text-center py-6 text-sm  border-t border-border mt-6 bg-background">
-              <p className="text-muted-foreground/50 text-lg font-medium">
-                No hay más imágenes para mostrar
-              </p>
-            </div>
-          )}
-        </div>
+            );
+          })}
+        </div> */}
+        {!hasMore && (
+          <div className="w-full text-center py-6 text-sm  border-t border-border mt-6 bg-background">
+            <p className="text-muted-foreground/50 text-lg font-medium">
+              No hay más imágenes para mostrar
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

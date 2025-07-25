@@ -1,3 +1,4 @@
+
 import OpenAI from "openai";
 import { query } from "./db";
 
@@ -109,4 +110,13 @@ export async function generateImageMetadata(
   };
 
   return { search_text, tags };
+}
+
+// Function to split data into columns for layout
+export function splitIntoColumns<T>(data: T[], columns: number): T[][] {
+  const result: T[][] = Array.from({ length: columns }, () => []);
+  data.forEach((item, index) => {
+    result[index % columns].push(item);
+  });
+  return result;
 }
