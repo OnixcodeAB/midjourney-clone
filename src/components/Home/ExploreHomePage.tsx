@@ -20,7 +20,7 @@ interface Props {
 }
 
 const breakpointCols = {
-  default: 5,
+  default: 6,
   small: 2,
   medium: 2,
   large: 3,
@@ -80,7 +80,6 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
       setColumns(breakpointCols.xxlarge);
     } else if (xlarge && breakpointCols.xlarge) {
       setColumns(breakpointCols.xlarge);
-    } else if (medium && breakpointCols.medium) {
     } else if (large && breakpointCols.large) {
       setColumns(breakpointCols.large);
     } else if (medium && breakpointCols.medium) {
