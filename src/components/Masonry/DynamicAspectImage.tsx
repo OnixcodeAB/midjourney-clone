@@ -103,7 +103,7 @@ export function DynamicAspectImage({
 
   return (
     <div
-      className={`relative w-3xs ${aspectClass} cursor-pointer bg-gray-200 overflow-hidden ${className}`}
+      className={`relative sm:w-sm md:w-fit lg:w-3xs  ${aspectClass} cursor-pointer bg-gray-200 overflow-hidden ${className}`}
     >
       <img
         src={src}

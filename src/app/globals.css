@@ -230,3 +230,12 @@
 .TooltipArrow {
   display: none;
 }
+
+.grid {
+  grid-auto-rows: 1fr; /* Maintain equal row sizing */
+}
+
+/* Optional: Add smooth transitions */
+.grid > div {
+  transition: all 0.3s ease;
+}
