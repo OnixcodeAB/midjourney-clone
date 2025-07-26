@@ -25,7 +25,7 @@ const breakpoints: Breakpoints = {
   medium: "(min-width: 768px)", // 48rem * 16px/rem = 768px
   large: "(min-width: 1024px)", // 64rem * 16px/rem = 1024px
   xlarge: "(min-width: 1280pxpx)", // 80rem * 16px/rem = 1280px
-  xxlarge: "(min-width: 1536px)", // 96rem * 16px/rem = 1280px
+  xxlarge: "(min-width: 1536px)", // 96rem * 16px/rem = 1536px
 };
 
 function useMediaQueries(): MatchedBreakpoints {
