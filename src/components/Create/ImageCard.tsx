@@ -49,8 +49,6 @@ const ImageCard = ({
   const router = useRouter();
   const { folders } = useFolders();
 
-  console.log("Image component",status)
-
   useEffect(() => {
     const img = imgRef.current;
     if (img && img.complete) setLoaded(true);
