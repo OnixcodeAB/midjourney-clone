@@ -65,7 +65,7 @@ export const FolderContent: React.FC<{
     <div className="w-full flex flex-column items-center justify-start">
       <Masonry
         breakpointCols={breakpointCols}
-        className="flex min-w-6xl h-screen"
+        className="flex w-fit gap-2"
         columnClassName=""
       >
         {items.map((img) => {
@@ -158,11 +158,12 @@ export const FolderContent: React.FC<{
                 showLike={false}
                 showSearch={false}
                 handleOnClick={() => handleClick(img.image_id)}
+                imgClassName="w-75"
               />
 
               {/* Prompt overlay on hover */}
               {img.prompt && (
-                <div className="absolute bottom-0 left-0  w-full bg-black/50 text-white text-xs px-2 py-2 opacity-0 group-hover:opacity-100 transition-opacity z-20 truncate ">
+                <div className="absolute bottom-0 left-0  w-full bg-black/50 text-white text-xs px-2 py-2 opacity-0 group-hover:opacity-100 transition-opacity z-0 truncate ">
                   {img.prompt}
                 </div>
               )}
