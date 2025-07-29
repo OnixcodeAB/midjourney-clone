@@ -3,6 +3,10 @@ import { query } from "@/lib/db";
 import { getAuth } from "@clerk/nextjs/server";
 import { invalidateCache } from "@/lib/redis";
 
+// Constants for cache keys
+const IMAGES_CACHE_KEY = "explore:images";
+const USER_LIKES_CACHE_PREFIX = "user:likes:";
+
 export async function POST(req: NextRequest) {
   try {
     const { userId } = getAuth(req);
@@ -37,7 +41,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    //await invalidateCache(`api:create:${user.id}`);
+    // Invalidate relevant cache entries
+    await Promise.all([
+      // Invalidate the main images cahe
+      invalidateCache(IMAGES_CACHE_KEY),
+      //invalidate this user´s like status for this image
+      invalidateCache(`${USER_LIKES_CACHE_PREFIX}${userId}:${imageId}`),
+      // Invalidate all user likes for this image (if you want to be thorough)
+      // This would require a pattern match, so we'd need to use Redis SCAN or KEYS
+      // Note: Be careful with this in production as it can be expensive
+      //invalidateCache(`${USER_LIKES_CACHE_PREFIX}*:${imageId}`),
+    ]);
 
     return NextResponse.json({
       isLike: action === "like" ? true : false,
