@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { query } from "@/lib/db";
 import { getAuth } from "@clerk/nextjs/server";
+import { invalidateCache } from "@/lib/redis";
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,6 +36,8 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
+
+    //await invalidateCache(`api:create:${user.id}`);
 
     return NextResponse.json({
       isLike: action === "like" ? true : false,
