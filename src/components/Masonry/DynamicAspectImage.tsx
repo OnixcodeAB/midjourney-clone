@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { BannerModal } from "../layout/Modals/BannerModal";
 
 interface Props {
   imageId: string;
@@ -179,6 +180,10 @@ export function DynamicAspectImage({
           </TooltipProvider>
         </div>
       </div>
+      <BannerModal
+        isOpen={isBannerOpen}
+        onClose={() => setIsBannerOpen(false)}
+      />
     </div>
   );
 }

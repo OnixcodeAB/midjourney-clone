@@ -158,6 +158,7 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
             columnsCount={columns}
             handleOnSearch={handleSearch}
             handleOnClick={handleClick}
+            isAuthenticated={userExists}
           />
         </div>
 
