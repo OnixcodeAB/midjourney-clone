@@ -49,6 +49,8 @@ const ImageCard = ({
   const router = useRouter();
   const { folders } = useFolders();
 
+  console.log("Image component",status)
+
   useEffect(() => {
     const img = imgRef.current;
     if (img && img.complete) setLoaded(true);
@@ -81,7 +83,7 @@ const ImageCard = ({
 
   return (
     <div
-      className="relative sm:w-fit border border-[var(--border)] dark:border-[var(--border)] overflow-hidden cursor-pointer group"
+      className="relative sm:w-fit aspect-square border border-[var(--border)] dark:border-[var(--border)] overflow-hidden cursor-pointer group"
       onClick={handleClick}
     >
       {/* Menu contextual arriba a la derecha */}
@@ -163,7 +165,7 @@ const ImageCard = ({
       </div>
       {/* ... el resto del código igual ... */}
       {status === "pending" || status === "running" ? (
-        <div className="absolute inset-0 bg-[var(--card)] dark:bg-[var(--card)] flex flex-col items-center justify-center z-10">
+        <div className="absolute  inset-0 bg-[var(--card)] dark:bg-[var(--card)] flex flex-col items-center justify-center z-10">
           <DonutLoader
             progress={progress_pct ?? 10}
             size={60}
