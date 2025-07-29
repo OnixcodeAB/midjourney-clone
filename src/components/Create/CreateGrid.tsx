@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ImageCard from "./ImageCard";
 import { useSocket } from "@/hooks/useSocket"; // Updated to useSocket
+import { useRouter } from "next/navigation";
 
 interface Props {
   images: Image[];
@@ -11,6 +12,12 @@ interface Props {
 
 const CreateGrid = ({ images: initialImages }: Props) => {
   const [images, setImages] = useState<Image[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Esto fuerza a Next.js a re-renderizar el SSR la ruta actual
+    router.refresh();
+  }, [router]);
 
   useEffect(() => {
     // Initialize images state with the initialImages prop
@@ -18,54 +25,19 @@ const CreateGrid = ({ images: initialImages }: Props) => {
   }, [initialImages]);
 
   // --- Define the message handler using useCallback ---
-  const handleDbUpdate = useCallback((data: any) => {
-    //console.log("Socket.IO received:", data);
-
-    // Ensure the data structure matches expectations
-    if (data) {
-      setImages((prevImages) => {
-        const exists = prevImages.some((img) => img.id === data.id);
-
-        if (exists) {
-          // Update existing item: Merge existing data with new data
-          return prevImages.map((img) =>
-            img.id === data.id ? { ...img, ...data.data } : img
-          );
-        } else {
-          // Add new item: Treat the payload as a new image
-          // Ensure all required fields for the 'Image' interface are present
-          // Provide defaults if necessary, or ensure the backend sends complete objects
-          const newImage: Image = {
-            id: data.id,
-            url: data.data.url || "",
-            prompt: data.data.prompt || "",
-            provider: data.data.provider || "openai",
-            status: data.data.status || "pending",
-            progress_pct: data.data.progress_pct || 0.3,
-            createdAt: data.data.createdAt || new Date().toISOString(),
-            ...data.data, // Spread the rest of the data, potentially overwriting defaults
-          };
-
-          // Filter out potentially invalid new images if essential data is missing
-          if (!newImage.id || !newImage.createdat) {
-            console.warn(
-              "Received incomplete image data for new item, skipping:",
-              data
-            );
-            return prevImages;
-          }
-          return [...prevImages, newImage];
-        }
-      });
-    } else {
-      console.warn("Received invalid db_update payload:", data);
+  const handleDbUpdate = useCallback(async () => {
+    try {
+      // Fuerza bypass de caché
+      const resp = await fetch("/api/create?noCache=true");
+      if (!resp.ok) throw new Error("Fetch error " + resp.status);
+      const { images: freshImages } = await resp.json();
+      setImages(freshImages);
+    } catch (err) {
+      console.error("Error refetching images:", err);
     }
-    // The dependency array is empty `[]` because `setImages` is guaranteed
-    // by React to be stable and we are using the functional update form
-    // which doesn't need `images` in the closure.
-  }, []); // <--- Empty dependency array for useCallback
+  }, []);
 
-   // Render memoizado de tarjetas
+  // Render memoizado de tarjetas
   const renderImageCard = useCallback(
     (img: Image) => (
       <ImageCard
@@ -84,7 +56,6 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     ),
     []
   );
-
 
   // Handle real-time updates from Socket.IO
   const { isConnected } = useSocket(
@@ -171,7 +142,6 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     );
   }
 
- 
   return (
     <div className="px-2 sm:px-2 w-full max-w-full space-y-6 h-full ">
       {!isConnected && (

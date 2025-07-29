@@ -16,7 +16,10 @@ interface GetImagesResponse {
  *
  * @returns {Promise<GetImagesResponse>} An object containing an array of images or an error message.
  */
-export async function getImagesForUser(): Promise<GetImagesResponse> {
+export async function getImagesForUser(options?: {
+  noCache?: boolean;
+}): Promise<GetImagesResponse> {
+  const noCache = options?.noCache ?? false;
   try {
     // Get the current user from Clerk
     const { userId } = await auth();
@@ -32,10 +35,12 @@ export async function getImagesForUser(): Promise<GetImagesResponse> {
     const CACHE_TTL = 60 * 1; // 1 minute in seconds
 
     // Try to get from cache first
-    const cachedImagesString = await getCached<string>(IMAGES_CACHE_KEY);
-    if (cachedImagesString) {
-      const cachedImages = JSON.parse(cachedImagesString) as Image[];
-      return { images: cachedImages };
+    if (!noCache) {
+      const cachedImagesString = await getCached<string>(IMAGES_CACHE_KEY);
+      if (cachedImagesString) {
+        const cachedImages = JSON.parse(cachedImagesString) as Image[];
+        return { images: cachedImages };
+      }
     }
 
     // If not in cache, query the database
@@ -71,8 +76,10 @@ export async function getImagesForUser(): Promise<GetImagesResponse> {
     ); */
 
     // Cache the images for future requests
-    await cacheResult(IMAGES_CACHE_KEY, CACHE_TTL, JSON.stringify(images));
-    console.log(`Images cached for user: ${userId}`);
+    if (!noCache) {
+      await cacheResult(IMAGES_CACHE_KEY, CACHE_TTL, JSON.stringify(images));
+      console.log(`Images cached for user: ${userId}`);
+    }
 
     return { images };
   } catch (error) {

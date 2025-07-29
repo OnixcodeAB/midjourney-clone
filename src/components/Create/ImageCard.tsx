@@ -81,7 +81,7 @@ const ImageCard = ({
 
   return (
     <div
-      className="relative sm:w-fit lg:w-50 border border-[var(--border)] dark:border-[var(--border)] overflow-hidden cursor-pointer group"
+      className="relative sm:w-fit border border-[var(--border)] dark:border-[var(--border)] overflow-hidden cursor-pointer group"
       onClick={handleClick}
     >
       {/* Menu contextual arriba a la derecha */}

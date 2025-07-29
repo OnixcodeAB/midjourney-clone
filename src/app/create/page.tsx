@@ -15,7 +15,7 @@ interface ImageProps {
 
 export default async function CreatePage() {
   // Fetch from DB or external API
-  const response = await getImagesForUser();
+  const response = await getImagesForUser({noCache:false});
   let images: Image[] = [];
 
   if (response.error) {
