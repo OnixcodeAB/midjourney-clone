@@ -164,6 +164,7 @@ export async function generateImageAndSave({
        RETURNING id, prompt, provider, status, url, createdat`,
       ["complete", uploadRes.secure_url, imageId]
     );
+    await invalidateCache(`api:create:${user.id}`);
     return { success: true, image: updateRes.rows[0] };
   } catch (dbErr: any) {
     console.error("[DB_INSERT_ERROR]", dbErr);
