@@ -1,5 +1,6 @@
 import CreateGrid from "@/components/Create/CreateGrid";
 import { getImagesForUser } from "../actions/image/getImagesForUser";
+import { auth } from "@clerk/nextjs/server";
 
 interface ImageProps {
   id: string;
@@ -12,10 +13,10 @@ interface ImageProps {
   search_text?: string;
 }
 
-
 export default async function CreatePage() {
+  const { userId } = await auth();
   // Fetch from DB or external API
-  const response = await getImagesForUser({noCache:false});
+  const response = await getImagesForUser({ noCache: false });
   let images: Image[] = [];
 
   if (response.error) {
@@ -27,7 +28,7 @@ export default async function CreatePage() {
 
   return (
     <div className="flex-1">
-      <CreateGrid images={images} />
+      <CreateGrid images={images} currentUserId={userId ?? ""} />
     </div>
   );
 }

@@ -15,6 +15,7 @@ export async function getImagesPaginated(
         i.prompt,
         i.user_name   AS author,
         i.like_count AS likes,
+        i.createdat,
         COALESCE(
           (
             SELECT array_agg(t.name)

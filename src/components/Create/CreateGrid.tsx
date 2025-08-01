@@ -4,14 +4,18 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import ImageCard from "./ImageCard";
 import { useSocket } from "@/hooks/useSocket"; // Updated to useSocket
 import { useRouter } from "next/navigation";
+import { getPaginatedImagesForUser } from "@/app/actions/image/getPaginatedImagesForUser";
 
 interface Props {
   images: Image[];
-  currentUserId?: string;
+  currentUserId: string;
 }
 
-const CreateGrid = ({ images: initialImages }: Props) => {
+const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
   const [images, setImages] = useState<Image[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -19,14 +23,68 @@ const CreateGrid = ({ images: initialImages }: Props) => {
     router.refresh();
   }, [router]);
 
+  // Initialize images state with the initialImages prop
   useEffect(() => {
-    // Initialize images state with the initialImages prop
     setImages(initialImages);
   }, [initialImages]);
+
+  const loadMoreImages = useCallback(async () => {
+    if (!hasMore || loading) return;
+
+    setLoading(true);
+    const limit = 10;
+    const offset = page * limit;
+
+    try {
+      const result = await getPaginatedImagesForUser(limit, offset);
+
+      if (result.images) {
+        const newImages = result.images.filter(
+          (newImg) => !images.some((img) => img.id === newImg.id)
+        );
+
+        console.log("loading more image", newImages);
+
+        setImages((prevImages) => [...prevImages, ...newImages]);
+        setPage((prevPage) => prevPage + 1);
+        setHasMore(result.hasMore ?? false);
+      }
+    } catch (error) {
+      console.error("Error loading more images:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentUserId, hasMore, loading, page, images]);
+
+  // Scroll handler
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+          document.documentElement.offsetHeight - 500 &&
+        !loading &&
+        hasMore
+      ) {
+        loadMoreImages();
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loading, hasMore, loadMoreImages]);
 
   // --- Define the message handler using useCallback ---
   const handleDbUpdate = useCallback(async () => {
     try {
+      // Also reset pagination when new images are added
+      const limit = 10;
+      const result = await getPaginatedImagesForUser(limit, 0);
+
+      if (result.images) {
+        setImages(result.images);
+        setPage(1);
+        setHasMore(result.images.length >= limit);
+      }
+
       // Fuerza bypass de caché
       const resp = await fetch("/api/create?noCache=true");
       if (!resp.ok) throw new Error("Fetch error " + resp.status);
@@ -70,11 +128,13 @@ const CreateGrid = ({ images: initialImages }: Props) => {
   const grouped = useMemo(() => {
     const groups: {
       Today: Image[];
+      Yesterday: Image[];
       "This Week": Image[];
       "This Month": Image[];
       Older: { [date: string]: Image[] };
     } = {
       Today: [],
+      Yesterday: [],
       "This Week": [],
       "This Month": [],
       Older: {},
@@ -89,13 +149,27 @@ const CreateGrid = ({ images: initialImages }: Props) => {
       );
     };
 
+    const isYesterday = (dateStr: string) => {
+      const d = new Date(dateStr);
+      const yesterday = new Date(now);
+      yesterday.setDate(now.getDate() - 1);
+
+      return (
+        d.getDate() === yesterday.getDate() &&
+        d.getMonth() === yesterday.getMonth() &&
+        d.getFullYear() === yesterday.getFullYear()
+      );
+    };
+
     const isThisWeek = (dateStr: string) => {
       const d = new Date(dateStr);
       const start = new Date(now);
       start.setDate(now.getDate() - now.getDay());
       const end = new Date(start);
       end.setDate(start.getDate() + 7);
-      return d >= start && d < end && !isToday(dateStr);
+      return (
+        d >= start && d < end && !isToday(dateStr) && !isYesterday(dateStr)
+      );
     };
 
     const isThisMonth = (dateStr: string) => {
@@ -109,6 +183,7 @@ const CreateGrid = ({ images: initialImages }: Props) => {
 
     for (const img of images) {
       if (isToday(img.createdat)) groups["Today"].push(img);
+      else if (isYesterday(img.createdat)) groups["Yesterday"].push(img);
       else if (isThisWeek(img.createdat)) groups["This Week"].push(img);
       else if (isThisMonth(img.createdat)) groups["This Month"].push(img);
       else {
@@ -190,6 +265,13 @@ const CreateGrid = ({ images: initialImages }: Props) => {
           </div>
         );
       })}
+
+      {/* End of content message */}
+      {!hasMore && (
+        <div className="text-center py-4 text-gray-500">
+          You've reached the end of your images
+        </div>
+      )}
     </div>
   );
 };

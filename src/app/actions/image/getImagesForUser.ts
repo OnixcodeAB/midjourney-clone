@@ -18,7 +18,7 @@ interface GetImagesResponse {
  */
 export async function getImagesForUser(options?: {
   noCache?: boolean;
-}): Promise<GetImagesResponse> {
+},): Promise<GetImagesResponse> {
   const noCache = options?.noCache ?? false;
   try {
     // Get the current user from Clerk
@@ -66,7 +66,8 @@ export async function getImagesForUser(options?: {
         ) AS tags
       FROM "Image" i
       WHERE i.user_id = $1
-      ORDER BY i."createdat" DESC;
+      ORDER BY i."createdat" DESC
+      LIMIT 10
       `,
       [userId]
     );
