@@ -48,7 +48,7 @@ export const FolderContent: React.FC<{
 
   if (!items || items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-[79vh]">
+      <div className="flex flex-col items-center justify-center h-[79vh] ">
         <img
           src="/empty-folder.png"
           alt="Empty folder"
@@ -62,7 +62,7 @@ export const FolderContent: React.FC<{
   }
 
   return (
-    <div className="w-full flex flex-column items-center justify-start">
+    <div className="w-full flex flex-column items-center justify-start z-0">
       <Masonry
         breakpointCols={breakpointCols}
         className="flex w-fit gap-2"

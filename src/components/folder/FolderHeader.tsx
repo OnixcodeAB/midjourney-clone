@@ -20,7 +20,7 @@ export const FolderHeader: React.FC<{
   inputRef,
 }) => {
   return (
-    <div className="flex gap-4 mb-8 w-full">
+    <div className="flex gap-4 mb-8 w-full z-20">
       {isEditing ? (
         <input
           ref={inputRef}

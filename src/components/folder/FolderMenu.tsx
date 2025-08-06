@@ -27,7 +27,7 @@ export const FolderMenu: React.FC<{
       <PopoverContent
         align="start"
         sideOffset={8}
-        className="p-2 w-48 rounded-2xl shadow-xl bg-white dark:bg-neutral-900/30 border border-neutral-200 dark:border-neutral-700"
+        className="p-2 w-48 rounded-2xl shadow-xl bg-background border border-border"
       >
         <button
           type="button"
