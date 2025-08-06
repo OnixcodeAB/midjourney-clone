@@ -103,18 +103,17 @@ export default function Header() {
     }
     const originalPrompt = prompt;
     setPrompt("");
-    const promise = generateImageAndSave({
+    const {success, error} = await generateImageAndSave({
       prompt,
       aspect: ratio || undefined,
       quality,
       // You can also pass previews here if needed for your logic
     });
     router.push("/create");
-    const result = await promise;
-    if (!result?.success) {
+    if (!success) {
       setPrompt(originalPrompt);
       toast.error("Generation failed", {
-        description: `${result?.error || "Try again later"}`,
+        description: `${error || "Try again later"}`,
       });
     }
   };
