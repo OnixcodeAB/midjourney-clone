@@ -95,6 +95,8 @@ const ImageCard = ({
       console.error("Error deleting image:", error);
     }
   };
+
+  return (
     <div
       className="relative sm:w-fit aspect-square border border-[var(--border)] dark:border-[var(--border)] overflow-hidden cursor-pointer group"
       onClick={handleClick}
@@ -126,6 +128,7 @@ const ImageCard = ({
             <DropdownMenuItem onClick={() => handleDeleteImage(id)}>
               <X className="w-4 h-4 mr-2" /> Delete
             </DropdownMenuItem>
+            <DropdownMenuItem>
               <Plus className="w-4 h-4 mr-2" /> Select
             </DropdownMenuItem>
             <DropdownMenuItem>
