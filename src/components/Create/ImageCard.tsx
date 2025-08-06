@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { useFolders } from "@/app/context/FolderContext";
 import { addFolderItem } from "@/app/actions/folders/addFolderItem";
-import { deleteImage } from "@/app/actions/image/deleteImage";
 
 interface ImageCardProps {
   id: string;
@@ -33,6 +32,7 @@ interface ImageCardProps {
   status?: "pending" | "completed" | "running";
   progress_pct?: number;
   blurUrl?: string;
+  OnDelete: (imageId: string) => Promise<string | number>;
 }
 
 const ImageCard = ({
@@ -43,6 +43,7 @@ const ImageCard = ({
   status = "pending",
   progress_pct,
   blurUrl,
+  OnDelete,
 }: ImageCardProps) => {
   const [loaded, setLoaded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -80,15 +81,6 @@ const ImageCard = ({
     }
   };
 
-  const handleDeleteImage = async (imageId: string) => {
-    try {
-      // Lógica para eliminar la imagen de la base de datos
-      await deleteImage(imageId);
-    } catch (error) {
-      console.error("Error deleting image:", error);
-    }
-  };
-
   return (
     <div
       className="relative sm:w-fit aspect-square border border-[var(--border)] dark:border-[var(--border)] overflow-hidden cursor-pointer group"
@@ -118,7 +110,7 @@ const ImageCard = ({
             className="w-56 rounded-2xl shadow-xl p-2 space-y-1"
             align="end"
           >
-            <DropdownMenuItem onClick={() => handleDeleteImage(id)}>
+            <DropdownMenuItem onClick={() => OnDelete(id)}>
               <X className="w-4 h-4 mr-2" /> Delete
             </DropdownMenuItem>
             <DropdownMenuItem>

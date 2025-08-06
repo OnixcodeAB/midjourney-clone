@@ -5,6 +5,8 @@ import ImageCard from "./ImageCard";
 import { useSocket } from "@/hooks/useSocket"; // Updated to useSocket
 import { useRouter } from "next/navigation";
 import { getPaginatedImagesForUser } from "@/app/actions/image/getPaginatedImagesForUser";
+import { deleteImageById } from "@/app/actions/image/deleteImageById";
+import { toast } from "sonner";
 
 interface Props {
   images: Image[];
@@ -36,7 +38,7 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
     const offset = page * limit;
 
     try {
-      const result = await getPaginatedImagesForUser(limit, offset,{noCache:true});
+      const result = await getPaginatedImagesForUser(limit, offset);
 
       if (result.images) {
         const newImages = result.images.filter(
@@ -95,6 +97,20 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
     }
   }, []);
 
+  const handleDeleteImage = async (imageId: string) => {
+    const { success } = await deleteImageById(imageId);
+    if (success) {
+      return toast.success("Deleting Image", {
+        description: "Your have been deleted",
+      });
+    } else {
+      return toast.error("Deleting Image", {
+        description:
+          "An error occurred while deleting the image,please try again later.",
+      });
+    }
+  };
+
   // Render memoizado de tarjetas
   const renderImageCard = useCallback(
     (img: Image) => (
@@ -110,6 +126,7 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
             ? "Generating..."
             : img.prompt
         }
+        OnDelete={handleDeleteImage}
       />
     ),
     []
