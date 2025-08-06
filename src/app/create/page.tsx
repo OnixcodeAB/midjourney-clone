@@ -2,16 +2,6 @@ import CreateGrid from "@/components/Create/CreateGrid";
 import { getImagesForUser } from "../actions/image/getImagesForUser";
 import { auth } from "@clerk/nextjs/server";
 
-interface ImageProps {
-  id: string;
-  url: string;
-  prompt: string;
-  provider: string;
-  status?: "pending" | "running" | "completed";
-  progress_pct?: number;
-  createdat: string;
-  search_text?: string;
-}
 
 export default async function CreatePage() {
   const { userId } = await auth();
