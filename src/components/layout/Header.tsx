@@ -212,7 +212,7 @@ export default function Header() {
 
                 <VariationsPopover />
 
-                <PresetPopover />
+                {/* <PresetPopover /> */}
                 {/* Remix/Generate Button */}
                 <HelpPopover />
               </div>
