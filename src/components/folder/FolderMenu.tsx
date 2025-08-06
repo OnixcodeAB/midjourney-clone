@@ -19,7 +19,7 @@ export const FolderMenu: React.FC<{
         <button
           type="button"
           aria-label="More options"
-          className="cursor-pointer transition"
+          className="cursor-pointer transition text-muted-foreground hover:text-foreground"
         >
           <MoreHorizontal className="w-5 h-5" />
         </button>
@@ -27,11 +27,11 @@ export const FolderMenu: React.FC<{
       <PopoverContent
         align="start"
         sideOffset={8}
-        className="p-2 w-48 rounded-2xl shadow-xl bg-background border border-border"
+        className="p-2 w-48 rounded-xl shadow-md bg-popover border border-border"
       >
         <button
           type="button"
-          className="flex items-center gap-2 w-full px-3 py-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 transition text-left"
+          className="flex items-center gap-2 w-full px-3 py-2 rounded hover:bg-accent transition text-left text-popover-foreground"
           onClick={() => {
             setMenuOpen(false);
             setTimeout(onRename, 10);
@@ -42,7 +42,7 @@ export const FolderMenu: React.FC<{
         </button>
         <button
           type="button"
-          className="flex items-center gap-2 w-full px-3 py-2 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-red-600 transition text-left mt-1"
+          className="flex items-center gap-2 w-full px-3 py-2 rounded hover:bg-accent text-destructive transition text-left mt-1"
           onClick={() => {
             setMenuOpen(false);
             onDelete();
