@@ -25,7 +25,7 @@ export const FolderHeader: React.FC<{
         <input
           ref={inputRef}
           aria-label="Rename folder"
-          className="text-xl font-semibold bg-transparent border-b border-neutral-400 outline-none w-48"
+          className="text-xl font-semibold bg-transparent border-b border-border outline-none w-32"
           value={renameValue}
           onChange={(e) => onRenameChange(e.target.value)}
           onBlur={onFinishRename}
