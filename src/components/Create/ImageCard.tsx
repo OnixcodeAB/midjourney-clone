@@ -79,7 +79,22 @@ const ImageCard = ({
     }
   };
 
-  return (
+  const handleDeleteImage = async (imageId: string) => {
+    try {
+      // Lógica para eliminar la imagen de la base de datos
+      const response = await fetch(`/api/images/${imageId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete image");
+      }
+
+      console.log("Image deleted successfully");
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+  };
     <div
       className="relative sm:w-fit aspect-square border border-[var(--border)] dark:border-[var(--border)] overflow-hidden cursor-pointer group"
       onClick={handleClick}
@@ -108,7 +123,9 @@ const ImageCard = ({
             className="w-56 rounded-2xl shadow-xl p-2 space-y-1"
             align="end"
           >
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDeleteImage(id)}>
+              <X className="w-4 h-4 mr-2" /> Delete
+            </DropdownMenuItem>
               <Plus className="w-4 h-4 mr-2" /> Select
             </DropdownMenuItem>
             <DropdownMenuItem>
