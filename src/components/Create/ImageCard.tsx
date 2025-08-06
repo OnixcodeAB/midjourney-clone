@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { useFolders } from "@/app/context/FolderContext";
 import { addFolderItem } from "@/app/actions/folders/addFolderItem";
+import { deleteImage } from "@/app/actions/image/deleteImage";
 
 interface ImageCardProps {
   id: string;
@@ -82,15 +83,7 @@ const ImageCard = ({
   const handleDeleteImage = async (imageId: string) => {
     try {
       // Lógica para eliminar la imagen de la base de datos
-      const response = await fetch(`/api/images/${imageId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete image");
-      }
-
-      console.log("Image deleted successfully");
+      await deleteImage(imageId);
     } catch (error) {
       console.error("Error deleting image:", error);
     }
