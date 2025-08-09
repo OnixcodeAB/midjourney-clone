@@ -103,12 +103,14 @@ export default function Header() {
     }
     const originalPrompt = prompt;
     setPrompt("");
-    const {success, error} = await generateImageAndSave({
+    //console.log({ prompt, ratio, quality, previews });
+    const { success, error } = await generateImageAndSave({
       prompt,
       aspect: ratio || undefined,
       quality,
-      // You can also pass previews here if needed for your logic
+      imagRefer: previews.length > 0 ? previews : undefined, // Pass existing images if any
     });
+
     router.push("/create");
     if (!success) {
       setPrompt(originalPrompt);
