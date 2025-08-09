@@ -81,7 +81,7 @@ async function fetchAsUploadable(
 
 // ---- main ------------------------------------------------------------------
 
-export async function generateImageAndSave({
+export async function ImagenCreation({
   prompt,
   aspect,
   quality,
