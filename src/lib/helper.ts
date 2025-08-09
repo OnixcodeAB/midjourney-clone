@@ -123,68 +123,81 @@ export function splitIntoColumns<T>(data: T[], columns: number): T[][] {
 
 type ImgMime = "image/png" | "image/jpeg" | "image/webp";
 
-const EXT_TO_MIME: Record<string, ImgMime> = {
+type ImgExt = "png" | "jpg" | "webp";
+
+const MIME_TO_EXT: Record<string, ImgMime> = {
   png: "image/png",
   jpg: "image/jpeg",
   jpeg: "image/jpeg",
   webp: "image/webp",
 };
 
-export function decideMimeAndExt(from: { header?: string; url?: string }): { mime: ImgMime; ext: keyof typeof EXT_TO_MIME } {
-  const h = (from.header || "").toLowerCase();
-  if (h.includes("image/png"))  return { mime: "image/png",  ext: "png"  };
-  if (h.includes("image/jpeg")) return { mime: "image/jpeg", ext: "jpg"  };
+function inferFromHeaderOrUrl(
+  header?: string | null,
+  url?: string
+): { mime: ImgMime; ext: ImgExt } {
+  const h = (header || "").toLowerCase();
+  if (h.includes("image/png")) return { mime: "image/png", ext: "png" };
+  if (h.includes("image/jpeg")) return { mime: "image/jpeg", ext: "jpg" };
   if (h.includes("image/webp")) return { mime: "image/webp", ext: "webp" };
 
-  const u = (from.url || "").toLowerCase();
-  if (u.endsWith(".png"))  return { mime: "image/png",  ext: "png"  };
-  if (u.endsWith(".jpg") || u.endsWith(".jpeg")) return { mime: "image/jpeg", ext: "jpg" };
+  const u = (url || "").toLowerCase();
+  if (u.endsWith(".png")) return { mime: "image/png", ext: "png" };
+  if (u.endsWith(".jpg") || u.endsWith(".jpeg"))
+    return { mime: "image/jpeg", ext: "jpg" };
   if (u.endsWith(".webp")) return { mime: "image/webp", ext: "webp" };
 
-  // safe default
   return { mime: "image/png", ext: "png" };
-}
+} // safe default
 
-export async function fetchAsUploadable(url: string, nameBase = "img", forcePng = false): Promise<Uploadable> {
-  // data URL path
+export async function fetchAsUploadable(
+  url: string,
+  nameBase = "img",
+  {
+    forcePng = false,
+    timeoutMs = 20000,
+  }: { forcePng?: boolean; timeoutMs?: number } = {}
+): Promise<Uploadable> {
+  // Data URL path (server-safe; use Buffer)
   if (url.startsWith("data:")) {
-    const m = /^data:(image\/(png|jpeg|webp));base64,(.*)$/i.exec(url);
+    const m = /^data:(image\/(png|jpeg|webp));base64,([\s\S]+)$/i.exec(url);
     const mime = (m?.[1]?.toLowerCase() as ImgMime | undefined) ?? "image/png";
-    const ext: keyof typeof EXT_TO_MIME = mime === "image/png" ? "png" : mime === "image/webp" ? "webp" : "jpg";
-    if (forcePng && mime !== "image/png") throw new Error("Mask must be a PNG (data URL is not PNG).");
-
-    const b64 = m?.[3] ?? "";
-    const buf = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-    return toFile(new Blob([buf], { type: mime }), `${nameBase}.${ext}`);
+    if (forcePng && mime !== "image/png") throw new Error("Mask must be PNG.");
+    const ext = MIME_TO_EXT[mime];
+    const buf = Buffer.from(m?.[3] ?? "", "base64");
+    return toFile(new Blob([buf], { type: mime }), `${nameBase}.${ext}`, {
+      type: mime,
+    });
   }
 
-  // normal URL path
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch image: ${url}`);
+  // Remote URL with timeout + Accept hint
+  const ac = new AbortController();
+  const t = setTimeout(() => ac.abort(), timeoutMs);
+  const res = await fetch(url, {
+    signal: ac.signal,
+    headers: {
+      Accept: "image/avif,image/webp,image/png,image/jpeg;q=0.9,*/*;q=0.8",
+    },
+  }).finally(() => clearTimeout(t));
 
-  // Use the server-provided MIME when possible
-  const headerType = res.headers.get("content-type") || undefined;
-  const blob = await res.blob(); // this preserves the MIME for us
-  const contentType = (blob.type || headerType || "").toLowerCase();
+  if (!res.ok)
+    throw new Error(`Failed to fetch image: ${url} (HTTP ${res.status})`);
 
-  // Decide final mime/ext
-  let { mime, ext } = decideMimeAndExt({ header: contentType, url });
-
-  if (forcePng) {
-    // Do NOT spoof: ensure the blob is actually PNG
-    if (contentType !== "image/png") {
-      throw new Error("Mask must be a real PNG with alpha (server did not return image/png).");
-    }
-    mime = "image/png";
-    ext = "png";
+  const { mime: inferredMime, ext: inferredExt } = inferFromHeaderOrUrl(
+    res.headers.get("content-type"),
+    url
+  );
+  if (forcePng && inferredMime !== "image/png") {
+    throw new Error("Mask must be a PNG with transparency.");
   }
 
-  // If blob.type was empty, rebuild a blob with the correct MIME so FormData sets it properly
-  const finalBlob = contentType ? blob : new Blob([await blob.arrayBuffer()], { type: mime });
-  //console.log({finalBlob})
+  const ab = await res.arrayBuffer();
+  const mime: ImgMime = forcePng ? "image/png" : inferredMime;
+  const ext: ImgExt = forcePng ? "png" : inferredExt;
 
-  // Some runtimes lose File.type on inspection; the SDK reads Blob.type at append-time
-  const file = await toFile(finalBlob, `${nameBase}.${ext}`, { type: mime });
-  //console.log(file)
-  return file;
+  // Optional: ensure < 25MB (OpenAI limit)
+  // if (ab.byteLength > 25 * 1024 * 1024) throw new Error("Image exceeds 25MB limit.");
+
+  const blob = new Blob([ab], { type: mime });
+  return toFile(blob, `${nameBase}.${ext}`, { type: mime }); // ✅ crucial to keep MIME
 }
