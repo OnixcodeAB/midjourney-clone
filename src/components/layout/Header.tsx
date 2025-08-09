@@ -12,12 +12,14 @@ import { BannerModal } from "./Modals/BannerModal";
 import { useUser } from "@clerk/nextjs";
 import { checkOnboardingStatus } from "@/app/actions/db/checkOnboardingStatus";
 import { generateImageAndSave } from "@/app/actions/openAI/generateImageAndSaveV3";
+import { ImagenCreation } from "@/app/actions/openAI/generateImagenV4";
 import PresetPopover from "./Popover/PresetPopover";
 import HelpPopover from "./Popover/helpPopoever";
 import TooltipButton from "./Button/TooltipButton";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import VariationsPopover from "./Popover/VariationsPopover";
+
 
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
@@ -101,14 +103,20 @@ export default function Header() {
       });
       return;
     }
+    //Infer scenario
+    const refs = (fileNames ?? []).filter(Boolean)
+    
+    let mode: "generate" | "reference" | "edit" = "generate";
+
     const originalPrompt = prompt;
     setPrompt("");
     //console.log({ prompt, ratio, quality, previews });
-    const { success, error } = await generateImageAndSave({
+    const { success, error } = await ImagenCreation({
       prompt,
       aspect: ratio || undefined,
       quality,
-      imagRefer: previews.length > 0 ? previews : undefined, // Pass existing images if any
+      mode: "generate",
+      imageRefs: fileNames.length > 0 ? fileNames : undefined, // Pass file names for uploads
     });
 
     router.push("/create");
