@@ -9,7 +9,7 @@ import {
 } from "@/lib/helper";
 import { query } from "@lib/db";
 import { OpenAI } from "openai";
-import { toFile, Uploadable } from "openai/uploads";
+import { Uploadable } from "openai/uploads";
 import { v2 as cloudinary } from "cloudinary";
 import { AspectRatio } from "../../context/HeaderContext";
 import { checkUsageLimit } from "@/lib/usageLimits";
