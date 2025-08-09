@@ -15,9 +15,6 @@ import { AspectRatio } from "../../context/HeaderContext";
 import { checkUsageLimit } from "@/lib/usageLimits";
 import { invalidateCache } from "@/lib/redis";
 
-type Aspect = "1024x1024" | "1024x1536" | "1536x1024";
-type Mode = "generate" | "reference" | "edit";
-
 export interface ImageRecord {
   id: string;
   url: string;
@@ -26,53 +23,6 @@ export interface ImageRecord {
   status: string;
   createdat?: string;
 }
-
-// ---- helpers ---------------------------------------------------------------
-
-async function fetchAsUint8Array(url: string): Promise<Uint8Array> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch image: ${url}`);
-  const ab = await res.arrayBuffer();
-  return new Uint8Array(ab);
-}
-
-function ensureMaxImages(arr: Uint8Array[], max = 10) {
-  if (arr.length > max) {
-    throw new Error(`Too many images provided. Max ${max}.`);
-  }
-}
-
-/* async function fetchAsUploadable(
-  url: string,
-  fallbackBase = "img"
-): Promise<Uploadable> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch image: ${url}`);
-
-  const ct = res.headers.get("content-type") ?? "";
-  const ab = await res.arrayBuffer();
-
-  // intenta inferir la extensión por content-type o por la URL
-  let ext = "png";
-  if (ct.includes("jpeg") || ct.includes("jpg")) ext = "jpg";
-  else if (ct.includes("webp")) ext = "webp";
-  else if (ct.includes("png")) ext = "png";
-  else {
-    const lower = url.toLowerCase();
-    if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) ext = "jpg";
-    else if (lower.endsWith(".webp")) ext = "webp";
-    else if (lower.endsWith(".png")) ext = "png";
-  }
-
-  const name = `${fallbackBase}.${ext}`;
-  // toFile acepta Blob/ArrayBuffer/ReadableStream + nombre
-  return await toFile(
-    new Blob([ab], { type: ct || "application/octet-stream" }),
-    name
-  );
-} */
-
-// ---- main ------------------------------------------------------------------
 
 export async function ImagenCreation({
   prompt,

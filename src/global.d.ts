@@ -110,6 +110,9 @@ declare global {
   initialLikeCount?: number;
   initialIsLiked?: boolean;
 }
+type Aspect = "1024x1024" | "1024x1536" | "1536x1024";
+type Mode = "generate" | "reference" | "edit";
+
 interface GenerateImageParams {
   prompt: string;
   aspect?: Aspect;
