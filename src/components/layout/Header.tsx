@@ -20,10 +20,9 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import VariationsPopover from "./Popover/VariationsPopover";
 
-
 export default function Header() {
   const [isEditing, setIsEditing] = useState(false);
-  const { prompt, setPrompt } = usePrompt();
+  const { prompt, setPrompt, baseImageUrl, maskUrl } = usePrompt();
   const { ratio, quality } = useHeaderSettings();
 
   const pathname = usePathname();
@@ -104,30 +103,76 @@ export default function Header() {
       return;
     }
     //Infer scenario
-    const refs = (fileNames ?? []).filter(Boolean)
-    
+    const refs = (previews ?? []).filter(Boolean);
+    const hasBase = !!baseImageUrl;
+    const hasMask = !!maskUrl;
+
     let mode: "generate" | "reference" | "edit" = "generate";
+    if (hasBase && hasMask) {
+      mode = "edit"; // 3) Edit with mask
+    } else if (refs.length > 0) {
+      mode = "reference"; // 2) New image using references
+    } // else 1) Text → Image (generate)
+
+    // Validate inputs by mode
+    if (mode === "reference" && refs.length === 0) {
+      toast.error("Reference images needed", {
+        description: "Add at least one image to guide the new creation.",
+      });
+      return;
+    }
+    if (mode === "edit" && (!hasBase || !hasMask)) {
+      toast.error("Base image and mask required", {
+        description:
+          "Editing needs a base image and a PNG mask with transparency.",
+      });
+      return;
+    }
+    if (refs.length > 4) {
+      toast.error("Too many images", {
+        description: "You can provide up to 4 images total.",
+      });
+      return;
+    }
 
     const originalPrompt = prompt;
     setPrompt("");
-    //console.log({ prompt, ratio, quality, previews });
-    const { success, error } = await ImagenCreation({
-      prompt,
-      aspect: ratio || undefined,
-      quality,
-      mode: "generate",
-      imageRefs: fileNames.length > 0 ? fileNames : undefined, // Pass file names for uploads
-    });
 
-    router.push("/create");
-    if (!success) {
+    try {
+      const payload: GenerateImageParams = {
+        prompt,
+        aspect: ratio || undefined,
+        mode,
+      };
+
+      if (mode === "generate") {
+        payload.quality = quality; // quality only for pure generation
+      } else {
+        if (refs.length) payload.imageRefs = refs;
+        if (mode === "edit") {
+          payload.baseImageUrl = baseImageUrl;
+          payload.maskUrl = maskUrl;
+        }
+      }
+      //console.log({ prompt, ratio, quality, previews });
+      const { success, error } = await ImagenCreation(payload);
+
+      router.push("/create");
+      if (!success) {
+        setPrompt(originalPrompt);
+        toast.error("Generation failed", {
+          description: `${error || "Try again later"}`,
+        });
+      }
+    } catch (e: any) {
       setPrompt(originalPrompt);
-      toast.error("Generation failed", {
-        description: `${error || "Try again later"}`,
+      toast.error("Unexpected error", {
+        description: e?.message || String(e),
       });
     }
   };
 
+  // Only show header on specific routes
   if (
     pathname !== "/" &&
     pathname !== "/create" &&

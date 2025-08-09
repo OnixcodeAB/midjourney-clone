@@ -1,5 +1,5 @@
-
 import OpenAI from "openai";
+import { toFile, Uploadable } from "openai/uploads";
 import { query } from "./db";
 
 // Helper to parse and validate the aspect ratio
@@ -119,4 +119,72 @@ export function splitIntoColumns<T>(data: T[], columns: number): T[][] {
     result[index % columns].push(item);
   });
   return result;
+}
+
+type ImgMime = "image/png" | "image/jpeg" | "image/webp";
+
+const EXT_TO_MIME: Record<string, ImgMime> = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  webp: "image/webp",
+};
+
+export function decideMimeAndExt(from: { header?: string; url?: string }): { mime: ImgMime; ext: keyof typeof EXT_TO_MIME } {
+  const h = (from.header || "").toLowerCase();
+  if (h.includes("image/png"))  return { mime: "image/png",  ext: "png"  };
+  if (h.includes("image/jpeg")) return { mime: "image/jpeg", ext: "jpg"  };
+  if (h.includes("image/webp")) return { mime: "image/webp", ext: "webp" };
+
+  const u = (from.url || "").toLowerCase();
+  if (u.endsWith(".png"))  return { mime: "image/png",  ext: "png"  };
+  if (u.endsWith(".jpg") || u.endsWith(".jpeg")) return { mime: "image/jpeg", ext: "jpg" };
+  if (u.endsWith(".webp")) return { mime: "image/webp", ext: "webp" };
+
+  // safe default
+  return { mime: "image/png", ext: "png" };
+}
+
+export async function fetchAsUploadable(url: string, nameBase = "img", forcePng = false): Promise<Uploadable> {
+  // data URL path
+  if (url.startsWith("data:")) {
+    const m = /^data:(image\/(png|jpeg|webp));base64,(.*)$/i.exec(url);
+    const mime = (m?.[1]?.toLowerCase() as ImgMime | undefined) ?? "image/png";
+    const ext: keyof typeof EXT_TO_MIME = mime === "image/png" ? "png" : mime === "image/webp" ? "webp" : "jpg";
+    if (forcePng && mime !== "image/png") throw new Error("Mask must be a PNG (data URL is not PNG).");
+
+    const b64 = m?.[3] ?? "";
+    const buf = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    return toFile(new Blob([buf], { type: mime }), `${nameBase}.${ext}`);
+  }
+
+  // normal URL path
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch image: ${url}`);
+
+  // Use the server-provided MIME when possible
+  const headerType = res.headers.get("content-type") || undefined;
+  const blob = await res.blob(); // this preserves the MIME for us
+  const contentType = (blob.type || headerType || "").toLowerCase();
+
+  // Decide final mime/ext
+  let { mime, ext } = decideMimeAndExt({ header: contentType, url });
+
+  if (forcePng) {
+    // Do NOT spoof: ensure the blob is actually PNG
+    if (contentType !== "image/png") {
+      throw new Error("Mask must be a real PNG with alpha (server did not return image/png).");
+    }
+    mime = "image/png";
+    ext = "png";
+  }
+
+  // If blob.type was empty, rebuild a blob with the correct MIME so FormData sets it properly
+  const finalBlob = contentType ? blob : new Blob([await blob.arrayBuffer()], { type: mime });
+  //console.log({finalBlob})
+
+  // Some runtimes lose File.type on inspection; the SDK reads Blob.type at append-time
+  const file = await toFile(finalBlob, `${nameBase}.${ext}`, { type: mime });
+  //console.log(file)
+  return file;
 }

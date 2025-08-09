@@ -110,4 +110,15 @@ declare global {
   initialLikeCount?: number;
   initialIsLiked?: boolean;
 }
+interface GenerateImageParams {
+  prompt: string;
+  aspect?: Aspect;
+  quality?: QualityType; // used only for text->image
+  mode?: Mode; // "generate" (default), "reference", "edit"
+  imageRefs?: string[]; // scenario 2: reference image URLs (<=10 total with base)
+  baseImageUrl?: string; // scenario 3: image to edit (mask applies to this)
+  maskUrl?: string; // scenario 3: PNG with alpha channel (transparent = editable)
+  // Back-compat alias:
+  imagRefer?: string[]; // (will be merged into imageRefs if provided)
+}
 }

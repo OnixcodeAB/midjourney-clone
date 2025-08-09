@@ -1,7 +1,12 @@
 "use server";
 
 import { currentUser } from "@clerk/nextjs/server";
-import { generateImageMetadata, logError, parseAspect } from "@/lib/helper";
+import {
+  fetchAsUploadable,
+  generateImageMetadata,
+  logError,
+  parseAspect,
+} from "@/lib/helper";
 import { query } from "@lib/db";
 import { OpenAI } from "openai";
 import { toFile, Uploadable } from "openai/uploads";
@@ -12,18 +17,6 @@ import { invalidateCache } from "@/lib/redis";
 
 type Aspect = "1024x1024" | "1024x1536" | "1536x1024";
 type Mode = "generate" | "reference" | "edit";
-
-interface GenerateImageParams {
-  prompt: string;
-  aspect?: Aspect;
-  quality?: QualityType; // used only for text->image
-  mode?: Mode; // "generate" (default), "reference", "edit"
-  imageRefs?: string[]; // scenario 2: reference image URLs (<=10 total with base)
-  baseImageUrl?: string; // scenario 3: image to edit (mask applies to this)
-  maskUrl?: string; // scenario 3: PNG with alpha channel (transparent = editable)
-  // Back-compat alias:
-  imagRefer?: string[]; // (will be merged into imageRefs if provided)
-}
 
 export interface ImageRecord {
   id: string;
@@ -49,7 +42,7 @@ function ensureMaxImages(arr: Uint8Array[], max = 10) {
   }
 }
 
-async function fetchAsUploadable(
+/* async function fetchAsUploadable(
   url: string,
   fallbackBase = "img"
 ): Promise<Uploadable> {
@@ -77,7 +70,7 @@ async function fetchAsUploadable(
     new Blob([ab], { type: ct || "application/octet-stream" }),
     name
   );
-}
+} */
 
 // ---- main ------------------------------------------------------------------
 
