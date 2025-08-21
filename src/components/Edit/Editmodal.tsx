@@ -73,7 +73,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-background flex mt-6 justify-center">
       <button
         type="button"
         title="btn-close"
@@ -192,6 +192,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         )}
       </div>
 
+      {/*  Input area for prompt and submit button */}
       <div className="absolute bottom-6 min-w-4xl flex items-center bg-accent rounded-full px-4 py-2 shadow-md border border-border">
         <button
           type="button"
@@ -201,12 +202,12 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         >
           <Plus />
         </button>
-        <input
-          type="text"
+        <textarea
           placeholder="Describe lo que quieres añadir, quitar o sustituir…"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          className="bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground text-md"
+          className=" bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground text-md resize-none"
+          rows={1}
         />
         <button
           type="button"
