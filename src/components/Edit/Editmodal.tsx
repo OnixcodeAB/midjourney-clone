@@ -228,7 +228,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
             placeholder="Describe lo que quieres añadir, quitar o sustituir…"
             value={prompt}
             onChange={handlePromptChange}
-            className="bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground text-md resize-none py-2 "
+            className="bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground placeholder:pt-2.5 text-md resize-none py-2 "
           />
           <button
             type="button"
