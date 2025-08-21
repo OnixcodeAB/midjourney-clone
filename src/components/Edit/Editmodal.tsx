@@ -65,7 +65,6 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
 
   const handleSubmit = async () => {
     if (!canvasRef.current || !imgSrc) return;
-
     // Get the canvas data URL
     const maskUrl = canvasRef.current.getDataURLFromMask();
     if (!maskUrl) {
