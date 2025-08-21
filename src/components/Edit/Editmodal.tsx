@@ -12,6 +12,7 @@ import {
   Plus,
   ArrowUp,
 } from "lucide-react";
+import { ImagenCreation } from "@/app/actions/openAI/generateImagenV4";
 
 interface Props {
   isOpen: boolean;
@@ -62,12 +63,38 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
     }
   }, [editing]);
 
-  const handleSubmit = () => {
-    canvasRef.current?.getDataURLFromMask();
-    console.log("🖼️ Original image:", imgSrc);
-    console.log("📝 Prompt:", prompt);
-    setEditing(false);
-    onClose();
+  const handleSubmit = async () => {
+    if (!canvasRef.current || !imgSrc) return;
+
+    // Get the canvas data URL
+    const maskUrl = canvasRef.current.getDataURLFromMask();
+    if (!maskUrl) {
+      console.error("No mask URL available");
+      return;
+    }
+    // Set the component to a submitting state
+    try {
+      const result = await ImagenCreation({
+        prompt: prompt,
+        mode: "edit",
+        baseImageUrl: imgSrc,
+        maskUrl: maskUrl,
+        // Pass other parameters like aspect and quality if you have them
+        //aspect:"1024x1536",
+        //quality: "high",
+      });
+
+      if (result.success) {
+        console.log("Image created successfully:", result.image);
+        // You can now close the modal and update your UI with the new image
+        onClose();
+      } else {
+        console.error("Image creation failed:", result.error);
+        // Handle the error, maybe show a toast or a message to the user
+      }
+    } catch (err) {
+      console.error("An unexpected error occurred:", err);
+    }
   };
 
   const handlePromptChange = (e: any) => {

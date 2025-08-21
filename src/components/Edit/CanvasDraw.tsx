@@ -21,7 +21,7 @@ export type CanvasDrawRef = {
   toggleEraser: () => void;
   undo: () => void;
   redo: () => void;
-  getDataURLFromMask: () => void;
+  getDataURLFromMask: () => string;
   loadImage: (url: string) => void;
   setBrushSize: (size: number) => void;
   setBrushColor: (color: string) => void;
@@ -404,6 +404,7 @@ const CanvasDraw = forwardRef<CanvasDrawRef, CanvasDrawProps>(
     function getDataURLFromMask() {
       const url = getMaskDataURL();
       getDataURL(url);
+      return url;
     }
 
     return (
