@@ -30,6 +30,17 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [numRows, setNumRows] = useState(1);
 
+  // Inside your EditModal component
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      // Reset the height to ensure scrollHeight is accurate
+      textareaRef.current.style.height = "auto";
+      // Set the height to the scroll height
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [prompt]);
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -59,12 +70,12 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
     onClose();
   };
 
-  const handlePromptChange = (e) => {
+  const handlePromptChange = (e: any) => {
     const text = e.target.value;
     setPrompt(text);
     const newRows = text.split("\n").length;
     // Ensure the number of rows doesn't get too small (e.g., min 1 row)
-    setNumRows(Math.max(1, newRows));
+    setNumRows(Math.max(1, Math.min(6, newRows))); // e.g., max 6 rows
   };
 
   // Base styles for all buttons
@@ -87,12 +98,12 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         type="button"
         title="btn-close"
         onClick={onClose}
-        className={`absolute top-4 left-4 ${closeButtonStyles}`}
+        className={`absolute top-2 left-4 ${closeButtonStyles}`}
       >
         <X className="size-6" />
       </button>
 
-      <div className="absolute top-6 right-4 flex items-center gap-3 text-foreground">
+      <div className="absolute top-2 right-4 flex items-center gap-3 text-foreground">
         {editing ? (
           <>
             <button
@@ -202,30 +213,32 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
       </div>
 
       {/*  Input area for prompt and submit button */}
-      <div className="absolute bottom-6 min-w-4xl flex items-center bg-accent rounded-full px-4 py-2 shadow-md border border-border">
-        <button
-          type="button"
-          title="."
-          onClick={handleSubmit}
-          className="text-2xl text-center flex items-center justify-center mr-2 text-foreground border border-muted-foreground rounded-full w-8 h-8"
-        >
-          <Plus />
-        </button>
-        <textarea
-          placeholder="Describe lo que quieres añadir, quitar o sustituir…"
-          value={prompt}
-          onChange={handlePromptChange}
-          className=" bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground text-md resize-none"
-          rows={numRows}
-        />
-        <button
-          type="button"
-          title="."
-          onClick={handleSubmit}
-          className={`${submitButtonStyles}`}
-        >
-          <ArrowUp />
-        </button>
+      <div className="absolute bottom-6 min-w-4xl flex flex-col bg-accent rounded-xl px-4 py-2 shadow-md border border-border">
+        <div className="flex items-center w-full">
+          <button
+            type="button"
+            title="."
+            onClick={handleSubmit}
+            className="text-2xl text-center flex items-center justify-center mr-2 text-foreground border border-muted-foreground rounded-full w-8 h-8 flex-shrink-0"
+          >
+            <Plus />
+          </button>
+          <textarea
+            ref={textareaRef}
+            placeholder="Describe lo que quieres añadir, quitar o sustituir…"
+            value={prompt}
+            onChange={handlePromptChange}
+            className="bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground text-md resize-none py-2 "
+          />
+          <button
+            type="button"
+            title="."
+            onClick={handleSubmit}
+            className="text-background bg-primary rounded-full w-8 h-8 flex justify-center items-center hover:bg-primary/90 flex-shrink-0"
+          >
+            <ArrowUp />
+          </button>
+        </div>
       </div>
     </div>
   );
