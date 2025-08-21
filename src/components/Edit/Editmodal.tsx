@@ -28,6 +28,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
   const [prompt, setPrompt] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [numRows, setNumRows] = useState(1);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -56,6 +57,14 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
     console.log("📝 Prompt:", prompt);
     setEditing(false);
     onClose();
+  };
+
+  const handlePromptChange = (e) => {
+    const text = e.target.value;
+    setPrompt(text);
+    const newRows = text.split("\n").length;
+    // Ensure the number of rows doesn't get too small (e.g., min 1 row)
+    setNumRows(Math.max(1, newRows));
   };
 
   // Base styles for all buttons
@@ -205,9 +214,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         <textarea
           placeholder="Describe lo que quieres añadir, quitar o sustituir…"
           value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
+          onChange={handlePromptChange}
           className=" bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground text-md resize-none"
-          rows={1}
+          rows={numRows}
         />
         <button
           type="button"
