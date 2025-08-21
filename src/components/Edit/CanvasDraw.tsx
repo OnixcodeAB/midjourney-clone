@@ -89,7 +89,7 @@ const CanvasDraw = forwardRef<CanvasDrawRef, CanvasDrawProps>(
       offscreenCanvasRef.current.height = canvasHeight;
 
       if (initialImageSrc) {
-        loadImage(initialImageSrc);
+        loadImage(initialImageSrc, true);
       } else {
         // Draw a blank background if no image
         const tmp = document.createElement("canvas");
@@ -101,6 +101,7 @@ const CanvasDraw = forwardRef<CanvasDrawRef, CanvasDrawProps>(
           ctx.fillRect(0, 0, tmp.width, tmp.height);
         }
         drawBackground(tmp);
+        saveState();
       }
     }, [initialImageSrc, canvasWidth, canvasHeight]);
 
@@ -240,11 +241,17 @@ const CanvasDraw = forwardRef<CanvasDrawRef, CanvasDrawProps>(
       return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     }
 
-    function loadImage(url: string) {
+    function loadImage(url: string, isInitialLoad = false) {
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.src = url;
-      img.onload = () => drawBackground(img);
+      img.onload = () => {
+        drawBackground(img);
+        if (isInitialLoad) {
+          // Save initial state immediately after drawing the background
+          saveState();
+        }
+      };
     }
 
     function drawBackground(image: CanvasImageSource) {
@@ -402,7 +409,12 @@ const CanvasDraw = forwardRef<CanvasDrawRef, CanvasDrawProps>(
     return (
       <>
         {/* <canvas ref={bgCanvasRef} className="absolute top-0 left-0 z-0" /> */}
-        <canvas ref={maskCanvasRef} width={canvasWidth} height={canvasHeight} className="absolute top-0 left-0 z-1" />
+        <canvas
+          ref={maskCanvasRef}
+          width={canvasWidth}
+          height={canvasHeight}
+          className="absolute top-0 left-0 z-1"
+        />
         <div
           ref={brushCursorRef}
           className="fixed pointer-events-none border-[3px] border-gray-500 rounded-full hidden z-20 transform -translate-x-1/2 -translate-y-1/2"
