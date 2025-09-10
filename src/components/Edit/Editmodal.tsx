@@ -21,6 +21,8 @@ interface Props {
   alt: string;
 }
 
+type AspectRatio = "1024x1024" | "1024x1536" | "1536x1024";
+
 export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
   const canvasRef = useRef<CanvasDrawRef>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -30,9 +32,23 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [numRows, setNumRows] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for submission loading
 
   // Inside your EditModal component
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Function to calculate aspect ratio
+  const calculateAspectRatio = (width: number, height: number): AspectRatio => {
+    const ratio = width / height;
+    
+    if (ratio >= 0.9 && ratio <= 1.1) {
+      return "1024x1024"; // Square or near-square
+    } else if (ratio > 1.1) {
+      return "1536x1024"; // Landscape (width > height)
+    } else {
+      return "1024x1536"; // Portrait (height > width)
+    }
+  };
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -42,6 +58,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [prompt]);
+  
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -64,23 +81,34 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
   }, [editing]);
 
   const handleSubmit = async () => {
-    if (!canvasRef.current || !imgSrc) return;
-    // Get the canvas data URL
-    const maskUrl = canvasRef.current.getDataURLFromMask();
-    if (!maskUrl) {
-      console.error("No mask URL available");
-      return;
-    }
-    // Set the component to a submitting state
+    if (!canvasRef.current || !imgSrc || isSubmitting) return;
+    
+    setIsSubmitting(true); // Disable UI elements
+    
     try {
+      // Get the canvas data URL
+      const maskUrl = canvasRef.current.getDataURLFromMask();
+      if (!maskUrl) {
+        console.error("No mask URL available");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Calculate aspect ratio from the original image
+      let aspect: AspectRatio = "1024x1024"; // Default
+      if (imgRef.current) {
+        const naturalWidth = imgRef.current.naturalWidth;
+        const naturalHeight = imgRef.current.naturalHeight;
+        aspect = calculateAspectRatio(naturalWidth, naturalHeight);
+      }
+
       const result = await ImagenCreation({
         prompt: prompt,
         mode: "edit",
         baseImageUrl: imgSrc,
         maskUrl: maskUrl,
-        // Pass other parameters like aspect and quality if you have them
-        //aspect:"1024x1536",
-        //quality: "high",
+        aspect: aspect, // Send the calculated aspect ratio
+        // quality: "high", // Uncomment if needed
       });
 
       if (result.success) {
@@ -93,6 +121,8 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
       }
     } catch (err) {
       console.error("An unexpected error occurred:", err);
+    } finally {
+      setIsSubmitting(false); // Re-enable UI elements
     }
   };
 
@@ -116,6 +146,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
     "text-background bg-primary rounded-full w-8 h-8 flex justify-center items-center hover:bg-primary/90";
   const closeButtonStyles = "text-foreground hover:bg-accent rounded-sm p-1";
 
+  // Disabled styles
+  const disabledStyles = "opacity-50 cursor-not-allowed";
+
   if (!isOpen) return null;
 
   return (
@@ -124,7 +157,8 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         type="button"
         title="btn-close"
         onClick={onClose}
-        className={`absolute top-2 left-4 ${closeButtonStyles}`}
+        disabled={isSubmitting} // Disable when submitting
+        className={`absolute top-2 left-4 ${closeButtonStyles} ${isSubmitting ? disabledStyles : ''}`}
       >
         <X className="size-6" />
       </button>
@@ -136,7 +170,8 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="Undo"
               onClick={() => canvasRef.current?.undo()}
-              className={`${buttonBaseStyles} `}
+              disabled={isSubmitting} // Disable when submitting
+              className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               <Undo2 className={`${iconBaseStyles}`} />
             </button>
@@ -144,7 +179,8 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="Redo"
               onClick={() => canvasRef.current?.redo()}
-              className={`${buttonBaseStyles} `}
+              disabled={isSubmitting} // Disable when submitting
+              className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               <Redo2 className={`${iconBaseStyles}`} />
             </button>
@@ -156,7 +192,8 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
             <button
               type="button"
               title="Like"
-              className={`${buttonBaseStyles} `}
+              disabled={isSubmitting} // Disable when submitting
+              className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               <ThumbsUp className={`${iconBaseStyles}`} />
             </button>
@@ -164,7 +201,8 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="Edit (draw)"
               onClick={() => setEditing(!editing)}
-              className={`${buttonBaseStyles} `}
+              disabled={isSubmitting} // Disable when submitting
+              className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               <Brush
                 className={`size-6 ${
@@ -181,7 +219,8 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="cancel"
               onClick={() => setEditing(!editing)}
-              className={textButtonStyles}
+              disabled={isSubmitting} // Disable when submitting
+              className={`${textButtonStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               Cancel
             </button>
@@ -197,7 +236,8 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
                 link.download = `${alt || "image"}.jpg`;
                 link.click();
               }}
-              className={`${buttonBaseStyles}`}
+              disabled={isSubmitting} // Disable when submitting
+              className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               <Download className={`${iconBaseStyles}`} />
             </button>
@@ -210,7 +250,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         </p>
       )}
       <div className="relative">
-        {!imageLoaded && (
+        {(!imageLoaded || isSubmitting) && ( // Show loader during submission too
           <div className="absolute inset-0 flex items-center justify-center text-foreground z-10">
             <Loader className="animate-spin size-6" />
           </div>
@@ -245,24 +285,31 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
             type="button"
             title="."
             onClick={handleSubmit}
+            disabled={isSubmitting} // Disable when submitting
             className="text-2xl text-center flex items-center justify-center mr-2 text-foreground border border-muted-foreground rounded-full w-8 h-8 flex-shrink-0"
           >
-            <Plus />
+            {isSubmitting ? <Loader className="animate-spin size-4" /> : <Plus />}
           </button>
           <textarea
             ref={textareaRef}
             placeholder="Describe lo que quieres añadir, quitar o sustituir…"
             value={prompt}
             onChange={handlePromptChange}
-            className="bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground placeholder:pt-2.5 text-md resize-none py-2 "
+            disabled={isSubmitting} // Disable when submitting
+            className="bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground placeholder:pt-2.5 text-md resize-none py-2 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             type="button"
-            title="."
+            title="Submit"
             onClick={handleSubmit}
-            className="text-background bg-primary rounded-full w-8 h-8 flex justify-center items-center hover:bg-primary/90 flex-shrink-0"
+            disabled={isSubmitting || !prompt.trim()} // Disable when submitting or prompt is empty
+            className={`${submitButtonStyles} ${isSubmitting || !prompt.trim() ? 'opacity-50 cursor-not-allowed hover:bg-primary' : ''}`}
           >
-            <ArrowUp />
+            {isSubmitting ? (
+              <Loader className="animate-spin size-4" />
+            ) : (
+              <ArrowUp />
+            )}
           </button>
         </div>
       </div>
