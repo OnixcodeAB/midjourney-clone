@@ -32,9 +32,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [numRows, setNumRows] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false); // New state for submission loading
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 }); // Store original image dimensions
 
-  // Inside your EditModal component
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Function to calculate aspect ratio
@@ -52,9 +52,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
 
   useEffect(() => {
     if (textareaRef.current) {
-      // Reset the height to ensure scrollHeight is accurate
       textareaRef.current.style.height = "auto";
-      // Set the height to the scroll height
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [prompt]);
@@ -71,6 +69,12 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
     if (imgRef.current && imageLoaded) {
       const { width, height } = imgRef.current.getBoundingClientRect();
       setCanvasSize({ width, height });
+      
+      // Store the natural dimensions of the original image
+      setNaturalSize({
+        width: imgRef.current.naturalWidth,
+        height: imgRef.current.naturalHeight
+      });
     }
   }, [imageLoaded]);
 
@@ -83,11 +87,15 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
   const handleSubmit = async () => {
     if (!canvasRef.current || !imgSrc || isSubmitting) return;
     
-    setIsSubmitting(true); // Disable UI elements
+    setIsSubmitting(true);
     
     try {
-      // Get the canvas data URL
-      const maskUrl = canvasRef.current.getDataURLFromMask();
+      // Get the canvas data URL with the original image dimensions
+      const maskUrl = canvasRef.current.getDataURLFromMask(
+        naturalSize.width,
+        naturalSize.height
+      );
+      
       if (!maskUrl) {
         console.error("No mask URL available");
         setIsSubmitting(false);
@@ -95,34 +103,26 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
       }
 
       // Calculate aspect ratio from the original image
-      let aspect: AspectRatio = "1024x1024"; // Default
-      if (imgRef.current) {
-        const naturalWidth = imgRef.current.naturalWidth;
-        const naturalHeight = imgRef.current.naturalHeight;
-        aspect = calculateAspectRatio(naturalWidth, naturalHeight);
-      }
+      const aspect = calculateAspectRatio(naturalSize.width, naturalSize.height);
 
       const result = await ImagenCreation({
         prompt: prompt,
         mode: "edit",
         baseImageUrl: imgSrc,
         maskUrl: maskUrl,
-        aspect: aspect, // Send the calculated aspect ratio
-        // quality: "high", // Uncomment if needed
+        aspect: aspect,
       });
 
       if (result.success) {
         console.log("Image created successfully:", result.image);
-        // You can now close the modal and update your UI with the new image
         onClose();
       } else {
         console.error("Image creation failed:", result.error);
-        // Handle the error, maybe show a toast or a message to the user
       }
     } catch (err) {
       console.error("An unexpected error occurred:", err);
     } finally {
-      setIsSubmitting(false); // Re-enable UI elements
+      setIsSubmitting(false);
     }
   };
 
@@ -130,8 +130,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
     const text = e.target.value;
     setPrompt(text);
     const newRows = text.split("\n").length;
-    // Ensure the number of rows doesn't get too small (e.g., min 1 row)
-    setNumRows(Math.max(1, Math.min(6, newRows))); // e.g., max 6 rows
+    setNumRows(Math.max(1, Math.min(6, newRows)));
   };
 
   // Base styles for all buttons
@@ -157,7 +156,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         type="button"
         title="btn-close"
         onClick={onClose}
-        disabled={isSubmitting} // Disable when submitting
+        disabled={isSubmitting}
         className={`absolute top-2 left-4 ${closeButtonStyles} ${isSubmitting ? disabledStyles : ''}`}
       >
         <X className="size-6" />
@@ -170,7 +169,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="Undo"
               onClick={() => canvasRef.current?.undo()}
-              disabled={isSubmitting} // Disable when submitting
+              disabled={isSubmitting}
               className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               <Undo2 className={`${iconBaseStyles}`} />
@@ -179,7 +178,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="Redo"
               onClick={() => canvasRef.current?.redo()}
-              disabled={isSubmitting} // Disable when submitting
+              disabled={isSubmitting}
               className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               <Redo2 className={`${iconBaseStyles}`} />
@@ -192,7 +191,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
             <button
               type="button"
               title="Like"
-              disabled={isSubmitting} // Disable when submitting
+              disabled={isSubmitting}
               className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               <ThumbsUp className={`${iconBaseStyles}`} />
@@ -201,7 +200,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="Edit (draw)"
               onClick={() => setEditing(!editing)}
-              disabled={isSubmitting} // Disable when submitting
+              disabled={isSubmitting}
               className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               <Brush
@@ -219,7 +218,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="cancel"
               onClick={() => setEditing(!editing)}
-              disabled={isSubmitting} // Disable when submitting
+              disabled={isSubmitting}
               className={`${textButtonStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               Cancel
@@ -236,7 +235,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
                 link.download = `${alt || "image"}.jpg`;
                 link.click();
               }}
-              disabled={isSubmitting} // Disable when submitting
+              disabled={isSubmitting}
               className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
             >
               <Download className={`${iconBaseStyles}`} />
@@ -250,7 +249,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         </p>
       )}
       <div className="relative">
-        {(!imageLoaded || isSubmitting) && ( // Show loader during submission too
+        {(!imageLoaded || isSubmitting) && (
           <div className="absolute inset-0 flex items-center justify-center text-foreground z-10">
             <Loader className="animate-spin size-6" />
           </div>
@@ -270,6 +269,8 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
             initialImageSrc={imgSrc}
             canvasWidth={canvasSize.width}
             canvasHeight={canvasSize.height}
+            originalWidth={naturalSize.width} // Pass original dimensions to CanvasDraw
+            originalHeight={naturalSize.height}
             getDataURL={(url) => console.log("🎯 Mask URL:", url)}
             onDraw={() => console.log("🖌️ Draw event")}
             onUndo={() => console.log("↩️ Undo")}
@@ -278,14 +279,14 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         )}
       </div>
 
-      {/*  Input area for prompt and submit button */}
+      {/* Input area for prompt and submit button */}
       <div className="absolute bottom-6 min-w-4xl flex flex-col bg-accent rounded-xl px-4 py-2 shadow-md border border-border">
         <div className="flex items-center w-full">
           <button
             type="button"
             title="."
             onClick={handleSubmit}
-            disabled={isSubmitting} // Disable when submitting
+            disabled={isSubmitting}
             className="text-2xl text-center flex items-center justify-center mr-2 text-foreground border border-muted-foreground rounded-full w-8 h-8 flex-shrink-0"
           >
             {isSubmitting ? <Loader className="animate-spin size-4" /> : <Plus />}
@@ -295,14 +296,14 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
             placeholder="Describe lo que quieres añadir, quitar o sustituir…"
             value={prompt}
             onChange={handlePromptChange}
-            disabled={isSubmitting} // Disable when submitting
+            disabled={isSubmitting}
             className="bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground placeholder:pt-2.5 text-md resize-none py-2 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             type="button"
             title="Submit"
             onClick={handleSubmit}
-            disabled={isSubmitting || !prompt.trim()} // Disable when submitting or prompt is empty
+            disabled={isSubmitting || !prompt.trim()}
             className={`${submitButtonStyles} ${isSubmitting || !prompt.trim() ? 'opacity-50 cursor-not-allowed hover:bg-primary' : ''}`}
           >
             {isSubmitting ? (

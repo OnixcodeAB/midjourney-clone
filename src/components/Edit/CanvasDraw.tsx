@@ -14,6 +14,8 @@ export type CanvasDrawProps = {
   onRedo?: () => void;
   canvasWidth?: number;
   canvasHeight?: number;
+  originalWidth?: number; // New prop for original image width
+  originalHeight?: number; // New prop for original image height
 };
 
 export type CanvasDrawRef = {
@@ -21,7 +23,7 @@ export type CanvasDrawRef = {
   toggleEraser: () => void;
   undo: () => void;
   redo: () => void;
-  getDataURLFromMask: () => string;
+  getDataURLFromMask: (targetWidth?: number, targetHeight?: number) => string; // Updated to accept target dimensions
   loadImage: (url: string) => void;
   setBrushSize: (size: number) => void;
   setBrushColor: (color: string) => void;
@@ -41,6 +43,8 @@ const CanvasDraw = forwardRef<CanvasDrawRef, CanvasDrawProps>(
       onRedo,
       canvasWidth = 480,
       canvasHeight = 600,
+      originalWidth = canvasWidth, // Default to canvas dimensions
+      originalHeight = canvasHeight, // Default to canvas dimensions
     },
     ref
   ) => {
@@ -56,6 +60,10 @@ const CanvasDraw = forwardRef<CanvasDrawRef, CanvasDrawProps>(
     const brushSizeRef = useRef(80);
     const brushColorRef = useRef("#ff0000");
     const brushOpacityRef = useRef(0.6);
+
+    // Calculate scaling factors
+    const scaleX = originalWidth / canvasWidth;
+    const scaleY = originalHeight / canvasHeight;
 
     // Offscreen canvas to store the mask before a new stroke
     const offscreenCanvasRef = useRef<HTMLCanvasElement>(
@@ -76,7 +84,8 @@ const CanvasDraw = forwardRef<CanvasDrawRef, CanvasDrawProps>(
       toggleEraser: () => setEraserEnabled((prev) => !prev),
       undo,
       redo,
-      getDataURLFromMask,
+      getDataURLFromMask: (targetWidth?: number, targetHeight?: number) => 
+        getDataURLFromMask(targetWidth, targetHeight),
       loadImage,
       setBrushSize: (size) => (brushSizeRef.current = size),
       setBrushColor: (color) => (brushColorRef.current = color),
@@ -375,19 +384,27 @@ const CanvasDraw = forwardRef<CanvasDrawRef, CanvasDrawProps>(
       img.src = dataUrl;
     }
 
-    function getMaskDataURL(): string {
+    function getMaskDataURL(targetWidth?: number, targetHeight?: number): string {
       const canvas = maskCanvasRef.current;
       if (!canvas) return "";
       const ctx = canvas.getContext("2d");
       if (!ctx) return "";
 
+      // Use target dimensions or original dimensions
+      const finalWidth = targetWidth || originalWidth;
+      const finalHeight = targetHeight || originalHeight;
+
       const bwCanvas = document.createElement("canvas");
-      bwCanvas.width = canvas.width;
-      bwCanvas.height = canvas.height;
+      bwCanvas.width = finalWidth;
+      bwCanvas.height = finalHeight;
       const bwCtx = bwCanvas.getContext("2d");
       if (!bwCtx) return "";
 
-      const srcData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      // Draw the mask onto the new canvas with the correct dimensions
+      bwCtx.drawImage(canvas, 0, 0, finalWidth, finalHeight);
+
+      // Convert to black and white mask
+      const srcData = bwCtx.getImageData(0, 0, finalWidth, finalHeight);
       const destData = bwCtx.createImageData(srcData);
 
       for (let i = 0; i < srcData.data.length; i += 4) {
@@ -401,15 +418,14 @@ const CanvasDraw = forwardRef<CanvasDrawRef, CanvasDrawProps>(
       return bwCanvas.toDataURL("image/png");
     }
 
-    function getDataURLFromMask() {
-      const url = getMaskDataURL();
+    function getDataURLFromMask(targetWidth?: number, targetHeight?: number) {
+      const url = getMaskDataURL(targetWidth, targetHeight);
       getDataURL(url);
       return url;
     }
 
     return (
       <>
-        {/* <canvas ref={bgCanvasRef} className="absolute top-0 left-0 z-0" /> */}
         <canvas
           ref={maskCanvasRef}
           width={canvasWidth}
