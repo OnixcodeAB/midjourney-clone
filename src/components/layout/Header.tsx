@@ -184,7 +184,7 @@ export default function Header() {
 
   return (
     <header
-      className={`hidden sticky inset-0 bottom-4 z-0 w-3xl left-[35%] lg:flex flex-col items-center bg-transparent ${
+      className={`hidden sticky inset-0 bottom-4 z-20 w-3xl left-[35%] lg:flex flex-col items-center bg-transparent ${
         isDraggingFile ? "" : "border-transparent"
       }`}
       onDropCapture={handleDropCapture}
