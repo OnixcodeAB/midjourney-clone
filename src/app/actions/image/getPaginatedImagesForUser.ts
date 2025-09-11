@@ -36,7 +36,7 @@ export async function getPaginatedImagesForUser(
     }
 
     // Cache key includes pagination parameters
-    const IMAGES_CACHE_KEY = `api:create:${userId}:${limit}:${offset}`;
+    const IMAGES_CACHE_KEY = `api:create:${userId}`;
     const CACHE_TTL = 60 * 1; // 1 minute in seconds
 
     // Try to get from cache first
