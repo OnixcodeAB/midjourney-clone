@@ -6,7 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 export default async function CreatePage() {
   const { userId } = await auth();
   // Fetch from DB or external API
-  const response = await getImagesForUser({ noCache: false });
+  const response = await getImagesForUser();
   let images: Image[] = [];
 
   if (response.error) {
