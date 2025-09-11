@@ -13,6 +13,13 @@ interface Props {
   currentUserId: string;
 }
 
+interface SocketImageData {
+  table: string;
+  operation: 'INSERT' | 'UPDATE' | 'DELETE';
+  id: string;
+  data: Image;
+}
+
 const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
   const [images, setImages] = useState<Image[]>([]);
   const [page, setPage] = useState(1);
@@ -21,14 +28,12 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
   const router = useRouter();
 
   useEffect(() => {
-    // Esto fuerza a Next.js a re-renderizar el SSR la ruta actual
     router.refresh();
   }, [router]);
 
   // Initialize images state with the initialImages prop
   useEffect(() => {
     setImages(initialImages);
-    // Also set hasMore based on initial images
     setHasMore(initialImages.length >= 10);
   }, [initialImages]);
 
@@ -76,35 +81,34 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [loading, hasMore, loadMoreImages]);
 
-  // --- Fixed message handler ---
-  const handleDbUpdate = useCallback(async () => {
-    try {
-      console.log("WebSocket update received - refreshing images");
-
-      // Reset to first page and load fresh data
-      const limit = 10;
-      const result = await getPaginatedImagesForUser(limit, 0);
-      console.log("Refetched images:", result);
-
-      if (result.images) {
-        setImages(result.images);
-        setPage(1); // Reset to first page
-        setHasMore(result.hasMore ?? false);
-
-        // Optional: Force a router refresh to ensure latest data
-        router.refresh();
-      }
-    } catch (err) {
-      console.error("Error refetching images:", err);
+  // --- Optimized message handler using socket data ---
+  const handleDbUpdate = useCallback((socketData: SocketImageData) => {
+    console.log("WebSocket update received:", socketData);
+    
+    const { operation, id, data } = socketData;
+    
+    if (operation === 'INSERT') {
+      // Add new image to the beginning of the list
+      setImages(prev => [data, ...prev]);
+    } 
+    else if (operation === 'UPDATE') {
+      // Update existing image
+      setImages(prev => prev.map(img => 
+        img.id === id ? { ...img, ...data } : img
+      ));
     }
-  }, [router]); // Add router to dependencies
+    else if (operation === 'DELETE') {
+      // Remove deleted image
+      setImages(prev => prev.filter(img => img.id !== id));
+    }
+  }, []);
 
   const handleDeleteImage = async (imageId: string) => {
     const { success } = await deleteImageById(imageId);
     if (success) {
-      // Also update local state immediately for better UX
-      setImages((prev) => prev.filter((img) => img.id !== imageId));
-
+      // The WebSocket will handle the state update, but we can update locally for immediate feedback
+      setImages(prev => prev.filter(img => img.id !== imageId));
+      
       toast.success("Deleting Image", {
         description: "Your image has been deleted",
       });
@@ -138,13 +142,11 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
   );
 
   // Handle real-time updates from Socket.IO
-  const { isConnected, data } = useSocket(
+  const { isConnected } = useSocket(
     "http://localhost:5000",
     "db_update",
-    handleDbUpdate // Pass the memoized callback function
+    handleDbUpdate
   );
-
-  console.log("Socket.IO data:", data);
 
   const now = new Date();
 
