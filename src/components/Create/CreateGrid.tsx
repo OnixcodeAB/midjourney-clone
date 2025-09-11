@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ImageCard from "./ImageCard";
-import { useSocket } from "@/hooks/useSocket"; // Updated to useSocket
+import { useSocket } from "@/hooks/useSocket";
 import { useRouter } from "next/navigation";
 import { getPaginatedImagesForUser } from "@/app/actions/image/getPaginatedImagesForUser";
 import { deleteImageById } from "@/app/actions/image/deleteImageById";
@@ -28,6 +28,8 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
   // Initialize images state with the initialImages prop
   useEffect(() => {
     setImages(initialImages);
+    // Also set hasMore based on initial images
+    setHasMore(initialImages.length >= 10);
   }, [initialImages]);
 
   const loadMoreImages = useCallback(async () => {
@@ -74,39 +76,41 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [loading, hasMore, loadMoreImages]);
 
-  // --- Define the message handler using useCallback ---
+  // --- Fixed message handler ---
   const handleDbUpdate = useCallback(async () => {
     try {
-      // Also reset pagination when new images are added
+      console.log("WebSocket update received - refreshing images");
+      
+      // Reset to first page and load fresh data
       const limit = 10;
       const result = await getPaginatedImagesForUser(limit, 0);
 
       if (result.images) {
         setImages(result.images);
-        setPage(1);
-        setHasMore(result.images.length >= limit);
+        setPage(1); // Reset to first page
+        setHasMore(result.hasMore ?? false);
+        
+        // Optional: Force a router refresh to ensure latest data
+        router.refresh();
       }
-
-      // Fuerza bypass de caché
-      const resp = await fetch("/api/create?noCache=true");
-      if (!resp.ok) throw new Error("Fetch error " + resp.status);
-      const { images: freshImages } = await resp.json();
-      setImages(freshImages);
     } catch (err) {
       console.error("Error refetching images:", err);
     }
-  }, []);
+  }, [router]); // Add router to dependencies
 
   const handleDeleteImage = async (imageId: string) => {
     const { success } = await deleteImageById(imageId);
     if (success) {
-      return toast.success("Deleting Image", {
-        description: "Your have been deleted",
+      // Also update local state immediately for better UX
+      setImages(prev => prev.filter(img => img.id !== imageId));
+      
+      toast.success("Deleting Image", {
+        description: "Your image has been deleted",
       });
     } else {
-      return toast.error("Deleting Image", {
+      toast.error("Deleting Image", {
         description:
-          "An error occurred while deleting the image,please try again later.",
+          "An error occurred while deleting the image, please try again later.",
       });
     }
   };

@@ -32,7 +32,7 @@ interface ImageCardProps {
   status?: "pending" | "completed" | "running";
   progress_pct?: number;
   blurUrl?: string;
-  OnDelete: (imageId: string) => Promise<string | number>;
+  OnDelete: (imageId: string) => Promise<void>;
 }
 
 const ImageCard = ({
