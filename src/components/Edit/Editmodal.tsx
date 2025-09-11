@@ -13,6 +13,7 @@ import {
   ArrowUp,
 } from "lucide-react";
 import { ImagenCreation } from "@/app/actions/openAI/generateImagenV4";
+import { calculateAspectRatio } from "@/lib/const";
 
 interface Props {
   isOpen: boolean;
@@ -20,8 +21,6 @@ interface Props {
   imgSrc: string;
   alt: string;
 }
-
-type AspectRatio = "1024x1024" | "1024x1536" | "1536x1024";
 
 export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
   const canvasRef = useRef<CanvasDrawRef>(null);
@@ -37,26 +36,13 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Function to calculate aspect ratio
-  const calculateAspectRatio = (width: number, height: number): AspectRatio => {
-    const ratio = width / height;
-    
-    if (ratio >= 0.9 && ratio <= 1.1) {
-      return "1024x1024"; // Square or near-square
-    } else if (ratio > 1.1) {
-      return "1536x1024"; // Landscape (width > height)
-    } else {
-      return "1024x1536"; // Portrait (height > width)
-    }
-  };
-
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [prompt]);
-  
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -69,11 +55,11 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
     if (imgRef.current && imageLoaded) {
       const { width, height } = imgRef.current.getBoundingClientRect();
       setCanvasSize({ width, height });
-      
+
       // Store the natural dimensions of the original image
       setNaturalSize({
         width: imgRef.current.naturalWidth,
-        height: imgRef.current.naturalHeight
+        height: imgRef.current.naturalHeight,
       });
     }
   }, [imageLoaded]);
@@ -86,16 +72,16 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
 
   const handleSubmit = async () => {
     if (!canvasRef.current || !imgSrc || isSubmitting) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Get the canvas data URL with the original image dimensions
       const maskUrl = canvasRef.current.getDataURLFromMask(
         naturalSize.width,
         naturalSize.height
       );
-      
+
       if (!maskUrl) {
         console.error("No mask URL available");
         setIsSubmitting(false);
@@ -103,7 +89,10 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
       }
 
       // Calculate aspect ratio from the original image
-      const aspect = calculateAspectRatio(naturalSize.width, naturalSize.height);
+      const aspect = calculateAspectRatio(
+        naturalSize.width,
+        naturalSize.height
+      );
 
       const result = await ImagenCreation({
         prompt: prompt,
@@ -157,7 +146,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
         title="btn-close"
         onClick={onClose}
         disabled={isSubmitting}
-        className={`absolute top-2 left-4 ${closeButtonStyles} ${isSubmitting ? disabledStyles : ''}`}
+        className={`absolute top-2 left-4 ${closeButtonStyles} ${
+          isSubmitting ? disabledStyles : ""
+        }`}
       >
         <X className="size-6" />
       </button>
@@ -170,7 +161,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               title="Undo"
               onClick={() => canvasRef.current?.undo()}
               disabled={isSubmitting}
-              className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
+              className={`${buttonBaseStyles} ${
+                isSubmitting ? disabledStyles : ""
+              }`}
             >
               <Undo2 className={`${iconBaseStyles}`} />
             </button>
@@ -179,7 +172,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               title="Redo"
               onClick={() => canvasRef.current?.redo()}
               disabled={isSubmitting}
-              className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
+              className={`${buttonBaseStyles} ${
+                isSubmitting ? disabledStyles : ""
+              }`}
             >
               <Redo2 className={`${iconBaseStyles}`} />
             </button>
@@ -192,7 +187,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               type="button"
               title="Like"
               disabled={isSubmitting}
-              className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
+              className={`${buttonBaseStyles} ${
+                isSubmitting ? disabledStyles : ""
+              }`}
             >
               <ThumbsUp className={`${iconBaseStyles}`} />
             </button>
@@ -201,7 +198,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               title="Edit (draw)"
               onClick={() => setEditing(!editing)}
               disabled={isSubmitting}
-              className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
+              className={`${buttonBaseStyles} ${
+                isSubmitting ? disabledStyles : ""
+              }`}
             >
               <Brush
                 className={`size-6 ${
@@ -219,7 +218,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
               title="cancel"
               onClick={() => setEditing(!editing)}
               disabled={isSubmitting}
-              className={`${textButtonStyles} ${isSubmitting ? disabledStyles : ''}`}
+              className={`${textButtonStyles} ${
+                isSubmitting ? disabledStyles : ""
+              }`}
             >
               Cancel
             </button>
@@ -236,7 +237,9 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
                 link.click();
               }}
               disabled={isSubmitting}
-              className={`${buttonBaseStyles} ${isSubmitting ? disabledStyles : ''}`}
+              className={`${buttonBaseStyles} ${
+                isSubmitting ? disabledStyles : ""
+              }`}
             >
               <Download className={`${iconBaseStyles}`} />
             </button>
@@ -289,7 +292,11 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
             disabled={isSubmitting}
             className="text-2xl text-center flex items-center justify-center mr-2 text-foreground border border-muted-foreground rounded-full w-8 h-8 flex-shrink-0"
           >
-            {isSubmitting ? <Loader className="animate-spin size-4" /> : <Plus />}
+            {isSubmitting ? (
+              <Loader className="animate-spin size-4" />
+            ) : (
+              <Plus />
+            )}
           </button>
           <textarea
             ref={textareaRef}
@@ -304,7 +311,11 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
             title="Submit"
             onClick={handleSubmit}
             disabled={isSubmitting || !prompt.trim()}
-            className={`${submitButtonStyles} ${isSubmitting || !prompt.trim() ? 'opacity-50 cursor-not-allowed hover:bg-primary' : ''}`}
+            className={`${submitButtonStyles} ${
+              isSubmitting || !prompt.trim()
+                ? "opacity-50 cursor-not-allowed hover:bg-primary"
+                : ""
+            }`}
           >
             {isSubmitting ? (
               <Loader className="animate-spin size-4" />
