@@ -67,7 +67,6 @@ export async function getImagesForUser(options?: {
       FROM "Image" i
       WHERE i.user_id = $1
       ORDER BY i."createdat" DESC
-      LIMIT 10
       `,
       [userId]
     );
