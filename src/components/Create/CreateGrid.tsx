@@ -80,16 +80,17 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
   const handleDbUpdate = useCallback(async () => {
     try {
       console.log("WebSocket update received - refreshing images");
-      
+
       // Reset to first page and load fresh data
       const limit = 10;
       const result = await getPaginatedImagesForUser(limit, 0);
+      console.log("Refetched images:", result);
 
       if (result.images) {
         setImages(result.images);
         setPage(1); // Reset to first page
         setHasMore(result.hasMore ?? false);
-        
+
         // Optional: Force a router refresh to ensure latest data
         router.refresh();
       }
@@ -102,8 +103,8 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
     const { success } = await deleteImageById(imageId);
     if (success) {
       // Also update local state immediately for better UX
-      setImages(prev => prev.filter(img => img.id !== imageId));
-      
+      setImages((prev) => prev.filter((img) => img.id !== imageId));
+
       toast.success("Deleting Image", {
         description: "Your image has been deleted",
       });
@@ -137,11 +138,13 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
   );
 
   // Handle real-time updates from Socket.IO
-  const { isConnected } = useSocket(
+  const { isConnected, data } = useSocket(
     "http://localhost:5000",
     "db_update",
     handleDbUpdate // Pass the memoized callback function
   );
+
+  console.log("Socket.IO data:", data);
 
   const now = new Date();
 

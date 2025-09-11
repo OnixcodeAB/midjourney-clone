@@ -8,6 +8,7 @@ export function useSocket<T = any>(
 ) {
   const socketRef = useRef<typeof Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [data, setData] = useState<T | null>(null);
 
   useEffect(() => {
     const socket = io(url, {
@@ -30,6 +31,7 @@ export function useSocket<T = any>(
     // Listen for specific event (e.g., 'db_update')
     socket.on(event, (data: T) => {
       console.log(`Received event '${event}':`, data);
+      setData(data);
       onMessage(data);
     });
 
@@ -47,5 +49,5 @@ export function useSocket<T = any>(
     }
   };
 
-  return { isConnected, sendMessage };
+  return { isConnected, data, sendMessage };
 }
