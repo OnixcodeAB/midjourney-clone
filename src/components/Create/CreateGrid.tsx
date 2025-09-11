@@ -45,7 +45,7 @@ const CreateGrid = ({ images: initialImages, currentUserId }: Props) => {
     const offset = page * limit;
 
     try {
-      const result = await getPaginatedImagesForUser(limit, offset);
+      const result = await getPaginatedImagesForUser(limit, offset,{ noCache: true });
 
       if (result.images) {
         const newImages = result.images.filter(

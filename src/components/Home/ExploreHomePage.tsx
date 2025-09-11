@@ -152,7 +152,7 @@ export const ExploreHomePage = ({ initialImages }: Props) => {
             </button>
           </div>
         )}
-        <div className=" w-full flex xl:justify-center h-screen">
+        <div className=" w-full flex xl:justify-center h-full">
           <MasonryImageGallery
             images={displayed}
             columnsCount={columns}

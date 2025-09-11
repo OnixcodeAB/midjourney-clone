@@ -21,8 +21,8 @@ interface GetPaginatedImagesResponse {
  * @returns {Promise<GetPaginatedImagesResponse>} Response with images, error, and hasMore flag
  */
 export async function getPaginatedImagesForUser(
-  limit: number,
-  offset: number,
+  limit: number = 20, // Default limit to 20
+  offset: number = 0,
   options?: { noCache?: boolean }
 ): Promise<GetPaginatedImagesResponse> {
   const noCache = options?.noCache ?? false;
@@ -87,6 +87,21 @@ export async function getPaginatedImagesForUser(
     );
     const totalCount = parseInt(countRows[0].count, 10);
     const hasMore = offset + limit < totalCount;
+
+    console.log(
+      `Fetched ${images.length} images for user ${userId}. Total count: ${totalCount}, Has more: ${hasMore}`
+    );
+
+    // Return empty array when we know there are more images but none in this page
+    if (images.length === 0 && hasMore) {
+      console.log(
+        `Returning empty array for offset ${offset} but hasMore is true`
+      );
+      return {
+        images: [],
+        hasMore: true,
+      };
+    }
 
     // Cache the paginated results
     if (!noCache) {
