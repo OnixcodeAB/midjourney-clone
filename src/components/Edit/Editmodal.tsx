@@ -304,7 +304,7 @@ export default function EditModal({ isOpen, onClose, imgSrc, alt }: Props) {
             value={prompt}
             onChange={handlePromptChange}
             disabled={isSubmitting}
-            className="bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground placeholder:pt-2.5 text-md resize-none py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-transparent outline-none text-foreground flex-1 placeholder:text-muted-foreground placeholder:pt-0 text-md resize-none pt-4 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             type="button"
